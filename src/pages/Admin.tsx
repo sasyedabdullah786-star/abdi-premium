@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Shield, Mail, Lock, Eye, EyeOff, ArrowLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useSite } from "@/contexts/SiteContext";
 
 const Admin = () => {
   const [email, setEmail] = useState("");
@@ -9,12 +10,12 @@ const Admin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { settings } = useSite();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login
     setTimeout(() => {
       toast({
         title: "Welcome, Admin!",
@@ -30,7 +31,7 @@ const Admin = () => {
       {/* Background effects */}
       <div className="fixed inset-0 pointer-events-none">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
       </div>
 
       {/* Back link */}
@@ -39,7 +40,7 @@ const Admin = () => {
         className="absolute top-6 left-6 flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors z-10"
       >
         <ArrowLeft className="w-5 h-5" />
-        <span>Back to Home</span>
+        <span>Back to {settings.navLabels.home}</span>
       </Link>
 
       {/* Login Card */}
@@ -54,7 +55,7 @@ const Admin = () => {
               Admin Portal
             </h1>
             <p className="text-muted-foreground">
-              Sign in to access the dashboard
+              Sign in to manage {settings.institutionName}
             </p>
           </div>
 
