@@ -1,91 +1,52 @@
 import { Link } from "react-router-dom";
-import { useSite } from "@/contexts/SiteContext";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight, BookOpen, Users, Award } from "lucide-react";
+import Layout from "@/components/Layout";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { useInstitution } from "@/hooks/useInstitution";
+import { useCourses } from "@/hooks/useCourses";
 
 const Index = () => {
-  const { settings } = useSite();
+  const { settings } = useSiteSettings();
+  const { institution } = useInstitution();
+  const { courses } = useCourses();
+  const publishedCourses = courses.filter(c => c.is_published);
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl" />
-      </div>
-
-      {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between p-6">
-        <div className="font-display text-xl font-bold gradient-text">
-          {settings.institutionName}
-        </div>
-        <Link
-          to="/admin"
-          className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-        >
-          {settings.navLabels.admin}
-        </Link>
-      </nav>
-
-      {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-[80vh] px-4">
-        {/* Hero Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 opacity-0 animate-fade-in">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm text-primary font-medium">Premium Learning Hub</span>
-        </div>
-
-        {/* Main Title */}
-        <h1 className="font-display text-6xl md:text-8xl font-bold mb-6 text-center opacity-0 animate-fade-in" style={{ animationDelay: "100ms" }}>
-          <span className="gradient-text">{settings.institutionName}</span>
-        </h1>
-
-        {/* Description */}
-        <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-center leading-relaxed mb-12 opacity-0 animate-fade-in" style={{ animationDelay: "200ms" }}>
-          {settings.institutionDescription}
-        </p>
-
-        {/* Main Card */}
-        <Link
-          to="/institution"
-          className="group glass-card p-8 md:p-12 max-w-md w-full text-center opacity-0 animate-fade-in hover:scale-[1.02] transition-all duration-300"
-          style={{ animationDelay: "300ms" }}
-        >
-          <div className="text-6xl mb-6">{settings.institutionLogo}</div>
-          <h2 className="font-display text-2xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-            {settings.homeCardText}
-          </h2>
-          <p className="text-muted-foreground mb-6">{settings.homeCardSubtitle}</p>
-          <div className="inline-flex items-center gap-2 text-primary">
-            <span>Explore Courses</span>
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+    <Layout>
+      <section className="container mx-auto px-4 py-16 md:py-24">
+        <div className="text-center max-w-4xl mx-auto animate-fade-in">
+          <div className="icon-gradient inline-flex mb-6">
+            <Award className="w-8 h-8 text-primary" />
           </div>
-        </Link>
-
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-8 mt-16 opacity-0 animate-fade-in" style={{ animationDelay: "400ms" }}>
-          <div className="text-center">
-            <div className="font-display text-3xl font-bold gradient-text">{settings.courses.length}</div>
-            <div className="text-sm text-muted-foreground">Courses</div>
+          <h1 className="font-display text-4xl md:text-6xl font-bold mb-6">
+            <span className="gradient-text">{settings.hero_title}</span>
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">{settings.hero_subtitle}</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/courses" className="btn-gradient inline-flex items-center gap-2">Explore Courses <ArrowRight className="w-5 h-5" /></Link>
+            <Link to="/institution" className="btn-glass inline-flex items-center gap-2">Learn About Us</Link>
           </div>
-          <div className="text-center">
-            <div className="font-display text-3xl font-bold gradient-text">
-              {settings.courses.reduce((acc, c) => acc + c.lessons.length, 0)}
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-3xl mx-auto">
+          <div className="glass-card p-6 text-center"><div className="font-display text-3xl font-bold gradient-text">{publishedCourses.length}</div><div className="text-muted-foreground text-sm mt-1">Courses</div></div>
+          <div className="glass-card p-6 text-center"><div className="font-display text-3xl font-bold gradient-text">1K+</div><div className="text-muted-foreground text-sm mt-1">Students</div></div>
+          <div className="glass-card p-6 text-center"><div className="font-display text-3xl font-bold gradient-text">50+</div><div className="text-muted-foreground text-sm mt-1">Lessons</div></div>
+          <div className="glass-card p-6 text-center"><div className="font-display text-3xl font-bold gradient-text">4.9</div><div className="text-muted-foreground text-sm mt-1">Rating</div></div>
+        </div>
+      </section>
+      <section className="container mx-auto px-4 py-12">
+        <Link to="/institution" className="glass-card-hover block p-8 max-w-2xl mx-auto">
+          <div className="flex items-start gap-6">
+            <div className="icon-gradient shrink-0"><BookOpen className="w-8 h-8 text-primary" /></div>
+            <div className="flex-1">
+              <h2 className="font-display text-2xl font-bold text-foreground mb-2">{institution?.name || 'ABD"I'}</h2>
+              <p className="text-muted-foreground mb-4">{institution?.description || 'Your premier learning destination'}</p>
+              <div className="flex items-center gap-2 text-primary"><span className="text-sm font-medium">View Institution</span><ArrowRight className="w-4 h-4" /></div>
             </div>
-            <div className="text-sm text-muted-foreground">Lessons</div>
           </div>
-          <div className="text-center">
-            <div className="font-display text-3xl font-bold gradient-text">24/7</div>
-            <div className="text-sm text-muted-foreground">Access</div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer */}
-      <footer className="relative z-10 text-center py-8 text-muted-foreground text-sm">
-        © 2024 {settings.institutionName}. Premium Educational Platform.
-      </footer>
-    </div>
+        </Link>
+      </section>
+    </Layout>
   );
 };
 

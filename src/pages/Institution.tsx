@@ -1,90 +1,53 @@
 import { Link } from "react-router-dom";
-import { useSite } from "@/contexts/SiteContext";
-import { ArrowLeft, BookOpen, Play } from "lucide-react";
+import { BookOpen, Target, Award, ArrowRight } from "lucide-react";
+import Layout from "@/components/Layout";
+import { useInstitution } from "@/hooks/useInstitution";
+import { useCourses } from "@/hooks/useCourses";
 
 const Institution = () => {
-  const { settings } = useSite();
+  const { institution, loading: institutionLoading } = useInstitution();
+  const { courses, loading: coursesLoading } = useCourses();
+  const publishedCourses = courses.filter(c => c.is_published);
+
+  if (institutionLoading) {
+    return <Layout showBack><div className="container mx-auto px-4 py-16 text-center"><div className="animate-pulse text-muted-foreground">Loading...</div></div></Layout>;
+  }
 
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Background effects */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-      </div>
-
-      {/* Navigation */}
-      <nav className="relative z-10 flex items-center justify-between p-6">
-        <Link
-          to="/"
-          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>{settings.navLabels.home}</span>
-        </Link>
-        <Link
-          to="/admin"
-          className="text-muted-foreground hover:text-foreground transition-colors text-sm"
-        >
-          {settings.navLabels.admin}
-        </Link>
-      </nav>
-
-      {/* Header */}
-      <header className="relative z-10 text-center py-12 px-4">
-        <div className="text-7xl mb-6 opacity-0 animate-fade-in">{settings.institutionLogo}</div>
-        <h1 className="font-display text-4xl md:text-5xl font-bold mb-4 opacity-0 animate-fade-in" style={{ animationDelay: "100ms" }}>
-          <span className="gradient-text">{settings.institutionName}</span>
-        </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto opacity-0 animate-fade-in" style={{ animationDelay: "200ms" }}>
-          {settings.institutionDescription}
-        </p>
-      </header>
-
-      {/* Courses Section */}
-      <section className="relative z-10 px-4 pb-16">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-3 mb-8 opacity-0 animate-fade-in" style={{ animationDelay: "300ms" }}>
-            <BookOpen className="w-6 h-6 text-primary" />
-            <h2 className="font-display text-2xl font-bold">{settings.navLabels.courses}</h2>
-          </div>
-
-          {settings.courses.length === 0 ? (
-            <div className="glass-card p-12 text-center opacity-0 animate-fade-in" style={{ animationDelay: "400ms" }}>
-              <p className="text-muted-foreground">No courses available yet. Check back soon!</p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {settings.courses.map((course, index) => (
-                <Link
-                  key={course.id}
-                  to={`/course/${course.id}`}
-                  className="group glass-card p-6 opacity-0 animate-fade-in hover:scale-[1.02] transition-all duration-300"
-                  style={{ animationDelay: `${400 + index * 100}ms` }}
-                >
-                  <div className="text-5xl mb-4">{course.thumbnail}</div>
-                  <h3 className="font-display text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                    {course.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                    {course.description}
-                  </p>
-                  <div className="flex items-center gap-2 text-primary text-sm">
-                    <Play className="w-4 h-4" />
-                    <span>{course.lessons.length} lessons</span>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
+    <Layout showBack>
+      <section className="container mx-auto px-4 py-16">
+        <div className="max-w-4xl mx-auto text-center animate-fade-in">
+          <div className="icon-gradient inline-flex mb-6"><Award className="w-12 h-12 text-primary" /></div>
+          <h1 className="font-display text-4xl md:text-5xl font-bold mb-4"><span className="gradient-text">{institution?.name || 'ABD"I'}</span></h1>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">{institution?.description}</p>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="relative z-10 text-center py-8 border-t border-border/50 text-muted-foreground text-sm">
-        © 2024 {settings.institutionName}. All rights reserved.
-      </footer>
-    </div>
+      {institution?.mission && (
+        <section className="container mx-auto px-4 py-12">
+          <div className="glass-card p-8 max-w-3xl mx-auto">
+            <div className="flex items-start gap-4">
+              <div className="icon-gradient shrink-0"><Target className="w-6 h-6 text-primary" /></div>
+              <div><h2 className="font-display text-xl font-bold mb-3">Our Mission</h2><p className="text-muted-foreground">{institution.mission}</p></div>
+            </div>
+          </div>
+        </section>
+      )}
+      <section className="container mx-auto px-4 py-12">
+        <h2 className="font-display text-2xl font-bold mb-8 text-center">Our Courses</h2>
+        {coursesLoading ? <div className="text-center text-muted-foreground">Loading...</div> : publishedCourses.length === 0 ? (
+          <div className="glass-card p-8 text-center max-w-md mx-auto"><BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" /><p className="text-muted-foreground">No courses available yet.</p></div>
+        ) : (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {publishedCourses.map((course) => (
+              <Link key={course.id} to={`/course/${course.id}`} className="glass-card-hover overflow-hidden">
+                <div className="h-40 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center"><BookOpen className="w-12 h-12 text-primary/50" /></div>
+                <div className="p-6"><h3 className="font-display text-lg font-bold mb-2">{course.title}</h3><p className="text-muted-foreground text-sm line-clamp-2 mb-4">{course.description}</p><div className="flex items-center gap-2 text-primary"><span className="text-sm font-medium">View Course</span><ArrowRight className="w-4 h-4" /></div></div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
+    </Layout>
   );
 };
 
