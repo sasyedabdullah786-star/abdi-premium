@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, MapPin, Send, Twitter, Facebook, Instagram } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Twitter, Facebook, Instagram, Linkedin, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useContactInfo } from "@/hooks/useContactInfo";
 import { useToast } from "@/hooks/use-toast";
@@ -7,33 +7,20 @@ import { useToast } from "@/hooks/use-toast";
 const Contact = () => {
   const { contactInfo, loading } = useContactInfo();
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [sending, setSending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSending(true);
-    
-    // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you as soon as possible.",
-    });
-    
+    toast({ title: "Message Sent!", description: "We'll get back to you soon." });
     setFormData({ name: '', email: '', message: '' });
     setSending(false);
   };
 
   const socialIcons: Record<string, typeof Twitter> = {
-    twitter: Twitter,
-    facebook: Facebook,
-    instagram: Instagram
+    twitter: Twitter, facebook: Facebook, instagram: Instagram, linkedin: Linkedin
   };
 
   return (
@@ -41,17 +28,16 @@ const Contact = () => {
       <section className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
           {/* Contact Info */}
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-6 animate-fade-in-up">
             <div className="glass-card p-8">
               <h2 className="font-display text-2xl font-bold mb-6 gradient-text">Get in Touch</h2>
-              
               {loading ? (
-                <div className="text-muted-foreground">Loading...</div>
+                <div className="animate-shimmer h-32 rounded-xl" />
               ) : (
                 <div className="space-y-6">
                   {contactInfo?.address && (
-                    <div className="flex items-start gap-4">
-                      <div className="icon-gradient shrink-0">
+                    <div className="flex items-start gap-4 group">
+                      <div className="icon-gradient shrink-0 group-hover:scale-110 transition-transform">
                         <MapPin className="w-5 h-5 text-primary" />
                       </div>
                       <div>
@@ -60,10 +46,9 @@ const Contact = () => {
                       </div>
                     </div>
                   )}
-                  
                   {contactInfo?.phone && (
-                    <div className="flex items-start gap-4">
-                      <div className="icon-gradient shrink-0">
+                    <div className="flex items-start gap-4 group">
+                      <div className="icon-gradient shrink-0 group-hover:scale-110 transition-transform">
                         <Phone className="w-5 h-5 text-primary" />
                       </div>
                       <div>
@@ -74,10 +59,9 @@ const Contact = () => {
                       </div>
                     </div>
                   )}
-                  
                   {contactInfo?.email && (
-                    <div className="flex items-start gap-4">
-                      <div className="icon-gradient shrink-0">
+                    <div className="flex items-start gap-4 group">
+                      <div className="icon-gradient shrink-0 group-hover:scale-110 transition-transform">
                         <Mail className="w-5 h-5 text-primary" />
                       </div>
                       <div>
@@ -90,23 +74,15 @@ const Contact = () => {
                   )}
                 </div>
               )}
-              
-              {/* Social Links */}
-              {contactInfo?.social_links && Object.keys(contactInfo.social_links).some(k => contactInfo.social_links[k]) && (
+              {contactInfo?.social_links && Object.keys(contactInfo.social_links).some(k => (contactInfo.social_links as Record<string, string>)[k]) && (
                 <div className="mt-8 pt-6 border-t border-border/30">
                   <div className="font-medium mb-4">Follow Us</div>
-                  <div className="flex gap-4">
-                    {Object.entries(contactInfo.social_links).map(([platform, url]) => {
+                  <div className="flex gap-3">
+                    {Object.entries(contactInfo.social_links as Record<string, string>).map(([platform, url]) => {
                       if (!url) return null;
                       const Icon = socialIcons[platform.toLowerCase()] || Twitter;
                       return (
-                        <a
-                          key={platform}
-                          href={url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="icon-gradient hover:scale-110 transition-transform"
-                        >
+                        <a key={platform} href={url} target="_blank" rel="noopener noreferrer" className="icon-gradient hover:scale-110 transition-transform">
                           <Icon className="w-5 h-5 text-primary" />
                         </a>
                       );
@@ -118,60 +94,24 @@ const Contact = () => {
           </div>
 
           {/* Contact Form */}
-          <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <div className="animate-fade-in-up delay-100">
             <form onSubmit={handleSubmit} className="glass-card p-8">
               <h2 className="font-display text-2xl font-bold mb-6 gradient-text">Send a Message</h2>
-              
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Name</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    className="input-glass"
-                    placeholder="Your name"
-                  />
+                  <input type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} required className="input-glass" placeholder="Your name" />
                 </div>
-                
                 <div>
                   <label className="block text-sm font-medium mb-2">Email</label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    className="input-glass"
-                    placeholder="your@email.com"
-                  />
+                  <input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} required className="input-glass" placeholder="your@email.com" />
                 </div>
-                
                 <div>
                   <label className="block text-sm font-medium mb-2">Message</label>
-                  <textarea
-                    value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    required
-                    rows={5}
-                    className="input-glass resize-none"
-                    placeholder="Your message..."
-                  />
+                  <textarea value={formData.message} onChange={(e) => setFormData({ ...formData, message: e.target.value })} required rows={5} className="input-glass resize-none" placeholder="Your message..." />
                 </div>
-                
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className="btn-gradient w-full flex items-center justify-center gap-2"
-                >
-                  {sending ? (
-                    <span>Sending...</span>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4" />
-                      Send Message
-                    </>
-                  )}
+                <button type="submit" disabled={sending} className="btn-gradient w-full flex items-center justify-center gap-2">
+                  {sending ? 'Sending...' : <><Send className="w-4 h-4" /> Send Message</>}
                 </button>
               </div>
             </form>
