@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Settings, Palette, BookOpen, FileText, Mail, Plus, Trash2, Save, Edit3, Play, X, ArrowLeft, Home } from "lucide-react";
+import { Settings, Palette, BookOpen, FileText, Mail, Plus, Trash2, Save, Edit3, Play, X, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useInstitution } from "@/hooks/useInstitution";
 import { useCourses } from "@/hooks/useCourses";
-import { useLessons } from "@/hooks/useLessons";
+import { useLessons, Lesson } from "@/hooks/useLessons";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { useContactInfo } from "@/hooks/useContactInfo";
 import { useToast } from "@/hooks/use-toast";
@@ -18,13 +18,17 @@ const Dashboard = () => {
   const { settings, updateSettings } = useSiteSettings();
   const { institution, updateInstitution } = useInstitution();
   const { courses, createCourse, updateCourse, deleteCourse } = useCourses();
-  const { lessons, createLesson, updateLesson, deleteLesson } = useLessons();
+  const { lessons, createLesson, updateLesson, deleteLesson, refetch: refetchLessons } = useLessons();
   const { posts, createPost, updatePost, deletePost } = useBlogPosts();
   const { contactInfo, updateContactInfo } = useContactInfo();
   
   const [activeTab, setActiveTab] = useState<"general" | "appearance" | "courses" | "blog" | "contact">("general");
-  const [editingCourse, setEditingCourse] = useState<string | null>(null);
   const [newCourse, setNewCourse] = useState({ title: "", description: "", thumbnail_url: "" });
+  const [newPost, setNewPost] = useState({ title: "", content: "", image_url: "" });
+  const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
+  const [newLesson, setNewLesson] = useState({ title: "", video_url: "", notes: "", pdf_url: "" });
+  const [editingPost, setEditingPost] = useState<string | null>(null);
+  const [editPostData, setEditPostData] = useState({ title: "", content: "", image_url: "" });
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -36,18 +40,84 @@ const Dashboard = () => {
   if (!isAdmin) return null;
 
   const handleAddCourse = async () => {
-    if (!newCourse.title) return;
+    if (!newCourse.title) {
+      toast({ title: "Please enter a course title", variant: "destructive" });
+      return;
+    }
     const result = await createCourse({ ...newCourse, institution_id: institution?.id || null, is_published: true });
-    if (result.success) { setNewCourse({ title: "", description: "", thumbnail_url: "" }); toast({ title: "Course added!" }); }
+    if (result.success) {
+      setNewCourse({ title: "", description: "", thumbnail_url: "" });
+      toast({ title: "Course added successfully!" });
+    } else {
+      toast({ title: "Failed to add course", variant: "destructive" });
+    }
+  };
+
+  const handleAddPost = async () => {
+    if (!newPost.title) {
+      toast({ title: "Please enter a post title", variant: "destructive" });
+      return;
+    }
+    const result = await createPost({ ...newPost, is_published: true });
+    if (result.success) {
+      setNewPost({ title: "", content: "", image_url: "" });
+      toast({ title: "Blog post added successfully!" });
+    } else {
+      toast({ title: "Failed to add blog post", variant: "destructive" });
+    }
+  };
+
+  const handleUpdatePost = async (id: string) => {
+    const result = await updatePost(id, editPostData);
+    if (result.success) {
+      setEditingPost(null);
+      toast({ title: "Blog post updated!" });
+    } else {
+      toast({ title: "Failed to update post", variant: "destructive" });
+    }
+  };
+
+  const handleAddLesson = async (courseId: string) => {
+    if (!newLesson.title) {
+      toast({ title: "Please enter a lesson title", variant: "destructive" });
+      return;
+    }
+    const courseLessons = lessons.filter(l => l.course_id === courseId);
+    const result = await createLesson({
+      course_id: courseId,
+      title: newLesson.title,
+      video_url: newLesson.video_url || null,
+      notes: newLesson.notes || null,
+      pdf_url: newLesson.pdf_url || null,
+      sort_order: courseLessons.length
+    });
+    if (result.success) {
+      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "" });
+      refetchLessons();
+      toast({ title: "Lesson added successfully!" });
+    } else {
+      toast({ title: "Failed to add lesson", variant: "destructive" });
+    }
+  };
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    const result = await deleteLesson(lessonId);
+    if (result.success) {
+      toast({ title: "Lesson deleted" });
+    } else {
+      toast({ title: "Failed to delete lesson", variant: "destructive" });
+    }
   };
 
   const tabs = [
     { id: "general" as const, label: "General", icon: Settings },
     { id: "appearance" as const, label: "Appearance", icon: Palette },
-    { id: "courses" as const, label: "Courses", icon: BookOpen },
+    { id: "courses" as const, label: "Courses & Lessons", icon: BookOpen },
     { id: "blog" as const, label: "Blog", icon: FileText },
     { id: "contact" as const, label: "Contact", icon: Mail },
   ];
+
+  const getCourseLessons = (courseId: string) => lessons.filter(l => l.course_id === courseId);
 
   return (
     <div className="min-h-screen bg-background">
@@ -70,7 +140,7 @@ const Dashboard = () => {
             ))}
           </nav>
         </aside>
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 overflow-auto">
           {activeTab === "general" && (
             <div className="space-y-6 max-w-2xl">
               <h2 className="font-display text-2xl font-bold">General Settings</h2>
@@ -97,38 +167,205 @@ const Dashboard = () => {
           )}
           {activeTab === "courses" && (
             <div className="space-y-6">
-              <h2 className="font-display text-2xl font-bold">Manage Courses</h2>
+              <h2 className="font-display text-2xl font-bold">Manage Courses & Lessons</h2>
+              
+              {/* Add New Course */}
               <div className="glass-card p-6">
-                <h3 className="font-medium mb-4 flex items-center gap-2"><Plus className="w-4 h-4" /> Add Course</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <input placeholder="Title" value={newCourse.title} onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })} className="input-glass" />
+                <h3 className="font-medium mb-4 flex items-center gap-2"><Plus className="w-4 h-4" /> Add New Course</h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <input placeholder="Course Title" value={newCourse.title} onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })} className="input-glass" />
                   <input placeholder="Description" value={newCourse.description} onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })} className="input-glass" />
+                  <input placeholder="Thumbnail URL (optional)" value={newCourse.thumbnail_url} onChange={(e) => setNewCourse({ ...newCourse, thumbnail_url: e.target.value })} className="input-glass" />
                   <button onClick={handleAddCourse} className="btn-gradient">Add Course</button>
                 </div>
               </div>
+
+              {/* Course List with Lessons */}
               <div className="space-y-4">
-                {courses.map((course) => (
-                  <div key={course.id} className="glass-card p-6">
-                    <div className="flex items-center justify-between">
-                      <div><h3 className="font-display text-xl font-bold">{course.title}</h3><p className="text-muted-foreground text-sm">{course.description}</p></div>
-                      <button onClick={() => { deleteCourse(course.id); toast({ title: "Deleted" }); }} className="p-2 text-destructive"><Trash2 className="w-5 h-5" /></button>
+                {courses.length === 0 ? (
+                  <div className="glass-card p-8 text-center text-muted-foreground">No courses yet. Add your first course above.</div>
+                ) : (
+                  courses.map((course) => (
+                    <div key={course.id} className="glass-card overflow-hidden">
+                      {/* Course Header */}
+                      <div className="p-6 flex items-center justify-between">
+                        <div className="flex-1">
+                          <h3 className="font-display text-xl font-bold">{course.title}</h3>
+                          <p className="text-muted-foreground text-sm">{course.description}</p>
+                          <p className="text-xs text-primary mt-1">{getCourseLessons(course.id).length} lessons</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button 
+                            onClick={() => setExpandedCourse(expandedCourse === course.id ? null : course.id)} 
+                            className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+                          >
+                            {expandedCourse === course.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                          </button>
+                          <button onClick={() => { deleteCourse(course.id); toast({ title: "Course deleted" }); }} className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors">
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Expanded Lessons Section */}
+                      {expandedCourse === course.id && (
+                        <div className="border-t border-border/50 bg-background/30 p-6">
+                          <h4 className="font-medium mb-4 flex items-center gap-2"><Play className="w-4 h-4" /> Lessons</h4>
+                          
+                          {/* Add Lesson Form */}
+                          <div className="glass-card p-4 mb-4 bg-primary/5">
+                            <h5 className="text-sm font-medium mb-3 flex items-center gap-2"><Plus className="w-3 h-3" /> Add New Lesson</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                              <input 
+                                placeholder="Lesson Title *" 
+                                value={newLesson.title} 
+                                onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })} 
+                                className="input-glass text-sm" 
+                              />
+                              <input 
+                                placeholder="Video URL (YouTube/Vimeo)" 
+                                value={newLesson.video_url} 
+                                onChange={(e) => setNewLesson({ ...newLesson, video_url: e.target.value })} 
+                                className="input-glass text-sm" 
+                              />
+                              <input 
+                                placeholder="PDF URL (optional)" 
+                                value={newLesson.pdf_url} 
+                                onChange={(e) => setNewLesson({ ...newLesson, pdf_url: e.target.value })} 
+                                className="input-glass text-sm" 
+                              />
+                              <input 
+                                placeholder="Notes (optional)" 
+                                value={newLesson.notes} 
+                                onChange={(e) => setNewLesson({ ...newLesson, notes: e.target.value })} 
+                                className="input-glass text-sm" 
+                              />
+                              <button onClick={() => handleAddLesson(course.id)} className="btn-gradient text-sm">Add Lesson</button>
+                            </div>
+                          </div>
+
+                          {/* Lesson List */}
+                          <div className="space-y-2">
+                            {getCourseLessons(course.id).length === 0 ? (
+                              <p className="text-muted-foreground text-sm py-4 text-center">No lessons yet. Add your first lesson above.</p>
+                            ) : (
+                              getCourseLessons(course.id).map((lesson, index) => (
+                                <div key={lesson.id} className="glass-card p-4 flex items-center justify-between">
+                                  <div className="flex items-center gap-4">
+                                    <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">{index + 1}</span>
+                                    <div>
+                                      <h5 className="font-medium">{lesson.title}</h5>
+                                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
+                                        {lesson.video_url && <span className="flex items-center gap-1"><Play className="w-3 h-3" /> Video</span>}
+                                        {lesson.pdf_url && <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> PDF</span>}
+                                        {lesson.notes && <span className="flex items-center gap-1"><Edit3 className="w-3 h-3" /> Notes</span>}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <button onClick={() => handleDeleteLesson(lesson.id)} className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors">
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
           {activeTab === "blog" && (
             <div className="space-y-6">
-              <h2 className="font-display text-2xl font-bold">Blog Posts</h2>
-              <p className="text-muted-foreground">Manage your blog posts here. Add, edit, or delete posts.</p>
-              <div className="space-y-4">
-                {posts.map((post) => (
-                  <div key={post.id} className="glass-card p-6 flex justify-between items-center">
-                    <div><h3 className="font-bold">{post.title}</h3><p className="text-muted-foreground text-sm line-clamp-1">{post.content}</p></div>
-                    <button onClick={() => { deletePost(post.id); toast({ title: "Deleted" }); }} className="p-2 text-destructive"><Trash2 className="w-5 h-5" /></button>
+              <h2 className="font-display text-2xl font-bold">Manage Blog Posts</h2>
+              
+              {/* Add New Post */}
+              <div className="glass-card p-6">
+                <h3 className="font-medium mb-4 flex items-center gap-2"><Plus className="w-4 h-4" /> Add New Blog Post</h3>
+                <div className="space-y-4">
+                  <input 
+                    placeholder="Post Title *" 
+                    value={newPost.title} 
+                    onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} 
+                    className="input-glass" 
+                  />
+                  <textarea 
+                    placeholder="Post Content" 
+                    value={newPost.content} 
+                    onChange={(e) => setNewPost({ ...newPost, content: e.target.value })} 
+                    className="input-glass min-h-[120px]" 
+                  />
+                  <div className="flex gap-4">
+                    <input 
+                      placeholder="Image URL (optional)" 
+                      value={newPost.image_url} 
+                      onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })} 
+                      className="input-glass flex-1" 
+                    />
+                    <button onClick={handleAddPost} className="btn-gradient">Add Post</button>
                   </div>
-                ))}
+                </div>
+              </div>
+
+              {/* Post List */}
+              <div className="space-y-4">
+                {posts.length === 0 ? (
+                  <div className="glass-card p-8 text-center text-muted-foreground">No blog posts yet. Add your first post above.</div>
+                ) : (
+                  posts.map((post) => (
+                    <div key={post.id} className="glass-card p-6">
+                      {editingPost === post.id ? (
+                        <div className="space-y-4">
+                          <input 
+                            value={editPostData.title} 
+                            onChange={(e) => setEditPostData({ ...editPostData, title: e.target.value })} 
+                            className="input-glass" 
+                          />
+                          <textarea 
+                            value={editPostData.content} 
+                            onChange={(e) => setEditPostData({ ...editPostData, content: e.target.value })} 
+                            className="input-glass min-h-[100px]" 
+                          />
+                          <input 
+                            placeholder="Image URL" 
+                            value={editPostData.image_url} 
+                            onChange={(e) => setEditPostData({ ...editPostData, image_url: e.target.value })} 
+                            className="input-glass" 
+                          />
+                          <div className="flex gap-2">
+                            <button onClick={() => handleUpdatePost(post.id)} className="btn-gradient text-sm">Save</button>
+                            <button onClick={() => setEditingPost(null)} className="btn-glass text-sm">Cancel</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h3 className="font-bold text-lg">{post.title}</h3>
+                            <p className="text-muted-foreground text-sm mt-1 line-clamp-2">{post.content}</p>
+                            {post.image_url && <p className="text-xs text-primary mt-2">Has image</p>}
+                            <p className="text-xs text-muted-foreground mt-2">{new Date(post.created_at).toLocaleDateString()}</p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <button 
+                              onClick={() => { 
+                                setEditingPost(post.id); 
+                                setEditPostData({ title: post.title, content: post.content || "", image_url: post.image_url || "" }); 
+                              }} 
+                              className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                            >
+                              <Edit3 className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => { deletePost(post.id); toast({ title: "Post deleted" }); }} className="p-2 text-destructive hover:bg-destructive/10 rounded-lg transition-colors">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}
