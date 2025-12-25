@@ -1,6 +1,19 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
+export type ResourceType = 'video' | 'worksheet' | 'notes' | 'pdf' | 'homework' | 'dpp' | 'timetable' | 'pyq';
+
+export const RESOURCE_TYPES: { value: ResourceType; label: string; icon: string }[] = [
+  { value: 'video', label: 'Video', icon: 'Play' },
+  { value: 'worksheet', label: 'Worksheet', icon: 'FileSpreadsheet' },
+  { value: 'notes', label: 'Notes', icon: 'FileText' },
+  { value: 'pdf', label: 'PDF', icon: 'File' },
+  { value: 'homework', label: 'Homework', icon: 'BookOpen' },
+  { value: 'dpp', label: 'DPP', icon: 'Target' },
+  { value: 'timetable', label: 'Timetable', icon: 'Calendar' },
+  { value: 'pyq', label: 'PYQs', icon: 'History' },
+];
+
 export interface Lesson {
   id: string;
   course_id: string;
@@ -9,6 +22,7 @@ export interface Lesson {
   notes: string | null;
   pdf_url: string | null;
   sort_order: number;
+  resource_type: ResourceType;
   created_at: string;
   updated_at: string;
 }
@@ -31,7 +45,7 @@ export const useLessons = (courseId?: string) => {
       const { data, error } = await query;
 
       if (error) throw error;
-      setLessons(data || []);
+      setLessons((data as Lesson[]) || []);
     } catch (err) {
       console.error('Error fetching lessons:', err);
     } finally {
@@ -48,7 +62,7 @@ export const useLessons = (courseId?: string) => {
         .single();
 
       if (error) throw error;
-      setLessons([...lessons, data]);
+      setLessons([...lessons, data as Lesson]);
       return { success: true, data };
     } catch (err) {
       console.error('Error creating lesson:', err);
