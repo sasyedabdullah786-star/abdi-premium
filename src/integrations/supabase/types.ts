@@ -152,6 +152,7 @@ export type Database = {
           id: string
           notes: string | null
           pdf_url: string | null
+          resource_type: string | null
           sort_order: number | null
           title: string
           updated_at: string | null
@@ -163,6 +164,7 @@ export type Database = {
           id?: string
           notes?: string | null
           pdf_url?: string | null
+          resource_type?: string | null
           sort_order?: number | null
           title: string
           updated_at?: string | null
@@ -174,6 +176,7 @@ export type Database = {
           id?: string
           notes?: string | null
           pdf_url?: string | null
+          resource_type?: string | null
           sort_order?: number | null
           title?: string
           updated_at?: string | null

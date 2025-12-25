@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useInstitution } from "@/hooks/useInstitution";
 import { useCourses } from "@/hooks/useCourses";
-import { useLessons, Lesson } from "@/hooks/useLessons";
+import { useLessons, Lesson, RESOURCE_TYPES, ResourceType } from "@/hooks/useLessons";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { useContactInfo } from "@/hooks/useContactInfo";
 import { useToast } from "@/hooks/use-toast";
@@ -26,7 +26,7 @@ const Dashboard = () => {
   const [newCourse, setNewCourse] = useState({ title: "", description: "", thumbnail_url: "" });
   const [newPost, setNewPost] = useState({ title: "", content: "", image_url: "" });
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
-  const [newLesson, setNewLesson] = useState({ title: "", video_url: "", notes: "", pdf_url: "" });
+  const [newLesson, setNewLesson] = useState({ title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" as ResourceType });
   const [editingPost, setEditingPost] = useState<string | null>(null);
   const [editPostData, setEditPostData] = useState({ title: "", content: "", image_url: "" });
 
@@ -89,10 +89,11 @@ const Dashboard = () => {
       video_url: newLesson.video_url || null,
       notes: newLesson.notes || null,
       pdf_url: newLesson.pdf_url || null,
-      sort_order: courseLessons.length
+      sort_order: courseLessons.length,
+      resource_type: newLesson.resource_type
     });
     if (result.success) {
-      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "" });
+      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" });
       refetchLessons();
       toast({ title: "Lesson added successfully!" });
     } else {
@@ -214,16 +215,25 @@ const Dashboard = () => {
                           
                           {/* Add Lesson Form */}
                           <div className="glass-card p-4 mb-4 bg-primary/5">
-                            <h5 className="text-sm font-medium mb-3 flex items-center gap-2"><Plus className="w-3 h-3" /> Add New Lesson</h5>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+                            <h5 className="text-sm font-medium mb-3 flex items-center gap-2"><Plus className="w-3 h-3" /> Add New Content</h5>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+                              <select
+                                value={newLesson.resource_type}
+                                onChange={(e) => setNewLesson({ ...newLesson, resource_type: e.target.value as ResourceType })}
+                                className="input-glass text-sm"
+                              >
+                                {RESOURCE_TYPES.map(rt => (
+                                  <option key={rt.value} value={rt.value}>{rt.label}</option>
+                                ))}
+                              </select>
                               <input 
-                                placeholder="Lesson Title *" 
+                                placeholder="Title *" 
                                 value={newLesson.title} 
                                 onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })} 
                                 className="input-glass text-sm" 
                               />
                               <input 
-                                placeholder="Video URL (YouTube/Vimeo)" 
+                                placeholder="Video/Link URL" 
                                 value={newLesson.video_url} 
                                 onChange={(e) => setNewLesson({ ...newLesson, video_url: e.target.value })} 
                                 className="input-glass text-sm" 
@@ -240,7 +250,7 @@ const Dashboard = () => {
                                 onChange={(e) => setNewLesson({ ...newLesson, notes: e.target.value })} 
                                 className="input-glass text-sm" 
                               />
-                              <button onClick={() => handleAddLesson(course.id)} className="btn-gradient text-sm">Add Lesson</button>
+                              <button onClick={() => handleAddLesson(course.id)} className="btn-gradient text-sm">Add</button>
                             </div>
                           </div>
 
@@ -254,9 +264,14 @@ const Dashboard = () => {
                                   <div className="flex items-center gap-4">
                                     <span className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-sm font-medium text-primary">{index + 1}</span>
                                     <div>
-                                      <h5 className="font-medium">{lesson.title}</h5>
+                                      <div className="flex items-center gap-2">
+                                        <h5 className="font-medium">{lesson.title}</h5>
+                                        <span className="px-2 py-0.5 text-xs rounded-full bg-secondary/20 text-secondary capitalize">
+                                          {RESOURCE_TYPES.find(rt => rt.value === lesson.resource_type)?.label || lesson.resource_type}
+                                        </span>
+                                      </div>
                                       <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
-                                        {lesson.video_url && <span className="flex items-center gap-1"><Play className="w-3 h-3" /> Video</span>}
+                                        {lesson.video_url && <span className="flex items-center gap-1"><Play className="w-3 h-3" /> Link</span>}
                                         {lesson.pdf_url && <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> PDF</span>}
                                         {lesson.notes && <span className="flex items-center gap-1"><Edit3 className="w-3 h-3" /> Notes</span>}
                                       </div>
