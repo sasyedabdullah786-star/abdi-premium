@@ -8,6 +8,11 @@ export interface Course {
   description: string | null;
   thumbnail_url: string | null;
   is_published: boolean;
+  is_featured: boolean;
+  category: string | null;
+  certificates_enabled: boolean;
+  price: string | null;
+  duration: string | null;
   created_at: string;
   updated_at: string;
 }
