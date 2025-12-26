@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      announcements: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          priority: number | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          priority?: number | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           content: string | null
@@ -41,6 +71,33 @@ export type Database = {
           is_published?: boolean | null
           title?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          icon: string | null
+          id: string
+          name: string
+          sort_order: number | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          sort_order?: number | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          sort_order?: number | null
         }
         Relationships: []
       }
@@ -76,31 +133,46 @@ export type Database = {
       }
       courses: {
         Row: {
+          category: string | null
+          certificates_enabled: boolean | null
           created_at: string | null
           description: string | null
+          duration: string | null
           id: string
           institution_id: string | null
+          is_featured: boolean | null
           is_published: boolean | null
+          price: string | null
           thumbnail_url: string | null
           title: string
           updated_at: string | null
         }
         Insert: {
+          category?: string | null
+          certificates_enabled?: boolean | null
           created_at?: string | null
           description?: string | null
+          duration?: string | null
           id?: string
           institution_id?: string | null
+          is_featured?: boolean | null
           is_published?: boolean | null
+          price?: string | null
           thumbnail_url?: string | null
           title: string
           updated_at?: string | null
         }
         Update: {
+          category?: string | null
+          certificates_enabled?: boolean | null
           created_at?: string | null
           description?: string | null
+          duration?: string | null
           id?: string
           institution_id?: string | null
+          is_featured?: boolean | null
           is_published?: boolean | null
+          price?: string | null
           thumbnail_url?: string | null
           title?: string
           updated_at?: string | null
@@ -279,6 +351,42 @@ export type Database = {
           seo_keywords?: string | null
           seo_title?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      testimonials: {
+        Row: {
+          content: string
+          course_name: string | null
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          is_featured: boolean | null
+          rating: number | null
+          student_image: string | null
+          student_name: string
+        }
+        Insert: {
+          content: string
+          course_name?: string | null
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          student_image?: string | null
+          student_name: string
+        }
+        Update: {
+          content?: string
+          course_name?: string | null
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          is_featured?: boolean | null
+          rating?: number | null
+          student_image?: string | null
+          student_name?: string
         }
         Relationships: []
       }
