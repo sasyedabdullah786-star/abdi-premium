@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { Settings, Palette, BookOpen, FileText, Mail, Plus, Trash2, Save, Edit3, Play, X, ArrowLeft, ChevronDown, ChevronUp, Megaphone, Star, Tag, TrendingUp, Award, Check, Eye, EyeOff } from "lucide-react";
+import { Settings, Palette, BookOpen, FileText, Mail, Plus, Trash2, Save, Edit3, Play, X, ArrowLeft, ChevronDown, ChevronUp, Megaphone, Star, Tag, TrendingUp, Award, Check, Eye, EyeOff, BarChart3, Layout, Construction, MessageSquare } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useInstitution } from "@/hooks/useInstitution";
@@ -12,6 +12,10 @@ import { useAnnouncements } from "@/hooks/useAnnouncements";
 import { useTestimonials } from "@/hooks/useTestimonials";
 import { useCategories } from "@/hooks/useCategories";
 import { useToast } from "@/hooks/use-toast";
+import AnalyticsTab from "@/components/admin/AnalyticsTab";
+import SectionsTab from "@/components/admin/SectionsTab";
+import MaintenanceTab from "@/components/admin/MaintenanceTab";
+import ReviewsTab from "@/components/admin/ReviewsTab";
 
 const Dashboard = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -28,7 +32,7 @@ const Dashboard = () => {
   const { testimonials, createTestimonial, updateTestimonial, deleteTestimonial } = useTestimonials();
   const { categories, createCategory, updateCategory, deleteCategory } = useCategories();
   
-  const [activeTab, setActiveTab] = useState<"general" | "appearance" | "courses" | "blog" | "contact" | "announcements" | "testimonials" | "categories">("general");
+  const [activeTab, setActiveTab] = useState<"analytics" | "general" | "appearance" | "sections" | "maintenance" | "courses" | "blog" | "contact" | "announcements" | "testimonials" | "categories" | "reviews">("analytics");
   const [newCourse, setNewCourse] = useState({ title: "", description: "", thumbnail_url: "", category: "general", price: "Free", duration: "", certificates_enabled: false });
   const [newPost, setNewPost] = useState({ title: "", content: "", image_url: "" });
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
@@ -173,12 +177,16 @@ const Dashboard = () => {
   };
 
   const tabs = [
+    { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
     { id: "general" as const, label: "General", icon: Settings },
     { id: "appearance" as const, label: "Appearance", icon: Palette },
+    { id: "sections" as const, label: "Sections", icon: Layout },
+    { id: "maintenance" as const, label: "Maintenance", icon: Construction },
     { id: "courses" as const, label: "Courses", icon: BookOpen },
     { id: "categories" as const, label: "Categories", icon: Tag },
     { id: "announcements" as const, label: "Announcements", icon: Megaphone },
     { id: "testimonials" as const, label: "Testimonials", icon: Star },
+    { id: "reviews" as const, label: "Reviews", icon: MessageSquare },
     { id: "blog" as const, label: "Blog", icon: FileText },
     { id: "contact" as const, label: "Contact", icon: Mail },
   ];
@@ -207,6 +215,14 @@ const Dashboard = () => {
           </nav>
         </aside>
         <main className="flex-1 p-6 overflow-auto">
+          {activeTab === "analytics" && <AnalyticsTab />}
+          
+          {activeTab === "sections" && <SectionsTab />}
+          
+          {activeTab === "maintenance" && <MaintenanceTab />}
+          
+          {activeTab === "reviews" && <ReviewsTab />}
+
           {activeTab === "general" && (
             <div className="space-y-6 max-w-2xl">
               <h2 className="font-display text-2xl font-bold">General Settings</h2>

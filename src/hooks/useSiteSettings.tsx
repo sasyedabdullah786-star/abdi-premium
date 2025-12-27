@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
+export interface HomepageSections {
+  announcements: boolean;
+  trending: boolean;
+  categories: boolean;
+  testimonials: boolean;
+  stats: boolean;
+  features: boolean;
+}
+
 export interface SiteSettings {
   id: string;
   primary_color: string;
@@ -18,6 +27,10 @@ export interface SiteSettings {
   seo_title: string;
   seo_description: string;
   seo_keywords: string;
+  is_maintenance_mode: boolean;
+  maintenance_message: string;
+  logo_url: string | null;
+  homepage_sections: HomepageSections;
 }
 
 const defaultSettings: SiteSettings = {
@@ -37,6 +50,17 @@ const defaultSettings: SiteSettings = {
   seo_title: 'ABD"I - Premium Learning Platform',
   seo_description: 'Transform your learning experience with ABD"I',
   seo_keywords: 'learning, education, courses',
+  is_maintenance_mode: false,
+  maintenance_message: 'We are currently performing maintenance. Please check back soon.',
+  logo_url: null,
+  homepage_sections: {
+    announcements: true,
+    trending: true,
+    categories: true,
+    testimonials: true,
+    stats: true,
+    features: true
+  }
 };
 
 export const useSiteSettings = () => {
@@ -53,8 +77,26 @@ export const useSiteSettings = () => {
 
       if (error) throw error;
       if (data) {
-        setSettings(data as SiteSettings);
-        applyTheme(data as SiteSettings);
+        const rawSections = data.homepage_sections as Record<string, unknown> | null;
+        const parsed: SiteSettings = {
+          ...defaultSettings,
+          ...data,
+          is_maintenance_mode: data.is_maintenance_mode ?? false,
+          maintenance_message: data.maintenance_message ?? defaultSettings.maintenance_message,
+          logo_url: data.logo_url ?? null,
+          homepage_sections: rawSections && typeof rawSections === 'object'
+            ? {
+                announcements: rawSections.announcements === true,
+                trending: rawSections.trending === true,
+                categories: rawSections.categories === true,
+                testimonials: rawSections.testimonials === true,
+                stats: rawSections.stats === true,
+                features: rawSections.features !== false
+              }
+            : defaultSettings.homepage_sections
+        };
+        setSettings(parsed);
+        applyTheme(parsed);
       }
     } catch (err) {
       console.error('Error fetching site settings:', err);
@@ -75,9 +117,19 @@ export const useSiteSettings = () => {
 
   const updateSettings = async (newSettings: Partial<SiteSettings>) => {
     try {
+      // Convert homepage_sections to JSON-compatible format
+      const dbUpdate: Record<string, unknown> = {};
+      Object.entries(newSettings).forEach(([key, value]) => {
+        if (key === 'homepage_sections' && value && typeof value === 'object') {
+          dbUpdate[key] = JSON.parse(JSON.stringify(value));
+        } else {
+          dbUpdate[key] = value;
+        }
+      });
+      
       const { error } = await supabase
         .from('site_settings')
-        .update(newSettings)
+        .update(dbUpdate)
         .eq('id', settings.id);
 
       if (error) throw error;
@@ -92,9 +144,20 @@ export const useSiteSettings = () => {
     }
   };
 
+  const updateHomepageSections = async (sections: Partial<HomepageSections>) => {
+    const newSections = { ...settings.homepage_sections, ...sections };
+    return updateSettings({ homepage_sections: newSections });
+  };
+
   useEffect(() => {
     fetchSettings();
   }, []);
 
-  return { settings, loading, updateSettings, refetch: fetchSettings };
+  return { 
+    settings, 
+    loading, 
+    updateSettings, 
+    updateHomepageSections,
+    refetch: fetchSettings 
+  };
 };

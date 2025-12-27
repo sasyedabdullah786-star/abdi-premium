@@ -74,6 +74,35 @@ export type Database = {
         }
         Relationships: []
       }
+      bookmarks: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           color: string | null
@@ -131,8 +160,104 @@ export type Database = {
         }
         Relationships: []
       }
+      course_progress: {
+        Row: {
+          completed_lessons: Json | null
+          course_id: string
+          created_at: string | null
+          id: string
+          is_completed: boolean | null
+          last_accessed_at: string | null
+          lesson_id: string | null
+          progress_percentage: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          completed_lessons?: Json | null
+          course_id: string
+          created_at?: string | null
+          id?: string
+          is_completed?: boolean | null
+          last_accessed_at?: string | null
+          lesson_id?: string | null
+          progress_percentage?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          completed_lessons?: Json | null
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          is_completed?: boolean | null
+          last_accessed_at?: string | null
+          lesson_id?: string | null
+          progress_percentage?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_progress_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      course_reviews: {
+        Row: {
+          course_id: string
+          created_at: string | null
+          id: string
+          is_approved: boolean | null
+          rating: number
+          review_text: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          rating: number
+          review_text?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string | null
+          id?: string
+          is_approved?: boolean | null
+          rating?: number
+          review_text?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_reviews_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
+          average_rating: number | null
           category: string | null
           certificates_enabled: boolean | null
           created_at: string | null
@@ -145,9 +270,12 @@ export type Database = {
           price: string | null
           thumbnail_url: string | null
           title: string
+          total_enrollments: number | null
+          total_reviews: number | null
           updated_at: string | null
         }
         Insert: {
+          average_rating?: number | null
           category?: string | null
           certificates_enabled?: boolean | null
           created_at?: string | null
@@ -160,9 +288,12 @@ export type Database = {
           price?: string | null
           thumbnail_url?: string | null
           title: string
+          total_enrollments?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
         }
         Update: {
+          average_rating?: number | null
           category?: string | null
           certificates_enabled?: boolean | null
           created_at?: string | null
@@ -175,6 +306,8 @@ export type Database = {
           price?: string | null
           thumbnail_url?: string | null
           title?: string
+          total_enrollments?: number | null
+          total_reviews?: number | null
           updated_at?: string | null
         }
         Relationships: [
@@ -301,7 +434,11 @@ export type Database = {
           hero_image_url: string | null
           hero_subtitle: string | null
           hero_title: string | null
+          homepage_sections: Json | null
           id: string
+          is_maintenance_mode: boolean | null
+          logo_url: string | null
+          maintenance_message: string | null
           nav_blog_label: string | null
           nav_contact_label: string | null
           nav_courses_label: string | null
@@ -321,7 +458,11 @@ export type Database = {
           hero_image_url?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          homepage_sections?: Json | null
           id?: string
+          is_maintenance_mode?: boolean | null
+          logo_url?: string | null
+          maintenance_message?: string | null
           nav_blog_label?: string | null
           nav_contact_label?: string | null
           nav_courses_label?: string | null
@@ -341,7 +482,11 @@ export type Database = {
           hero_image_url?: string | null
           hero_subtitle?: string | null
           hero_title?: string | null
+          homepage_sections?: Json | null
           id?: string
+          is_maintenance_mode?: boolean | null
+          logo_url?: string | null
+          maintenance_message?: string | null
           nav_blog_label?: string | null
           nav_contact_label?: string | null
           nav_courses_label?: string | null
