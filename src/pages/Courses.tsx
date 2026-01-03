@@ -1,11 +1,20 @@
 import { Link } from "react-router-dom";
 import { BookOpen, ArrowRight, Sparkles, Clock } from "lucide-react";
 import Layout from "@/components/Layout";
+import ComingSoon from "@/components/ComingSoon";
 import { useCourses } from "@/hooks/useCourses";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Courses = () => {
   const { courses, loading } = useCourses();
+  const { settings, loading: settingsLoading } = useSiteSettings();
   const publishedCourses = courses.filter(c => c.is_published);
+
+  const pageSettings = settings.page_settings?.courses;
+  
+  if (!settingsLoading && pageSettings?.coming_soon) {
+    return <ComingSoon pageName="Courses" />;
+  }
 
   return (
     <Layout title="All Courses">

@@ -13,6 +13,9 @@ export interface Course {
   certificates_enabled: boolean;
   price: string | null;
   duration: string | null;
+  average_rating: number | null;
+  total_reviews: number | null;
+  total_enrollments: number | null;
   created_at: string;
   updated_at: string;
 }

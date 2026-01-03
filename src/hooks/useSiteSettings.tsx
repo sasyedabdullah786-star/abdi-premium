@@ -10,6 +10,18 @@ export interface HomepageSections {
   features: boolean;
 }
 
+export interface PageSetting {
+  enabled: boolean;
+  coming_soon: boolean;
+}
+
+export interface PageSettings {
+  courses: PageSetting;
+  blog: PageSetting;
+  contact: PageSetting;
+  institution: PageSetting;
+}
+
 export interface SiteSettings {
   id: string;
   primary_color: string;
@@ -31,7 +43,15 @@ export interface SiteSettings {
   maintenance_message: string;
   logo_url: string | null;
   homepage_sections: HomepageSections;
+  page_settings: PageSettings;
 }
+
+const defaultPageSettings: PageSettings = {
+  courses: { enabled: true, coming_soon: false },
+  blog: { enabled: true, coming_soon: false },
+  contact: { enabled: true, coming_soon: false },
+  institution: { enabled: true, coming_soon: false }
+};
 
 const defaultSettings: SiteSettings = {
   id: '',
@@ -60,7 +80,8 @@ const defaultSettings: SiteSettings = {
     testimonials: true,
     stats: true,
     features: true
-  }
+  },
+  page_settings: defaultPageSettings
 };
 
 export const useSiteSettings = () => {
@@ -78,6 +99,7 @@ export const useSiteSettings = () => {
       if (error) throw error;
       if (data) {
         const rawSections = data.homepage_sections as Record<string, unknown> | null;
+        const rawPageSettings = data.page_settings as Record<string, unknown> | null;
         const parsed: SiteSettings = {
           ...defaultSettings,
           ...data,
@@ -93,7 +115,15 @@ export const useSiteSettings = () => {
                 stats: rawSections.stats === true,
                 features: rawSections.features !== false
               }
-            : defaultSettings.homepage_sections
+            : defaultSettings.homepage_sections,
+          page_settings: rawPageSettings && typeof rawPageSettings === 'object'
+            ? {
+                courses: (rawPageSettings.courses as PageSetting) ?? defaultPageSettings.courses,
+                blog: (rawPageSettings.blog as PageSetting) ?? defaultPageSettings.blog,
+                contact: (rawPageSettings.contact as PageSetting) ?? defaultPageSettings.contact,
+                institution: (rawPageSettings.institution as PageSetting) ?? defaultPageSettings.institution
+              }
+            : defaultPageSettings
         };
         setSettings(parsed);
         applyTheme(parsed);

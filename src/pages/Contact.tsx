@@ -1,14 +1,23 @@
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send, Twitter, Facebook, Instagram, Linkedin, ArrowRight } from "lucide-react";
 import Layout from "@/components/Layout";
+import ComingSoon from "@/components/ComingSoon";
 import { useContactInfo } from "@/hooks/useContactInfo";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useToast } from "@/hooks/use-toast";
 
 const Contact = () => {
   const { contactInfo, loading } = useContactInfo();
+  const { settings, loading: settingsLoading } = useSiteSettings();
   const { toast } = useToast();
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [sending, setSending] = useState(false);
+
+  const pageSettings = settings.page_settings?.contact;
+  
+  if (!settingsLoading && pageSettings?.coming_soon) {
+    return <ComingSoon pageName="Contact" />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
