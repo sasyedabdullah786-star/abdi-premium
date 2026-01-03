@@ -20,6 +20,7 @@ export const useReviews = (courseId?: string) => {
   const [reviews, setReviews] = useState<CourseReview[]>([]);
   const [userReview, setUserReview] = useState<CourseReview | null>(null);
   const [allReviews, setAllReviews] = useState<CourseReview[]>([]);
+  const [userReviews, setUserReviews] = useState<CourseReview[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchReviews = async () => {
@@ -56,6 +57,16 @@ export const useReviews = (courseId?: string) => {
 
         if (error) throw error;
         setAllReviews(data || []);
+      } else if (user) {
+        // Student: fetch their own review history
+        const { data, error } = await supabase
+          .from('course_reviews')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        setUserReviews(data || []);
       }
     } catch (err) {
       console.error('Error fetching reviews:', err);
@@ -82,6 +93,7 @@ export const useReviews = (courseId?: string) => {
 
       if (error) throw error;
       setUserReview(data);
+      setUserReviews([data, ...userReviews]);
       return { success: true, data };
     } catch (err) {
       console.error('Error creating review:', err);
@@ -97,11 +109,13 @@ export const useReviews = (courseId?: string) => {
         .eq('id', reviewId);
 
       if (error) throw error;
-      
+
       if (isAdmin) {
         setAllReviews(allReviews.map(r => r.id === reviewId ? { ...r, ...updates } : r));
       }
-      
+      setUserReviews(userReviews.map(r => r.id === reviewId ? { ...r, ...updates } : r));
+      if (userReview?.id === reviewId) setUserReview({ ...userReview, ...updates });
+
       return { success: true };
     } catch (err) {
       console.error('Error updating review:', err);
@@ -117,11 +131,12 @@ export const useReviews = (courseId?: string) => {
         .eq('id', reviewId);
 
       if (error) throw error;
-      
+
       setReviews(reviews.filter(r => r.id !== reviewId));
       setAllReviews(allReviews.filter(r => r.id !== reviewId));
+      setUserReviews(userReviews.filter(r => r.id !== reviewId));
       if (userReview?.id === reviewId) setUserReview(null);
-      
+
       return { success: true };
     } catch (err) {
       console.error('Error deleting review:', err);
@@ -137,15 +152,16 @@ export const useReviews = (courseId?: string) => {
     fetchReviews();
   }, [user, courseId, isAdmin]);
 
-  return { 
-    reviews, 
+  return {
+    reviews,
     userReview,
+    userReviews,
     allReviews,
-    loading, 
-    createReview, 
+    loading,
+    createReview,
     updateReview,
     deleteReview,
     approveReview,
-    refetch: fetchReviews 
+    refetch: fetchReviews
   };
 };
