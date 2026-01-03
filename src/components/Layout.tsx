@@ -143,6 +143,12 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
                         {isAdmin ? 'Administrator' : 'Member'}
                       </p>
                     </div>
+                    <DropdownMenuItem asChild>
+                      <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
+                        <User className="w-4 h-4" />
+                        My Profile
+                      </Link>
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <DropdownMenuItem asChild>
                         <Link to="/dashboard" className="flex items-center gap-2 cursor-pointer">
