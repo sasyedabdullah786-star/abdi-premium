@@ -1,11 +1,20 @@
 import { Link } from "react-router-dom";
 import { FileText, Calendar, ArrowRight, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
+import ComingSoon from "@/components/ComingSoon";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Blog = () => {
   const { posts, loading } = useBlogPosts();
+  const { settings, loading: settingsLoading } = useSiteSettings();
   const publishedPosts = posts.filter(p => p.is_published);
+
+  const pageSettings = settings.page_settings?.blog;
+  
+  if (!settingsLoading && pageSettings?.coming_soon) {
+    return <ComingSoon pageName="Blog" />;
+  }
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

@@ -1,13 +1,22 @@
 import { Link } from "react-router-dom";
 import { BookOpen, Target, Award, ArrowRight, Users, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
+import ComingSoon from "@/components/ComingSoon";
 import { useInstitution } from "@/hooks/useInstitution";
 import { useCourses } from "@/hooks/useCourses";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const Institution = () => {
   const { institution, loading: institutionLoading } = useInstitution();
   const { courses, loading: coursesLoading } = useCourses();
+  const { settings, loading: settingsLoading } = useSiteSettings();
   const publishedCourses = courses.filter(c => c.is_published);
+
+  const pageSettings = settings.page_settings?.institution;
+  
+  if (!settingsLoading && pageSettings?.coming_soon) {
+    return <ComingSoon pageName="About Us" />;
+  }
 
   if (institutionLoading) {
     return (

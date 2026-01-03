@@ -443,6 +443,7 @@ export type Database = {
           nav_contact_label: string | null
           nav_courses_label: string | null
           nav_home_label: string | null
+          page_settings: Json | null
           primary_color: string | null
           seo_description: string | null
           seo_keywords: string | null
@@ -467,6 +468,7 @@ export type Database = {
           nav_contact_label?: string | null
           nav_courses_label?: string | null
           nav_home_label?: string | null
+          page_settings?: Json | null
           primary_color?: string | null
           seo_description?: string | null
           seo_keywords?: string | null
@@ -491,6 +493,7 @@ export type Database = {
           nav_contact_label?: string | null
           nav_courses_label?: string | null
           nav_home_label?: string | null
+          page_settings?: Json | null
           primary_color?: string | null
           seo_description?: string | null
           seo_keywords?: string | null

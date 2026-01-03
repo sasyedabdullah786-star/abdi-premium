@@ -82,7 +82,7 @@ const Index = () => {
   return (
     <Layout>
       {/* Announcements Banner */}
-      {activeAnnouncements.length > 0 && (
+      {settings.homepage_sections.announcements && activeAnnouncements.length > 0 && (
         <div className="bg-primary/10 border-b border-primary/20">
           <div className="container mx-auto px-4 py-3">
             <div className="flex items-center justify-center gap-3 text-sm">
@@ -130,30 +130,32 @@ const Index = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-20 max-w-4xl mx-auto">
-            {stats.map((stat, index) => (
-              <div 
-                key={stat.label} 
-                className="stat-card animate-fade-in-up"
-                style={{ animationDelay: `${400 + index * 100}ms` }}
-              >
-                <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
-                  <stat.icon className="w-6 h-6 text-primary-foreground" />
+          {settings.homepage_sections.stats && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-20 max-w-4xl mx-auto">
+              {stats.map((stat, index) => (
+                <div 
+                  key={stat.label} 
+                  className="stat-card animate-fade-in-up"
+                  style={{ animationDelay: `${400 + index * 100}ms` }}
+                >
+                  <div className={`w-12 h-12 mx-auto mb-4 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center`}>
+                    <stat.icon className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <div className="font-display text-3xl md:text-4xl font-bold gradient-text mb-1">
+                    {stat.value}
+                  </div>
+                  <div className="text-muted-foreground text-sm">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="font-display text-3xl md:text-4xl font-bold gradient-text mb-1">
-                  {stat.value}
-                </div>
-                <div className="text-muted-foreground text-sm">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
       {/* Trending Courses Section */}
-      {trendingCourses.length > 0 && (
+      {settings.homepage_sections.trending && trendingCourses.length > 0 && (
         <section className="py-20 relative bg-primary/5">
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-12">
