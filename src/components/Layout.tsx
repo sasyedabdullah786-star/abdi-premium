@@ -178,6 +178,12 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
                         My Profile
                       </Link>
                     </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/leaderboard" className="flex items-center gap-2 cursor-pointer">
+                        <Sparkles className="w-4 h-4" />
+                        Leaderboard
+                      </Link>
+                    </DropdownMenuItem>
                     {isAdmin && (
                       <DropdownMenuItem asChild>
                         <Link to="/dashboard" className="flex items-center gap-2 cursor-pointer">
