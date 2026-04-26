@@ -41,9 +41,14 @@ interface LayoutProps {
 const Layout = ({ children, showBack = false, showNav = true, title }: LayoutProps) => {
   const { settings } = useSiteSettings();
   const { user, isAdmin, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const openCommandPalette = () => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
+  };
 
   const navLinks = [
     { to: "/", label: settings.nav_home_label, icon: Home },
