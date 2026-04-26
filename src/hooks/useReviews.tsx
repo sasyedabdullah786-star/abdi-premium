@@ -105,7 +105,7 @@ export const useReviews = (courseId?: string) => {
     try {
       const { error } = await supabase
         .from('course_reviews')
-        .update(updates)
+        .update(updates as any)
         .eq('id', reviewId);
 
       if (error) throw error;
