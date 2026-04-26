@@ -159,7 +159,7 @@ export const useSiteSettings = () => {
       
       const { error } = await supabase
         .from('site_settings')
-        .update(dbUpdate)
+        .update(dbUpdate as any)
         .eq('id', settings.id);
 
       if (error) throw error;

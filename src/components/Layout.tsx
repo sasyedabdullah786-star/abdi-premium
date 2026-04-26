@@ -15,10 +15,14 @@ import {
   User,
   LogOut,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon,
+  Command
 } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,9 +41,14 @@ interface LayoutProps {
 const Layout = ({ children, showBack = false, showNav = true, title }: LayoutProps) => {
   const { settings } = useSiteSettings();
   const { user, isAdmin, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const openCommandPalette = () => {
+    window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }));
+  };
 
   const navLinks = [
     { to: "/", label: settings.nav_home_label, icon: Home },
@@ -109,13 +118,33 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
             
             {/* Right Side Actions */}
             <div className="flex items-center gap-2">
-              {/* Search Button */}
-              <button 
-                onClick={() => setSearchOpen(!searchOpen)}
-                className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all duration-300"
+              {/* Command Palette trigger */}
+              <button
+                onClick={openCommandPalette}
+                title="Search (⌘K)"
+                className="hidden md:flex items-center gap-2 px-3 py-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all duration-300 border border-border/30 text-xs"
+              >
+                <Search className="w-4 h-4" />
+                <span>Search</span>
+                <kbd className="ml-2 px-1.5 py-0.5 rounded bg-muted/50 text-[10px] font-mono">⌘K</kbd>
+              </button>
+              <button
+                onClick={openCommandPalette}
+                aria-label="Search"
+                className="md:hidden p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all duration-300"
               >
                 <Search className="w-5 h-5" />
               </button>
+
+              {/* Theme toggle */}
+              <button
+                onClick={toggleTheme}
+                aria-label="Toggle theme"
+                className="p-2.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-all duration-300"
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              </button>
+
 
               {/* Notifications */}
               {user && (
@@ -147,6 +176,12 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
                       <Link to="/profile" className="flex items-center gap-2 cursor-pointer">
                         <User className="w-4 h-4" />
                         My Profile
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link to="/leaderboard" className="flex items-center gap-2 cursor-pointer">
+                        <Sparkles className="w-4 h-4" />
+                        Leaderboard
                       </Link>
                     </DropdownMenuItem>
                     {isAdmin && (
