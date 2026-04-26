@@ -15,10 +15,14 @@ import {
   User,
   LogOut,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  Sun,
+  Moon,
+  Command
 } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
+import { useTheme } from "@/hooks/useTheme";
 import {
   DropdownMenu,
   DropdownMenuContent,
