@@ -44,6 +44,42 @@ export type Database = {
         }
         Relationships: []
       }
+      badges: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          icon: string
+          id: string
+          name: string
+          requirement_type: string
+          requirement_value: number
+          sort_order: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name: string
+          requirement_type?: string
+          requirement_value?: number
+          sort_order?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          icon?: string
+          id?: string
+          name?: string
+          requirement_type?: string
+          requirement_value?: number
+          sort_order?: number
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           content: string | null
@@ -538,6 +574,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_badges: {
+        Row: {
+          badge_id: string
+          earned_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          earned_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          earned_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -553,6 +618,48 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          created_at: string
+          current_streak: number
+          id: string
+          last_activity_date: string | null
+          level: number
+          longest_streak: number
+          total_courses_completed: number
+          total_lessons_completed: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          created_at?: string
+          current_streak?: number
+          id?: string
+          last_activity_date?: string | null
+          level?: number
+          longest_streak?: number
+          total_courses_completed?: number
+          total_lessons_completed?: number
+          updated_at?: string
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          created_at?: string
+          current_streak?: number
+          id?: string
+          last_activity_date?: string | null
+          level?: number
+          longest_streak?: number
+          total_courses_completed?: number
+          total_lessons_completed?: number
+          updated_at?: string
+          user_id?: string
+          xp?: number
         }
         Relationships: []
       }
