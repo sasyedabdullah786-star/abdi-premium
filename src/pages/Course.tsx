@@ -323,6 +323,13 @@ const Course = () => {
           )}
         </div>
       </section>
+
+      {/* Discussion section */}
+      <section className="container mx-auto px-4 pb-16">
+        <div className="max-w-6xl mx-auto">
+          <Discussions courseId={courseId} />
+        </div>
+      </section>
     </Layout>
   );
 };
