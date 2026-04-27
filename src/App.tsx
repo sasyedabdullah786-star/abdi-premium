@@ -9,6 +9,8 @@ import { ThemeProvider } from "@/hooks/useTheme";
 import CommandPalette from "@/components/CommandPalette";
 import AIAssistant, { AIAssistantButton } from "@/components/AIAssistant";
 import ParticleBackground from "@/components/ParticleBackground";
+import AnimatedCursor from "@/components/AnimatedCursor";
+import PageLoader from "@/components/PageLoader";
 import Index from "./pages/Index";
 import Institution from "./pages/Institution";
 import Courses from "./pages/Courses";
@@ -21,6 +23,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Dashboard from "./pages/Dashboard";
 import StudentProfile from "./pages/StudentProfile";
 import Leaderboard from "./pages/Leaderboard";
+import AITools from "./pages/AITools";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +44,7 @@ const AnimatedRoutes = () => {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/profile" element={<StudentProfile />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/ai-tools" element={<AITools />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -54,18 +58,20 @@ const AppShell = () => {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
-        setPaletteOpen(o => !o);
+        setPaletteOpen((o) => !o);
       }
     };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   return (
     <>
       <ParticleBackground />
+      <PageLoader />
+      <AnimatedCursor />
       <AnimatedRoutes />
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onOpenChat={() => setChatOpen(true)} />
       <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />
