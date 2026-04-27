@@ -11,6 +11,8 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { BookMarked, BookOpen, Star, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import ActivityHeatmap from "@/components/ActivityHeatmap";
+import WeeklyGoal from "@/components/WeeklyGoal";
 
 const StudentProfile = () => {
   const navigate = useNavigate();
@@ -82,6 +84,11 @@ const StudentProfile = () => {
             </div>
           </div>
         </header>
+
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <WeeklyGoal />
+          <ActivityHeatmap />
+        </div>
 
         <Tabs defaultValue="progress" className="w-full">
           <TabsList className="glass-card">
