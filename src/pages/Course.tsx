@@ -4,6 +4,7 @@ import { Play, FileText, BookOpen, ChevronRight, Download, Clock, CheckCircle, F
 import Layout from "@/components/Layout";
 import { useCourses } from "@/hooks/useCourses";
 import { useLessons, RESOURCE_TYPES, ResourceType } from "@/hooks/useLessons";
+import Discussions from "@/components/Discussions";
 
 const resourceIcons: Record<ResourceType, React.ReactNode> = {
   video: <Play className="w-4 h-4" />,

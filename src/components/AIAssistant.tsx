@@ -322,11 +322,11 @@ export const AIAssistantButton = ({ onClick }: { onClick: () => void }) => (
   <button
     onClick={onClick}
     aria-label="Open AI Assistant"
-    className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-primary via-secondary to-accent shadow-2xl flex items-center justify-center hover:scale-110 transition-all duration-300 group"
+    className="fixed bottom-5 right-5 z-50 h-11 px-3.5 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center gap-2 text-sm font-medium hover:bg-primary/90 active:scale-95 transition-all duration-150 group border border-primary/40"
+    style={{ boxShadow: "0 8px 24px -8px hsl(var(--primary) / 0.5), 0 0 0 1px hsl(var(--primary) / 0.4)" }}
   >
-    <MessageSquare className="w-6 h-6 text-primary-foreground group-hover:rotate-12 transition-transform" />
-    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary to-secondary blur-xl opacity-50 group-hover:opacity-75 -z-10" />
-    <span className="absolute -top-1 -right-1 w-3 h-3 bg-accent rounded-full animate-ping" />
+    <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+    <span className="hidden sm:inline">Ask AI</span>
   </button>
 );
 
