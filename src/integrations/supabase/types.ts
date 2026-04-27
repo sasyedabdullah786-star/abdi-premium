@@ -356,6 +356,47 @@ export type Database = {
           },
         ]
       }
+      discussions: {
+        Row: {
+          content: string
+          course_id: string
+          created_at: string
+          id: string
+          parent_id: string | null
+          updated_at: string
+          upvotes: number
+          user_id: string
+        }
+        Insert: {
+          content: string
+          course_id: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          upvotes?: number
+          user_id: string
+        }
+        Update: {
+          content?: string
+          course_id?: string
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          updated_at?: string
+          upvotes?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "discussions_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "discussions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       institutions: {
         Row: {
           created_at: string | null
@@ -660,6 +701,36 @@ export type Database = {
           updated_at?: string
           user_id?: string
           xp?: number
+        }
+        Relationships: []
+      }
+      weekly_goals: {
+        Row: {
+          achieved: boolean
+          created_at: string
+          id: string
+          target_xp: number
+          updated_at: string
+          user_id: string
+          week_start: string
+        }
+        Insert: {
+          achieved?: boolean
+          created_at?: string
+          id?: string
+          target_xp?: number
+          updated_at?: string
+          user_id: string
+          week_start: string
+        }
+        Update: {
+          achieved?: boolean
+          created_at?: string
+          id?: string
+          target_xp?: number
+          updated_at?: string
+          user_id?: string
+          week_start?: string
         }
         Relationships: []
       }
