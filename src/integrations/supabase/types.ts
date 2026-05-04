@@ -356,6 +356,48 @@ export type Database = {
           },
         ]
       }
+      daily_tasks: {
+        Row: {
+          completed: boolean
+          course_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          task_date: string
+          task_type: string
+          title: string
+          updated_at: string
+          user_id: string
+          xp_reward: number
+        }
+        Insert: {
+          completed?: boolean
+          course_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          task_date?: string
+          task_type?: string
+          title: string
+          updated_at?: string
+          user_id: string
+          xp_reward?: number
+        }
+        Update: {
+          completed?: boolean
+          course_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          task_date?: string
+          task_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          xp_reward?: number
+        }
+        Relationships: []
+      }
       discussions: {
         Row: {
           content: string
@@ -396,6 +438,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      flashcards: {
+        Row: {
+          back: string
+          course_id: string | null
+          created_at: string
+          front: string
+          id: string
+          last_reviewed_at: string | null
+          mastery: number
+          topic: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          back: string
+          course_id?: string | null
+          created_at?: string
+          front: string
+          id?: string
+          last_reviewed_at?: string | null
+          mastery?: number
+          topic?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          back?: string
+          course_id?: string | null
+          created_at?: string
+          front?: string
+          id?: string
+          last_reviewed_at?: string | null
+          mastery?: number
+          topic?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       institutions: {
         Row: {
@@ -498,6 +579,42 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      quiz_attempts: {
+        Row: {
+          course_id: string | null
+          created_at: string
+          difficulty: string
+          id: string
+          questions: Json
+          score: number
+          topic: string | null
+          total_questions: number
+          user_id: string
+        }
+        Insert: {
+          course_id?: string | null
+          created_at?: string
+          difficulty?: string
+          id?: string
+          questions?: Json
+          score?: number
+          topic?: string | null
+          total_questions?: number
+          user_id: string
+        }
+        Update: {
+          course_id?: string | null
+          created_at?: string
+          difficulty?: string
+          id?: string
+          questions?: Json
+          score?: number
+          topic?: string | null
+          total_questions?: number
+          user_id?: string
         }
         Relationships: []
       }
