@@ -14,6 +14,7 @@ import {
   Clock
 } from "lucide-react";
 import Layout from "@/components/Layout";
+import ShayariBanner from "@/components/ShayariBanner";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useInstitution } from "@/hooks/useInstitution";
 import { useCourses } from "@/hooks/useCourses";
@@ -96,8 +97,13 @@ const Index = () => {
         </div>
       )}
 
+      {/* Shayari motivational banner */}
+      <div className="container mx-auto px-4 pt-6">
+        <ShayariBanner />
+      </div>
+
       {/* Hero Section */}
-      <section className="relative py-20 md:py-32 overflow-hidden">
+      <section className="relative py-16 md:py-24 overflow-hidden">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
             {/* Badge */}

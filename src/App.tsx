@@ -24,6 +24,9 @@ import Dashboard from "./pages/Dashboard";
 import StudentProfile from "./pages/StudentProfile";
 import Leaderboard from "./pages/Leaderboard";
 import AITools from "./pages/AITools";
+import HolographicHub from "./pages/HolographicHub";
+import StudyCompanion from "./pages/StudyCompanion";
+import VoiceButton from "./components/VoiceButton";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +48,8 @@ const AnimatedRoutes = () => {
         <Route path="/profile" element={<StudentProfile />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
         <Route path="/ai-tools" element={<AITools />} />
+        <Route path="/hub" element={<HolographicHub />} />
+        <Route path="/companion" element={<StudyCompanion />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -76,6 +81,7 @@ const AppShell = () => {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onOpenChat={() => setChatOpen(true)} />
       <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />
       {!chatOpen && <AIAssistantButton onClick={() => setChatOpen(true)} />}
+      <VoiceButton />
     </>
   );
 };
