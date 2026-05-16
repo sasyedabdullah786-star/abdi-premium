@@ -3,10 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { 
   Settings, Palette, BookOpen, FileText, Mail, ArrowLeft, 
   Megaphone, Star, Tag, BarChart3, Layout, Construction, 
-  MessageSquare, FileCheck
+  MessageSquare, FileCheck, Brain
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
+import SmartCenterTab from "@/components/admin/SmartCenterTab";
 import SectionsTab from "@/components/admin/SectionsTab";
 import MaintenanceTab from "@/components/admin/MaintenanceTab";
 import ReviewsTab from "@/components/admin/ReviewsTab";
@@ -20,13 +21,13 @@ import AppearanceTab from "@/components/admin/AppearanceTab";
 import BlogTab from "@/components/admin/BlogTab";
 import ContactTab from "@/components/admin/ContactTab";
 
-type TabId = "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "testimonials" | "reviews" | "blog" | "contact";
+type TabId = "smart" | "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "testimonials" | "reviews" | "blog" | "contact";
 
 const Dashboard = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState<TabId>("analytics");
+  const [activeTab, setActiveTab] = useState<TabId>("smart");
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
@@ -45,6 +46,7 @@ const Dashboard = () => {
   if (!isAdmin) return null;
 
   const tabs = [
+    { id: "smart" as const, label: "Smart Center", icon: Brain },
     { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
     { id: "general" as const, label: "General", icon: Settings },
     { id: "appearance" as const, label: "Appearance", icon: Palette },
@@ -62,6 +64,7 @@ const Dashboard = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case "smart": return <SmartCenterTab />;
       case "analytics": return <AnalyticsTab />;
       case "general": return <GeneralTab />;
       case "appearance": return <AppearanceTab />;
@@ -75,7 +78,7 @@ const Dashboard = () => {
       case "reviews": return <ReviewsTab />;
       case "blog": return <BlogTab />;
       case "contact": return <ContactTab />;
-      default: return <AnalyticsTab />;
+      default: return <SmartCenterTab />;
     }
   };
 
