@@ -46,6 +46,7 @@ const Dashboard = () => {
   if (!isAdmin) return null;
 
   const tabs = [
+    { id: "smart" as const, label: "Smart Center", icon: Brain },
     { id: "analytics" as const, label: "Analytics", icon: BarChart3 },
     { id: "general" as const, label: "General", icon: Settings },
     { id: "appearance" as const, label: "Appearance", icon: Palette },
