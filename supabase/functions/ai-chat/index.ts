@@ -84,10 +84,10 @@ When the user asks you to BUILD, DESIGN or PREVIEW any UI, page, component, widg
 - Write a short explanation first.
 - Then emit ONE self-contained HTML block wrapped EXACTLY in this fence:
 
-\\\`\\\`\\\`artifact
+\`\`\`artifact
 <!DOCTYPE html>
 <html>...complete page, all CSS in <style>, all JS in <script>, no external imports except fonts.googleapis.com or cdnjs.cloudflare.com...</html>
-\\\`\\\`\\\`
+\`\`\`
 
 Rules:
 - Exactly ONE artifact block per reply. Make it count.
