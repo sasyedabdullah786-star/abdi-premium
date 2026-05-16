@@ -64,6 +64,7 @@ const Dashboard = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case "smart": return <SmartCenterTab />;
       case "analytics": return <AnalyticsTab />;
       case "general": return <GeneralTab />;
       case "appearance": return <AppearanceTab />;
