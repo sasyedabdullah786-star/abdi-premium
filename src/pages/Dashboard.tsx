@@ -21,7 +21,7 @@ import AppearanceTab from "@/components/admin/AppearanceTab";
 import BlogTab from "@/components/admin/BlogTab";
 import ContactTab from "@/components/admin/ContactTab";
 
-type TabId = "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "testimonials" | "reviews" | "blog" | "contact";
+type TabId = "smart" | "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "testimonials" | "reviews" | "blog" | "contact";
 
 const Dashboard = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
