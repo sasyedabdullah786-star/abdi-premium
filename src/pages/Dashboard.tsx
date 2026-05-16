@@ -78,7 +78,7 @@ const Dashboard = () => {
       case "reviews": return <ReviewsTab />;
       case "blog": return <BlogTab />;
       case "contact": return <ContactTab />;
-      default: return <AnalyticsTab />;
+      default: return <SmartCenterTab />;
     }
   };
 
