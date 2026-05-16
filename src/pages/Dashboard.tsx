@@ -27,7 +27,7 @@ const Dashboard = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   
-  const [activeTab, setActiveTab] = useState<TabId>("analytics");
+  const [activeTab, setActiveTab] = useState<TabId>("smart");
 
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
