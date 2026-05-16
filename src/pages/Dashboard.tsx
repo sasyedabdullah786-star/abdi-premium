@@ -3,10 +3,11 @@ import { useNavigate, Link } from "react-router-dom";
 import { 
   Settings, Palette, BookOpen, FileText, Mail, ArrowLeft, 
   Megaphone, Star, Tag, BarChart3, Layout, Construction, 
-  MessageSquare, FileCheck
+  MessageSquare, FileCheck, Brain
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
+import SmartCenterTab from "@/components/admin/SmartCenterTab";
 import SectionsTab from "@/components/admin/SectionsTab";
 import MaintenanceTab from "@/components/admin/MaintenanceTab";
 import ReviewsTab from "@/components/admin/ReviewsTab";
