@@ -26,6 +26,7 @@ import Leaderboard from "./pages/Leaderboard";
 import AITools from "./pages/AITools";
 import HolographicHub from "./pages/HolographicHub";
 import StudyCompanion from "./pages/StudyCompanion";
+import Nexus from "./pages/Nexus";
 import VoiceButton from "./components/VoiceButton";
 import NotFound from "./pages/NotFound";
 
