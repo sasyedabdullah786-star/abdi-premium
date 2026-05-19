@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Sparkles, Loader2, Mic, Copy, Check, Trash2, Maximize2, Minimize2, Code2, Eye, MonitorPlay, Wrench, Search, Bug, Bot, ExternalLink } from 'lucide-react';
+import { X, Send, Sparkles, Loader2, Mic, Copy, Check, Trash2, Maximize2, Minimize2, Code2, Eye, MonitorPlay, Wrench, Search, Bug, Bot, ExternalLink, Plus, FolderOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
