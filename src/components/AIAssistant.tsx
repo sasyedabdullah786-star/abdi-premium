@@ -120,15 +120,11 @@ function ArtifactPane({ artifact, onClose }: { artifact: string; onClose: () => 
 interface Props { open: boolean; onOpenChange: (o: boolean) => void; }
 
 const AIAssistant = ({ open, onOpenChange }: Props) => {
+  const [sessionId, setSessionId] = useState<string | null>(() => getActiveSession()?.id ?? null);
+  const [sessionTitle, setSessionTitle] = useState<string>(() => getActiveSession()?.title ?? 'New chat');
   const [messages, setMessages] = useState<Msg[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {}
-    return [WELCOME];
+    const s = getActiveSession();
+    return s && s.messages.length ? s.messages : [WELCOME];
   });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -140,15 +136,43 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
+  // Sync when active session changes externally (e.g. from Nexus page).
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50))); } catch {}
-  }, [messages]);
+    const sync = () => {
+      const s = getActiveSession();
+      setSessionId(s?.id ?? null);
+      setSessionTitle(s?.title ?? 'New chat');
+      setMessages(s && s.messages.length ? s.messages : [WELCOME]);
+      setOpenArtifact(null);
+    };
+    window.addEventListener(NEXUS_EVENT, sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener(NEXUS_EVENT, sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  // Persist non-welcome message states into the active session.
+  useEffect(() => {
+    if (!sessionId) return;
+    if (messages.length === 1 && messages[0] === WELCOME) return;
+    saveMessages(sessionId, messages);
+  }, [messages, sessionId]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, loading]);
 
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 100); }, [open]);
+
+  const ensureSession = (): string => {
+    if (sessionId) return sessionId;
+    const s = createSession();
+    setSessionId(s.id);
+    setSessionTitle(s.title);
+    return s.id;
+  };
 
   const startVoice = () => {
     const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -158,10 +182,19 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
     rec.onerror = () => setListening(false); rec.onend = () => setListening(false); rec.start();
   };
 
+  const newChat = () => {
+    const s = createSession();
+    setSessionId(s.id);
+    setSessionTitle(s.title);
+    setMessages([WELCOME]);
+    setOpenArtifact(null);
+    toast({ title: 'New chat started', description: 'Fresh canvas.' });
+  };
+
   const clearChat = () => {
-    setMessages([WELCOME]); setOpenArtifact(null);
-    localStorage.removeItem(STORAGE_KEY);
-    toast({ title: 'Chat cleared', description: 'Fresh canvas.' });
+    setMessages([WELCOME]);
+    setOpenArtifact(null);
+    if (sessionId) saveMessages(sessionId, []);
   };
 
   const copyMessage = async (text: string, idx: number) => {
