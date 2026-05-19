@@ -70,8 +70,13 @@ const AppShell = () => {
         setPaletteOpen((o) => !o);
       }
     };
+    const onOpenChat = () => setChatOpen(true);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("abdi-open-assistant", onOpenChat);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("abdi-open-assistant", onOpenChat);
+    };
   }, []);
 
   return (
