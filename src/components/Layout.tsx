@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   ArrowLeft, Home, BookOpen, FileText, Mail, Shield, Search,
   Bell, Menu, X, User, LogOut, ChevronDown, Sparkles, Sun, Moon,
-  Trophy, Wand2, Brain, Box,
+  Trophy, Wand2, Brain, Box, MessageSquare,
 } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
