@@ -298,11 +298,13 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
             </div>
             <div className="min-w-0">
               <div className="font-bold text-sm leading-tight truncate">ABD'I <span className="text-[10px] font-mono text-muted-foreground">NEXUS-∞</span></div>
-              <div className="text-[10px] text-muted-foreground truncate">{loading ? 'thinking…' : 'Master AI · Zero bugs · Live preview'}</div>
+              <div className="text-[10px] text-muted-foreground truncate" title={sessionTitle}>{loading ? 'thinking…' : sessionTitle}</div>
             </div>
           </div>
           <div className="flex items-center gap-0.5 shrink-0">
-            <button onClick={clearChat} title="Clear chat" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Trash2 className="w-3.5 h-3.5" /></button>
+            <button onClick={newChat} title="New chat" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Plus className="w-3.5 h-3.5" /></button>
+            <Link to="/nexus" onClick={() => onOpenChange(false)} title="Open Nexus (all chats)" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><FolderOpen className="w-3.5 h-3.5" /></Link>
+            <button onClick={clearChat} title="Clear messages" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Trash2 className="w-3.5 h-3.5" /></button>
             <button onClick={() => setExpanded(e => !e)} title={wide ? 'Shrink' : 'Expand'} className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground">
               {wide ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>
