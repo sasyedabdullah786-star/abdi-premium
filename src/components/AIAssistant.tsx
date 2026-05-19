@@ -117,9 +117,9 @@ function ArtifactPane({ artifact, onClose }: { artifact: string; onClose: () => 
   );
 }
 
-interface Props { open: boolean; onOpenChange: (o: boolean) => void; }
+interface Props { open: boolean; onOpenChange: (o: boolean) => void; embedded?: boolean; }
 
-const AIAssistant = ({ open, onOpenChange }: Props) => {
+const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   const [sessionId, setSessionId] = useState<string | null>(() => getActiveSession()?.id ?? null);
   const [sessionTitle, setSessionTitle] = useState<string>(() => getActiveSession()?.title ?? 'New chat');
   const [messages, setMessages] = useState<Msg[]>(() => {
