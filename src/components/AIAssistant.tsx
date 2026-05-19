@@ -205,8 +205,10 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
   const sendMessage = async (textOverride?: string) => {
     const text = (textOverride ?? input).trim();
     if (!text || loading) return;
+    ensureSession();
     const userMsg: Msg = { role: 'user', content: text };
-    const next = [...messages, userMsg];
+    const base = (messages.length === 1 && messages[0] === WELCOME) ? [] : messages;
+    const next = [...base, userMsg];
     setMessages(next);
     setInput('');
     setLoading(true);
