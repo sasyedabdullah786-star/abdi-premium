@@ -4,10 +4,13 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
 
-type Msg = { role: 'user' | 'assistant'; content: string; artifact?: string | null };
+import {
+  getActiveSession, setActiveId, createSession, saveMessages,
+  NEXUS_EVENT, type NexusMsg as Msg,
+} from '@/lib/nexusStore';
+import { Link } from 'react-router-dom';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
-const STORAGE_KEY = 'abdi-ai-chat-history-v2';
 
 const TOOLS = [
   { icon: Wrench,     label: 'ModelForge',     hint: 'Design a new AI model architecture and explain it' },
