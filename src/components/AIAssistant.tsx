@@ -280,14 +280,20 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   if (!open) return null;
 
   const wide = expanded || !!openArtifact;
-  const sizeClasses = wide
-    ? 'w-[min(1100px,calc(100vw-2rem))] h-[min(820px,calc(100vh-3rem))]'
-    : 'w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-6rem)]';
+  const sizeClasses = embedded
+    ? 'w-full h-full'
+    : wide
+      ? 'w-[min(1100px,calc(100vw-2rem))] h-[min(820px,calc(100vh-3rem))]'
+      : 'w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-6rem)]';
 
   const showStarters = messages.length <= 1 && !loading;
 
+  const containerClasses = embedded
+    ? `${sizeClasses} flex overflow-hidden border border-border/40 rounded-2xl bg-background/50`
+    : `fixed bottom-6 right-6 z-[60] ${sizeClasses} glass-card flex rounded-2xl overflow-hidden animate-scale-in border border-border/50 shadow-2xl`;
+
   return (
-    <div className={`fixed bottom-6 right-6 z-[60] ${sizeClasses} glass-card flex rounded-2xl overflow-hidden animate-scale-in border border-border/50 shadow-2xl`}>
+    <div className={containerClasses}>
       {/* LEFT: Chat */}
       <div className="flex flex-col flex-1 min-w-0" style={{ width: openArtifact ? '44%' : '100%' }}>
         {/* Header */}
