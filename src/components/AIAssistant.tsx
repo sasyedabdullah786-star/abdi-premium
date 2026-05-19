@@ -117,9 +117,9 @@ function ArtifactPane({ artifact, onClose }: { artifact: string; onClose: () => 
   );
 }
 
-interface Props { open: boolean; onOpenChange: (o: boolean) => void; }
+interface Props { open: boolean; onOpenChange: (o: boolean) => void; embedded?: boolean; }
 
-const AIAssistant = ({ open, onOpenChange }: Props) => {
+const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   const [sessionId, setSessionId] = useState<string | null>(() => getActiveSession()?.id ?? null);
   const [sessionTitle, setSessionTitle] = useState<string>(() => getActiveSession()?.title ?? 'New chat');
   const [messages, setMessages] = useState<Msg[]>(() => {
@@ -280,14 +280,20 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
   if (!open) return null;
 
   const wide = expanded || !!openArtifact;
-  const sizeClasses = wide
-    ? 'w-[min(1100px,calc(100vw-2rem))] h-[min(820px,calc(100vh-3rem))]'
-    : 'w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-6rem)]';
+  const sizeClasses = embedded
+    ? 'w-full h-full'
+    : wide
+      ? 'w-[min(1100px,calc(100vw-2rem))] h-[min(820px,calc(100vh-3rem))]'
+      : 'w-[400px] max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-6rem)]';
 
   const showStarters = messages.length <= 1 && !loading;
 
+  const containerClasses = embedded
+    ? `${sizeClasses} flex overflow-hidden border border-border/40 rounded-2xl bg-background/50`
+    : `fixed bottom-6 right-6 z-[60] ${sizeClasses} glass-card flex rounded-2xl overflow-hidden animate-scale-in border border-border/50 shadow-2xl`;
+
   return (
-    <div className={`fixed bottom-6 right-6 z-[60] ${sizeClasses} glass-card flex rounded-2xl overflow-hidden animate-scale-in border border-border/50 shadow-2xl`}>
+    <div className={containerClasses}>
       {/* LEFT: Chat */}
       <div className="flex flex-col flex-1 min-w-0" style={{ width: openArtifact ? '44%' : '100%' }}>
         {/* Header */}
@@ -303,12 +309,18 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
           </div>
           <div className="flex items-center gap-0.5 shrink-0">
             <button onClick={newChat} title="New chat" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Plus className="w-3.5 h-3.5" /></button>
-            <Link to="/nexus" onClick={() => onOpenChange(false)} title="Open Nexus (all chats)" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><FolderOpen className="w-3.5 h-3.5" /></Link>
+            {!embedded && (
+              <Link to="/nexus" onClick={() => onOpenChange(false)} title="Open Nexus (all chats)" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><FolderOpen className="w-3.5 h-3.5" /></Link>
+            )}
             <button onClick={clearChat} title="Clear messages" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Trash2 className="w-3.5 h-3.5" /></button>
-            <button onClick={() => setExpanded(e => !e)} title={wide ? 'Shrink' : 'Expand'} className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground">
-              {wide ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
-            </button>
-            <button onClick={() => onOpenChange(false)} className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><X className="w-3.5 h-3.5" /></button>
+            {!embedded && (
+              <button onClick={() => setExpanded(e => !e)} title={wide ? 'Shrink' : 'Expand'} className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground">
+                {wide ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+              </button>
+            )}
+            {!embedded && (
+              <button onClick={() => onOpenChange(false)} className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><X className="w-3.5 h-3.5" /></button>
+            )}
           </div>
         </div>
 
