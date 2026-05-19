@@ -1,13 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Sparkles, Loader2, Mic, Copy, Check, Trash2, Maximize2, Minimize2, Code2, Eye, MonitorPlay, Wrench, Search, Bug, Bot, ExternalLink } from 'lucide-react';
+import { X, Send, Sparkles, Loader2, Mic, Copy, Check, Trash2, Maximize2, Minimize2, Code2, Eye, MonitorPlay, Wrench, Search, Bug, Bot, ExternalLink, Plus, FolderOpen } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
 
-type Msg = { role: 'user' | 'assistant'; content: string; artifact?: string | null };
+import {
+  getActiveSession, setActiveId, createSession, saveMessages,
+  NEXUS_EVENT, type NexusMsg as Msg,
+} from '@/lib/nexusStore';
+import { Link } from 'react-router-dom';
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
-const STORAGE_KEY = 'abdi-ai-chat-history-v2';
 
 const TOOLS = [
   { icon: Wrench,     label: 'ModelForge',     hint: 'Design a new AI model architecture and explain it' },
@@ -117,15 +120,11 @@ function ArtifactPane({ artifact, onClose }: { artifact: string; onClose: () => 
 interface Props { open: boolean; onOpenChange: (o: boolean) => void; }
 
 const AIAssistant = ({ open, onOpenChange }: Props) => {
+  const [sessionId, setSessionId] = useState<string | null>(() => getActiveSession()?.id ?? null);
+  const [sessionTitle, setSessionTitle] = useState<string>(() => getActiveSession()?.title ?? 'New chat');
   const [messages, setMessages] = useState<Msg[]>(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {}
-    return [WELCOME];
+    const s = getActiveSession();
+    return s && s.messages.length ? s.messages : [WELCOME];
   });
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -137,15 +136,43 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
+  // Sync when active session changes externally (e.g. from Nexus page).
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(messages.slice(-50))); } catch {}
-  }, [messages]);
+    const sync = () => {
+      const s = getActiveSession();
+      setSessionId(s?.id ?? null);
+      setSessionTitle(s?.title ?? 'New chat');
+      setMessages(s && s.messages.length ? s.messages : [WELCOME]);
+      setOpenArtifact(null);
+    };
+    window.addEventListener(NEXUS_EVENT, sync);
+    window.addEventListener('storage', sync);
+    return () => {
+      window.removeEventListener(NEXUS_EVENT, sync);
+      window.removeEventListener('storage', sync);
+    };
+  }, []);
+
+  // Persist non-welcome message states into the active session.
+  useEffect(() => {
+    if (!sessionId) return;
+    if (messages.length === 1 && messages[0] === WELCOME) return;
+    saveMessages(sessionId, messages);
+  }, [messages, sessionId]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, loading]);
 
   useEffect(() => { if (open) setTimeout(() => inputRef.current?.focus(), 100); }, [open]);
+
+  const ensureSession = (): string => {
+    if (sessionId) return sessionId;
+    const s = createSession();
+    setSessionId(s.id);
+    setSessionTitle(s.title);
+    return s.id;
+  };
 
   const startVoice = () => {
     const SR: any = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -155,10 +182,19 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
     rec.onerror = () => setListening(false); rec.onend = () => setListening(false); rec.start();
   };
 
+  const newChat = () => {
+    const s = createSession();
+    setSessionId(s.id);
+    setSessionTitle(s.title);
+    setMessages([WELCOME]);
+    setOpenArtifact(null);
+    toast({ title: 'New chat started', description: 'Fresh canvas.' });
+  };
+
   const clearChat = () => {
-    setMessages([WELCOME]); setOpenArtifact(null);
-    localStorage.removeItem(STORAGE_KEY);
-    toast({ title: 'Chat cleared', description: 'Fresh canvas.' });
+    setMessages([WELCOME]);
+    setOpenArtifact(null);
+    if (sessionId) saveMessages(sessionId, []);
   };
 
   const copyMessage = async (text: string, idx: number) => {
@@ -169,8 +205,10 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
   const sendMessage = async (textOverride?: string) => {
     const text = (textOverride ?? input).trim();
     if (!text || loading) return;
+    ensureSession();
     const userMsg: Msg = { role: 'user', content: text };
-    const next = [...messages, userMsg];
+    const base = (messages.length === 1 && messages[0] === WELCOME) ? [] : messages;
+    const next = [...base, userMsg];
     setMessages(next);
     setInput('');
     setLoading(true);
@@ -260,11 +298,13 @@ const AIAssistant = ({ open, onOpenChange }: Props) => {
             </div>
             <div className="min-w-0">
               <div className="font-bold text-sm leading-tight truncate">ABD'I <span className="text-[10px] font-mono text-muted-foreground">NEXUS-∞</span></div>
-              <div className="text-[10px] text-muted-foreground truncate">{loading ? 'thinking…' : 'Master AI · Zero bugs · Live preview'}</div>
+              <div className="text-[10px] text-muted-foreground truncate" title={sessionTitle}>{loading ? 'thinking…' : sessionTitle}</div>
             </div>
           </div>
           <div className="flex items-center gap-0.5 shrink-0">
-            <button onClick={clearChat} title="Clear chat" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Trash2 className="w-3.5 h-3.5" /></button>
+            <button onClick={newChat} title="New chat" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Plus className="w-3.5 h-3.5" /></button>
+            <Link to="/nexus" onClick={() => onOpenChange(false)} title="Open Nexus (all chats)" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><FolderOpen className="w-3.5 h-3.5" /></Link>
+            <button onClick={clearChat} title="Clear messages" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground"><Trash2 className="w-3.5 h-3.5" /></button>
             <button onClick={() => setExpanded(e => !e)} title={wide ? 'Shrink' : 'Expand'} className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground">
               {wide ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
             </button>

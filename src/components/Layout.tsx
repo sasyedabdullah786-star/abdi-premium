@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import {
   ArrowLeft, Home, BookOpen, FileText, Mail, Shield, Search,
   Bell, Menu, X, User, LogOut, ChevronDown, Sparkles, Sun, Moon,
-  Trophy, Wand2, Brain, Box,
+  Trophy, Wand2, Brain, Box, MessageSquare,
 } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useAuth } from "@/hooks/useAuth";
@@ -46,6 +46,7 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
     { to: "/courses", label: settings.nav_courses_label, icon: BookOpen },
     { to: "/hub", label: "Hub", icon: Box },
     { to: "/companion", label: "Companion", icon: Brain },
+    { to: "/nexus", label: "Nexus", icon: MessageSquare },
     { to: "/ai-tools", label: "AI Tools", icon: Wand2 },
     { to: "/blog", label: settings.nav_blog_label, icon: FileText },
     { to: "/contact", label: settings.nav_contact_label, icon: Mail },

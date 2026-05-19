@@ -26,6 +26,7 @@ import Leaderboard from "./pages/Leaderboard";
 import AITools from "./pages/AITools";
 import HolographicHub from "./pages/HolographicHub";
 import StudyCompanion from "./pages/StudyCompanion";
+import Nexus from "./pages/Nexus";
 import VoiceButton from "./components/VoiceButton";
 import NotFound from "./pages/NotFound";
 
@@ -50,6 +51,7 @@ const AnimatedRoutes = () => {
         <Route path="/ai-tools" element={<AITools />} />
         <Route path="/hub" element={<HolographicHub />} />
         <Route path="/companion" element={<StudyCompanion />} />
+        <Route path="/nexus" element={<Nexus />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -68,8 +70,13 @@ const AppShell = () => {
         setPaletteOpen((o) => !o);
       }
     };
+    const onOpenChat = () => setChatOpen(true);
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    window.addEventListener("abdi-open-assistant", onOpenChat);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("abdi-open-assistant", onOpenChat);
+    };
   }, []);
 
   return (
