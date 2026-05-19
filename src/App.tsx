@@ -62,6 +62,8 @@ const AnimatedRoutes = () => {
 const AppShell = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const location = useLocation();
+  const onNexus = location.pathname.startsWith("/nexus");
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -86,8 +88,8 @@ const AppShell = () => {
       <AnimatedCursor />
       <AnimatedRoutes />
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onOpenChat={() => setChatOpen(true)} />
-      <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />
-      {!chatOpen && <AIAssistantButton onClick={() => setChatOpen(true)} />}
+      {!onNexus && <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />}
+      {!onNexus && !chatOpen && <AIAssistantButton onClick={() => setChatOpen(true)} />}
       <VoiceButton />
     </>
   );
