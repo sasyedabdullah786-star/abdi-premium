@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Sparkles, Send, Loader2, RotateCcw, MessageCircleQuestion } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+// supabase imported indirectly via env-derived fetch
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
