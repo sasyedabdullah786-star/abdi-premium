@@ -1,10 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Play, FileText, BookOpen, ChevronRight, Download, Clock, CheckCircle, File, FileSpreadsheet, Target, Calendar, History } from "lucide-react";
+import { Play, FileText, BookOpen, ChevronRight, Download, Clock, CheckCircle, File, FileSpreadsheet, Target, Calendar, History, Award, Zap, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useCourses } from "@/hooks/useCourses";
 import { useLessons, RESOURCE_TYPES, ResourceType } from "@/hooks/useLessons";
 import Discussions from "@/components/Discussions";
+import DoubtSolver from "@/components/DoubtSolver";
+import { useEnrollment } from "@/hooks/useEnrollment";
+import { useAuth } from "@/hooks/useAuth";
 
 const resourceIcons: Record<ResourceType, React.ReactNode> = {
   video: <Play className="w-4 h-4" />,
