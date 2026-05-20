@@ -288,6 +288,17 @@ const Course = () => {
                     <p className="text-muted-foreground">Select an item from the list to view</p>
                   </div>
                 )}
+
+                {/* AI Doubt Solver — only when watching a video */}
+                {currentLesson && currentLesson.resource_type === 'video' && (
+                  <div className="mt-6">
+                    <DoubtSolver
+                      courseTitle={course.title}
+                      lessonTitle={currentLesson.title}
+                      lessonNotes={currentLesson.notes}
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Content List */}
