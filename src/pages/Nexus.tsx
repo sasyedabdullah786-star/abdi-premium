@@ -172,23 +172,35 @@ const Nexus = () => {
   return (
     <Layout showBack>
       <div className="container mx-auto px-3 sm:px-4 pt-4 pb-6">
+        {/* Hero header */}
+        <div className="mb-4 hidden lg:block">
+          <div className="flex items-center justify-between gap-4 rounded-2xl border border-border/40 bg-gradient-to-r from-primary/10 via-secondary/10 to-transparent px-5 py-3">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-lg shadow-primary/30">
+                <Sparkles className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div>
+                <div className="text-sm font-semibold leading-tight">ABD'I Nexus</div>
+                <div className="text-[11px] text-muted-foreground font-mono">save · resume · build with AI</div>
+              </div>
+            </div>
+            <button onClick={handleNew} className="hidden sm:inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-medium hover:opacity-90">
+              <Plus className="w-4 h-4" /> New chat
+            </button>
+          </div>
+        </div>
+
         {/* Mobile toolbar */}
         <div className="flex items-center justify-between mb-3 lg:hidden">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border/40 bg-muted/30 text-xs"
-          >
+          <button onClick={() => setSidebarOpen(true)} className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border/40 bg-muted/30 text-xs">
             <Menu className="w-4 h-4" /> Chats ({sessions.length})
           </button>
-          <button
-            onClick={handleNew}
-            className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-medium"
-          >
+          <button onClick={handleNew} className="flex items-center gap-1.5 h-9 px-3 rounded-lg bg-gradient-to-br from-primary to-secondary text-primary-foreground text-xs font-medium">
             <Plus className="w-4 h-4" /> New
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 h-[calc(100vh-9rem)] min-h-[560px]">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 h-[calc(100vh-12rem)] min-h-[560px]">
           {/* Desktop sidebar */}
           <aside className="hidden lg:block glass-card rounded-2xl border border-border/40 overflow-hidden">
             {Sidebar}
