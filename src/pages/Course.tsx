@@ -112,11 +112,34 @@ const Course = () => {
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">{course.description}</p>
           
-          <div className="flex items-center gap-6 mt-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3 mt-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <BookOpen className="w-4 h-4" />
               <span>{lessons.length} items</span>
             </div>
+            {user && (
+              isEnrolled ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="badge-success inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-success/15 text-success border border-success/30">
+                    <CheckCircle className="w-3.5 h-3.5" /> Enrolled
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-primary/10 text-primary border border-primary/30">
+                    <Zap className="w-3.5 h-3.5" /> {enrollment?.xp_earned ?? 0} XP earned
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-muted/40 text-muted-foreground border border-border/40">
+                    <Award className="w-3.5 h-3.5" /> {(enrollment?.viewed_lessons?.length ?? 0)} / {lessons.filter(l => l.resource_type === 'video').length || lessons.length} watched
+                  </span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => enroll()}
+                  className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-gradient-to-br from-primary to-secondary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  <Sparkles className="w-4 h-4" /> Enroll & track progress
+                  <span className="text-[10px] opacity-80">+{xpPerLesson} XP / video</span>
+                </button>
+              )
+            )}
           </div>
         </div>
       </section>
