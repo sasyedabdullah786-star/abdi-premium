@@ -58,11 +58,11 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              "You are an expert curriculum designer for ABD\"I learning platform. Build realistic, achievable learning paths grounded in the actual courses available. Always use the path_plan tool.",
+              "You are an elite curriculum designer + career mentor for the ABD\"I learning platform. You build realistic, week-by-week paths AND a full mastery + consistency + networking strategy. Always call the path_plan tool. Be specific, motivational, and concise.",
           },
           {
             role: "user",
-            content: `Goal: ${goal}\nDifficulty: ${difficulty}\nDuration: ${weeks} weeks\n\nAvailable platform courses:\n${courseList || "(no courses listed)"}\n\nBuild a week-by-week plan. Reference real course titles when possible. 2-3 milestones per week, ~30-90 min daily.`,
+            content: `Goal: ${goal}\nDifficulty: ${difficulty}\nDuration: ${weeks} weeks\n\nAvailable platform courses:\n${courseList || "(no courses listed)"}\n\nReturn a complete plan: weekly schedule + a mastery_guide (how to truly master this), a consistency_plan (daily habits, anti-burnout, accountability), and a networking_plan (communities, mentors, content to consume, people to follow).`,
           },
         ],
         tools: [
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
             type: "function",
             function: {
               name: "path_plan",
-              description: "Return a week-by-week structured learning path",
+              description: "Return a week-by-week structured learning path with mastery, consistency and networking sections",
               parameters: {
                 type: "object",
                 properties: {
@@ -90,8 +90,42 @@ Deno.serve(async (req) => {
                       required: ["week", "focus", "milestones"],
                     },
                   },
+                  mastery_guide: {
+                    type: "object",
+                    description: "How to go from learner to master of this domain",
+                    properties: {
+                      pillars: { type: "array", items: { type: "string" }, description: "3-5 core skill pillars to deeply master" },
+                      deep_practice: { type: "array", items: { type: "string" }, description: "Specific deep-practice rituals" },
+                      milestones: { type: "array", items: { type: "string" }, description: "Mastery checkpoints (beginner → expert)" },
+                      mistakes_to_avoid: { type: "array", items: { type: "string" } },
+                    },
+                    required: ["pillars", "deep_practice", "milestones"],
+                  },
+                  consistency_plan: {
+                    type: "object",
+                    description: "Daily/weekly habit system to keep going",
+                    properties: {
+                      daily_ritual: { type: "array", items: { type: "string" }, description: "Step-by-step daily routine" },
+                      weekly_review: { type: "array", items: { type: "string" } },
+                      anti_burnout: { type: "array", items: { type: "string" } },
+                      accountability: { type: "array", items: { type: "string" }, description: "How to stay accountable" },
+                    },
+                    required: ["daily_ritual"],
+                  },
+                  networking_plan: {
+                    type: "object",
+                    description: "How to build a network in this field",
+                    properties: {
+                      communities: { type: "array", items: { type: "string" }, description: "Communities/Discords/forums to join" },
+                      mentors: { type: "array", items: { type: "string" }, description: "Profiles / kinds of mentors to seek" },
+                      people_to_follow: { type: "array", items: { type: "string" } },
+                      content_to_consume: { type: "array", items: { type: "string" }, description: "Books, podcasts, channels, newsletters" },
+                      outreach_template: { type: "string", description: "A short cold-DM template to reach out to mentors" },
+                    },
+                    required: ["communities", "people_to_follow"],
+                  },
                 },
-                required: ["title", "summary", "weeks"],
+                required: ["title", "summary", "weeks", "mastery_guide", "consistency_plan", "networking_plan"],
               },
             },
           },
