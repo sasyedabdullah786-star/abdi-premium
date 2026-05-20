@@ -24,10 +24,22 @@ const Course = () => {
   const { courseId } = useParams();
   const { courses, loading: coursesLoading } = useCourses();
   const { lessons, loading: lessonsLoading } = useLessons(courseId);
+  const { user } = useAuth();
+  const { enrollment, enroll, isEnrolled, markLessonViewed, xpPerLesson } = useEnrollment(courseId);
   const [activeTab, setActiveTab] = useState<ResourceType | 'overview'>('overview');
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
 
   const course = courses.find(c => c.id === courseId);
+
+  // Award XP the first time a video lesson is opened
+  useEffect(() => {
+    if (!activeLesson || !user) return;
+    const lesson = lessons.find(l => l.id === activeLesson);
+    if (lesson?.resource_type === 'video') {
+      markLessonViewed(activeLesson);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLesson]);
 
   // Get unique resource types that exist in this course's lessons
   const availableTabs = useMemo(() => {
