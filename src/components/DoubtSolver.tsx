@@ -33,28 +33,62 @@ const DoubtSolver = ({ courseTitle, lessonTitle, lessonNotes }: Props) => {
     setMessages(next);
     setLoading(true);
     try {
-      const systemContext = `You are the in-video Doubt Solver for the ABD"I learning platform.
-Help the student understand the concept behind their current lesson clearly and briefly.
-Current course: ${courseTitle || 'N/A'}
-Current lesson: ${lessonTitle || 'N/A'}
-${lessonNotes ? `Lesson notes:\n${lessonNotes.slice(0, 2000)}\n` : ''}
-Rules: Short, friendly, exam-focused. Use markdown — bullet points, **bold** key terms, and tiny examples. End with a one-line "Try this:" practice prompt.`;
+      const lessonCtx = `\n\nLESSON CONTEXT — Course: ${courseTitle || 'N/A'} | Lesson: ${lessonTitle || 'N/A'}.${
+        lessonNotes ? ` Notes excerpt: ${lessonNotes.slice(0, 1200)}` : ''
+      }\nAnswer briefly with markdown, bold key terms, and end with a one-line "Try this:" prompt.`;
 
-      const { data, error } = await supabase.functions.invoke('ai-chat', {
-        body: {
-          messages: [
-            { role: 'system', content: systemContext },
-            ...next.map(m => ({ role: m.role, content: m.content })),
-          ],
+      const url = `https://${import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/ai-chat`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
+        body: JSON.stringify({
+          messages: [
+            ...next.map(m => ({ role: m.role, content: m.content })),
+            { role: 'user', content: lessonCtx },
+          ],
+        }),
       });
-      if (error) throw error;
-      const reply = (data as any)?.content || (data as any)?.message || (data as any)?.text || '';
-      if (!reply) throw new Error('Empty response');
-      setMessages(m => [...m, { role: 'assistant', content: reply }]);
+      if (!res.ok || !res.body) {
+        const txt = await res.text().catch(() => '');
+        throw new Error(txt || `Request failed (${res.status})`);
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buf = '';
+      let assistant = '';
+      setMessages(m => [...m, { role: 'assistant', content: '' }]);
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const lines = buf.split('\n');
+        buf = lines.pop() || '';
+        for (const line of lines) {
+          const l = line.trim();
+          if (!l.startsWith('data:')) continue;
+          const data = l.slice(5).trim();
+          if (data === '[DONE]') continue;
+          try {
+            const j = JSON.parse(data);
+            const delta = j.choices?.[0]?.delta?.content || '';
+            if (delta) {
+              assistant += delta;
+              setMessages(m => {
+                const copy = [...m];
+                copy[copy.length - 1] = { role: 'assistant', content: assistant };
+                return copy;
+              });
+            }
+          } catch {}
+        }
+      }
+      if (!assistant.trim()) throw new Error('Empty response');
     } catch (e: any) {
       toast({ title: 'Doubt Solver failed', description: e?.message || 'Try again.', variant: 'destructive' });
-      setMessages(m => m.slice(0, -1));
+      setMessages(m => m.filter(x => x.role === 'user' || x.content.trim()));
     } finally {
       setLoading(false);
     }
