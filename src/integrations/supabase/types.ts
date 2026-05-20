@@ -439,6 +439,39 @@ export type Database = {
           },
         ]
       }
+      enrollments: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          last_lesson_id: string | null
+          updated_at: string
+          user_id: string
+          viewed_lessons: Json
+          xp_earned: number
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          last_lesson_id?: string | null
+          updated_at?: string
+          user_id: string
+          viewed_lessons?: Json
+          xp_earned?: number
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          last_lesson_id?: string | null
+          updated_at?: string
+          user_id?: string
+          viewed_lessons?: Json
+          xp_earned?: number
+        }
+        Relationships: []
+      }
       flashcards: {
         Row: {
           back: string
