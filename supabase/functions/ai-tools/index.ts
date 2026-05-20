@@ -1,4 +1,4 @@
-// AI Tools edge function — handles 3 modes: learning_path, quiz, summarize
+// AI Tools edge function — handles modes: learning_path, quiz, summarize, nextgen
 // Uses Lovable AI Gateway with structured tool-calling for path & quiz, plain text for summary.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -58,11 +58,11 @@ Deno.serve(async (req) => {
           {
             role: "system",
             content:
-              "You are an expert curriculum designer for ABD\"I learning platform. Build realistic, achievable learning paths grounded in the actual courses available. Always use the path_plan tool.",
+              "You are an elite curriculum designer + career mentor for the ABD\"I learning platform. You build realistic, week-by-week paths AND a full mastery + consistency + networking strategy. Always call the path_plan tool. Be specific, motivational, and concise.",
           },
           {
             role: "user",
-            content: `Goal: ${goal}\nDifficulty: ${difficulty}\nDuration: ${weeks} weeks\n\nAvailable platform courses:\n${courseList || "(no courses listed)"}\n\nBuild a week-by-week plan. Reference real course titles when possible. 2-3 milestones per week, ~30-90 min daily.`,
+            content: `Goal: ${goal}\nDifficulty: ${difficulty}\nDuration: ${weeks} weeks\n\nAvailable platform courses:\n${courseList || "(no courses listed)"}\n\nReturn a complete plan: weekly schedule + a mastery_guide (how to truly master this), a consistency_plan (daily habits, anti-burnout, accountability), and a networking_plan (communities, mentors, content to consume, people to follow).`,
           },
         ],
         tools: [
@@ -70,7 +70,7 @@ Deno.serve(async (req) => {
             type: "function",
             function: {
               name: "path_plan",
-              description: "Return a week-by-week structured learning path",
+              description: "Return a week-by-week structured learning path with mastery, consistency and networking sections",
               parameters: {
                 type: "object",
                 properties: {
@@ -90,8 +90,42 @@ Deno.serve(async (req) => {
                       required: ["week", "focus", "milestones"],
                     },
                   },
+                  mastery_guide: {
+                    type: "object",
+                    description: "How to go from learner to master of this domain",
+                    properties: {
+                      pillars: { type: "array", items: { type: "string" }, description: "3-5 core skill pillars to deeply master" },
+                      deep_practice: { type: "array", items: { type: "string" }, description: "Specific deep-practice rituals" },
+                      milestones: { type: "array", items: { type: "string" }, description: "Mastery checkpoints (beginner → expert)" },
+                      mistakes_to_avoid: { type: "array", items: { type: "string" } },
+                    },
+                    required: ["pillars", "deep_practice", "milestones"],
+                  },
+                  consistency_plan: {
+                    type: "object",
+                    description: "Daily/weekly habit system to keep going",
+                    properties: {
+                      daily_ritual: { type: "array", items: { type: "string" }, description: "Step-by-step daily routine" },
+                      weekly_review: { type: "array", items: { type: "string" } },
+                      anti_burnout: { type: "array", items: { type: "string" } },
+                      accountability: { type: "array", items: { type: "string" }, description: "How to stay accountable" },
+                    },
+                    required: ["daily_ritual"],
+                  },
+                  networking_plan: {
+                    type: "object",
+                    description: "How to build a network in this field",
+                    properties: {
+                      communities: { type: "array", items: { type: "string" }, description: "Communities/Discords/forums to join" },
+                      mentors: { type: "array", items: { type: "string" }, description: "Profiles / kinds of mentors to seek" },
+                      people_to_follow: { type: "array", items: { type: "string" } },
+                      content_to_consume: { type: "array", items: { type: "string" }, description: "Books, podcasts, channels, newsletters" },
+                      outreach_template: { type: "string", description: "A short cold-DM template to reach out to mentors" },
+                    },
+                    required: ["communities", "people_to_follow"],
+                  },
                 },
-                required: ["title", "summary", "weeks"],
+                required: ["title", "summary", "weeks", "mastery_guide", "consistency_plan", "networking_plan"],
               },
             },
           },
@@ -159,6 +193,60 @@ Deno.serve(async (req) => {
           },
           { role: "user", content: input },
         ],
+      };
+    } else if (mode === "nextgen") {
+      // NextGen Career Time-Machine — simulates "Future You" in 5 years
+      // for a chosen path and reverse-engineers the steps to get there.
+      payload = {
+        ...payload,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are NextGen — a never-before-seen AI tool that runs a 5-year 'Future Self Time-Machine' simulation. For the user's chosen path, write a vivid day-in-the-life of their future self, identify the inflection points that got them there, list the skills, mindset shifts, signature projects, and the wealth/impact trajectory. Always call the time_machine tool. Be cinematic but specific, never generic.",
+          },
+          {
+            role: "user",
+            content: `Path / dream: ${input || goal || "becoming an exceptional version of myself"}\nCurrent level: ${difficulty}\nHorizon: 5 years.\n\nRun the simulation.`,
+          },
+        ],
+        tools: [
+          {
+            type: "function",
+            function: {
+              name: "time_machine",
+              description: "Simulate the user's future self 5 years from now along the chosen path",
+              parameters: {
+                type: "object",
+                properties: {
+                  future_identity: { type: "string", description: "One-line headline of who they become (e.g. 'Senior product engineer at a unicorn shipping AI products')" },
+                  day_in_life: { type: "string", description: "Cinematic 1-paragraph day-in-the-life of Future You" },
+                  inflection_points: {
+                    type: "array",
+                    description: "3-5 key moments / decisions that made the difference",
+                    items: {
+                      type: "object",
+                      properties: {
+                        when: { type: "string", description: "e.g. 'Month 3', 'Year 2'" },
+                        moment: { type: "string" },
+                        why_it_mattered: { type: "string" },
+                      },
+                      required: ["when", "moment", "why_it_mattered"],
+                    },
+                  },
+                  signature_projects: { type: "array", items: { type: "string" }, description: "3 portfolio-defining projects to ship" },
+                  skills_unlocked: { type: "array", items: { type: "string" } },
+                  mindset_shifts: { type: "array", items: { type: "string" }, description: "Old belief → new belief format" },
+                  wealth_impact: { type: "string", description: "Realistic income / impact band by year 5" },
+                  letter_from_future: { type: "string", description: "A 4-6 sentence motivational letter from Future You to Present You" },
+                  first_step_tomorrow: { type: "string", description: "The single most important action to take in the next 24h" },
+                },
+                required: ["future_identity", "day_in_life", "inflection_points", "signature_projects", "skills_unlocked", "letter_from_future", "first_step_tomorrow"],
+              },
+            },
+          },
+        ],
+        tool_choice: { type: "function", function: { name: "time_machine" } },
       };
     } else {
       return new Response(JSON.stringify({ error: "Unknown mode" }), {

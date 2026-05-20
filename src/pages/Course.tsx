@@ -1,10 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Play, FileText, BookOpen, ChevronRight, Download, Clock, CheckCircle, File, FileSpreadsheet, Target, Calendar, History } from "lucide-react";
+import { Play, FileText, BookOpen, ChevronRight, Download, Clock, CheckCircle, File, FileSpreadsheet, Target, Calendar, History, Award, Zap, Sparkles } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useCourses } from "@/hooks/useCourses";
 import { useLessons, RESOURCE_TYPES, ResourceType } from "@/hooks/useLessons";
 import Discussions from "@/components/Discussions";
+import DoubtSolver from "@/components/DoubtSolver";
+import { useEnrollment } from "@/hooks/useEnrollment";
+import { useAuth } from "@/hooks/useAuth";
 
 const resourceIcons: Record<ResourceType, React.ReactNode> = {
   video: <Play className="w-4 h-4" />,
@@ -21,10 +24,22 @@ const Course = () => {
   const { courseId } = useParams();
   const { courses, loading: coursesLoading } = useCourses();
   const { lessons, loading: lessonsLoading } = useLessons(courseId);
+  const { user } = useAuth();
+  const { enrollment, enroll, isEnrolled, markLessonViewed, xpPerLesson } = useEnrollment(courseId);
   const [activeTab, setActiveTab] = useState<ResourceType | 'overview'>('overview');
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
 
   const course = courses.find(c => c.id === courseId);
+
+  // Award XP the first time a video lesson is opened
+  useEffect(() => {
+    if (!activeLesson || !user) return;
+    const lesson = lessons.find(l => l.id === activeLesson);
+    if (lesson?.resource_type === 'video') {
+      markLessonViewed(activeLesson);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLesson]);
 
   // Get unique resource types that exist in this course's lessons
   const availableTabs = useMemo(() => {
@@ -97,11 +112,34 @@ const Course = () => {
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl">{course.description}</p>
           
-          <div className="flex items-center gap-6 mt-6 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-3 mt-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <BookOpen className="w-4 h-4" />
               <span>{lessons.length} items</span>
             </div>
+            {user && (
+              isEnrolled ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="badge-success inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-success/15 text-success border border-success/30">
+                    <CheckCircle className="w-3.5 h-3.5" /> Enrolled
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-primary/10 text-primary border border-primary/30">
+                    <Zap className="w-3.5 h-3.5" /> {enrollment?.xp_earned ?? 0} XP earned
+                  </span>
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-muted/40 text-muted-foreground border border-border/40">
+                    <Award className="w-3.5 h-3.5" /> {(enrollment?.viewed_lessons?.length ?? 0)} / {lessons.filter(l => l.resource_type === 'video').length || lessons.length} watched
+                  </span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => enroll()}
+                  className="inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-gradient-to-br from-primary to-secondary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+                >
+                  <Sparkles className="w-4 h-4" /> Enroll & track progress
+                  <span className="text-[10px] opacity-80">+{xpPerLesson} XP / video</span>
+                </button>
+              )
+            )}
           </div>
         </div>
       </section>
@@ -271,6 +309,17 @@ const Course = () => {
                       {resourceIcons[activeTab as ResourceType] || <BookOpen className="w-10 h-10 text-primary" />}
                     </div>
                     <p className="text-muted-foreground">Select an item from the list to view</p>
+                  </div>
+                )}
+
+                {/* AI Doubt Solver — only when watching a video */}
+                {currentLesson && currentLesson.resource_type === 'video' && (
+                  <div className="mt-6">
+                    <DoubtSolver
+                      courseTitle={course.title}
+                      lessonTitle={currentLesson.title}
+                      lessonNotes={currentLesson.notes}
+                    />
                   </div>
                 )}
               </div>
