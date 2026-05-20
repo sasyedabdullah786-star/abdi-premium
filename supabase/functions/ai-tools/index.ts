@@ -1,4 +1,4 @@
-// AI Tools edge function — handles 3 modes: learning_path, quiz, summarize
+// AI Tools edge function — handles modes: learning_path, quiz, summarize, nextgen
 // Uses Lovable AI Gateway with structured tool-calling for path & quiz, plain text for summary.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
