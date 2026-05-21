@@ -440,9 +440,11 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
       {/* RIGHT: Artifact pane */}
       {openArtifact && (
         <div className="flex-1 min-w-0 animate-fade-in">
-          <ArtifactPane artifact={openArtifact} onClose={() => setOpenArtifact(null)} />
+          <ArtifactPane artifact={openArtifact} onClose={() => setOpenArtifact(null)} onPublish={() => setPublishOpen(true)} />
         </div>
       )}
+
+      <PublishDialog open={publishOpen} onClose={() => setPublishOpen(false)} html={openArtifact || ''} defaultTitle={sessionTitle} />
     </div>
   );
 };
