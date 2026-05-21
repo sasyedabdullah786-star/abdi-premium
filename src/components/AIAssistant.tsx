@@ -98,6 +98,9 @@ function ArtifactPane({ artifact, onClose, onPublish }: { artifact: string; onCl
           <button onClick={openInNewTab} title="Open in new tab" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground">
             <ExternalLink className="w-3.5 h-3.5" />
           </button>
+          <button onClick={onPublish} title="Publish (share link / download)" className="p-1.5 rounded-md hover:bg-primary/20 text-primary">
+            <Globe className="w-3.5 h-3.5" />
+          </button>
           <button onClick={onClose} title="Close" className="p-1.5 rounded-md hover:bg-muted/50 text-muted-foreground">
             <X className="w-3.5 h-3.5" />
           </button>
