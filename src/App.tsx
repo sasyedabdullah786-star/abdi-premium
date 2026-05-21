@@ -27,6 +27,7 @@ import AITools from "./pages/AITools";
 import HolographicHub from "./pages/HolographicHub";
 import StudyCompanion from "./pages/StudyCompanion";
 import Nexus from "./pages/Nexus";
+import NexusPublic from "./pages/NexusPublic";
 import VoiceButton from "./components/VoiceButton";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const AnimatedRoutes = () => {
         <Route path="/hub" element={<HolographicHub />} />
         <Route path="/companion" element={<StudyCompanion />} />
         <Route path="/nexus" element={<Nexus />} />
+        <Route path="/nexus/p/:slug" element={<NexusPublic />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -63,7 +65,8 @@ const AppShell = () => {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
   const location = useLocation();
-  const onNexus = location.pathname.startsWith("/nexus");
+  // Hide global chat on the embedded Nexus workspace AND on the public viewer
+  const onNexus = location.pathname === "/nexus" || location.pathname.startsWith("/nexus/p/");
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
