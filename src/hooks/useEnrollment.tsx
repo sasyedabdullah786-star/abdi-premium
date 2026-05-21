@@ -16,6 +16,23 @@ export interface Enrollment {
 
 const XP_PER_LESSON = 15;
 
+/** Calculate the new streak based on the previous activity date. */
+function nextStreak(prev: { current_streak: number; longest_streak: number; last_activity_date: string | null }) {
+  const today = new Date().toISOString().slice(0, 10);
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+
+  let current = prev.current_streak || 0;
+  if (prev.last_activity_date === today) {
+    // already counted today
+  } else if (prev.last_activity_date === yesterday) {
+    current += 1;
+  } else {
+    current = 1; // streak reset / fresh start
+  }
+  const longest = Math.max(prev.longest_streak || 0, current);
+  return { current_streak: current, longest_streak: longest, last_activity_date: today };
+}
+
 export const useEnrollment = (courseId?: string) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -57,7 +74,7 @@ export const useEnrollment = (courseId?: string) => {
     return data as any;
   };
 
-  /** Awards XP if this lesson hasn't been viewed before. */
+  /** Awards XP + updates streak if this lesson hasn't been viewed before. */
   const markLessonViewed = async (lessonId: string) => {
     if (!user || !courseId) return;
     let current = enrollment;
@@ -77,30 +94,47 @@ export const useEnrollment = (courseId?: string) => {
     if (updated) setEnrollment(updated as any);
 
     if (!already) {
-      // bump user_stats xp + lessons_completed
       const { data: stats } = await supabase
         .from('user_stats')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
+
       if (stats) {
+        const streak = nextStreak({
+          current_streak: stats.current_streak,
+          longest_streak: stats.longest_streak,
+          last_activity_date: stats.last_activity_date,
+        });
+        const newXp = (stats.xp || 0) + XP_PER_LESSON;
+        const newLevel = Math.max(1, Math.floor(newXp / 100) + 1);
         await supabase
           .from('user_stats')
           .update({
-            xp: (stats.xp || 0) + XP_PER_LESSON,
+            xp: newXp,
+            level: newLevel,
             total_lessons_completed: (stats.total_lessons_completed || 0) + 1,
-            last_activity_date: new Date().toISOString().slice(0, 10),
+            ...streak,
           })
           .eq('user_id', user.id);
+
+        if (streak.current_streak > (stats.current_streak || 0)) {
+          toast({ title: `🔥 ${streak.current_streak}-day streak`, description: `+${XP_PER_LESSON} XP earned. Keep it alive!` });
+        } else {
+          toast({ title: `+${XP_PER_LESSON} XP`, description: 'Lesson viewed.' });
+        }
       } else {
         await supabase.from('user_stats').insert({
           user_id: user.id,
           xp: XP_PER_LESSON,
+          level: 1,
           total_lessons_completed: 1,
+          current_streak: 1,
+          longest_streak: 1,
           last_activity_date: new Date().toISOString().slice(0, 10),
         });
+        toast({ title: `🔥 1-day streak started`, description: `+${XP_PER_LESSON} XP. Come back tomorrow!` });
       }
-      toast({ title: `+${XP_PER_LESSON} XP`, description: 'Lesson viewed. Keep going!' });
     }
   };
 
