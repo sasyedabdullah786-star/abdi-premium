@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Send, Sparkles, Loader2, Mic, Copy, Check, Trash2, Maximize2, Minimize2, Code2, Eye, MonitorPlay, Wrench, Search, Bug, Bot, ExternalLink, Plus, FolderOpen } from 'lucide-react';
+import { X, Send, Sparkles, Loader2, Mic, Copy, Check, Trash2, Maximize2, Minimize2, Code2, Eye, MonitorPlay, Wrench, Search, Bug, Bot, ExternalLink, Plus, FolderOpen, Globe } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import PublishDialog from '@/components/PublishDialog';
 
 import {
   getActiveSession, setActiveId, createSession, saveMessages,
@@ -50,7 +52,7 @@ function parseArtifact(raw: string): { text: string; artifact: string | null } {
   };
 }
 
-function ArtifactPane({ artifact, onClose }: { artifact: string; onClose: () => void }) {
+function ArtifactPane({ artifact, onClose, onPublish }: { artifact: string; onClose: () => void; onPublish: () => void }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [tab, setTab] = useState<'preview' | 'code'>('preview');
   const [copied, setCopied] = useState(false);
