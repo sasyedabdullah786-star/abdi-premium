@@ -137,6 +137,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   const [expanded, setExpanded] = useState(false);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [openArtifact, setOpenArtifact] = useState<string | null>(null);
+  const [publishOpen, setPublishOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
