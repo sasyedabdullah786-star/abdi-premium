@@ -6,6 +6,7 @@ import { useCategories } from "@/hooks/useCategories";
 import { useInstitution } from "@/hooks/useInstitution";
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import MediaUpload from "@/components/MediaUpload";
 
 const CoursesTab = () => {
   const { courses, createCourse, updateCourse, deleteCourse } = useCourses();
@@ -148,13 +149,19 @@ const CoursesTab = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <input placeholder="Course Title *" value={newCourse.title} onChange={(e) => setNewCourse({ ...newCourse, title: e.target.value })} className="input-glass" />
           <input placeholder="Description" value={newCourse.description} onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })} className="input-glass" />
-          <input placeholder="Thumbnail URL" value={newCourse.thumbnail_url} onChange={(e) => setNewCourse({ ...newCourse, thumbnail_url: e.target.value })} className="input-glass" />
           <select value={newCourse.category} onChange={(e) => setNewCourse({ ...newCourse, category: e.target.value })} className="input-glass bg-card">
             <option value="general">General</option>
             {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
           </select>
           <input placeholder="Price (e.g., Free, ₹499)" value={newCourse.price} onChange={(e) => setNewCourse({ ...newCourse, price: e.target.value })} className="input-glass" />
           <input placeholder="Duration (e.g., 10 hours)" value={newCourse.duration} onChange={(e) => setNewCourse({ ...newCourse, duration: e.target.value })} className="input-glass" />
+          <MediaUpload
+            value={newCourse.thumbnail_url}
+            onChange={(url) => setNewCourse({ ...newCourse, thumbnail_url: url })}
+            kind="image"
+            folder="courses"
+            label="Thumbnail"
+          />
         </div>
         <div className="flex items-center gap-6 mt-4">
           <label className="flex items-center gap-2 cursor-pointer">
@@ -179,13 +186,19 @@ const CoursesTab = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                       <input placeholder="Title" value={editCourseData.title || ""} onChange={(e) => setEditCourseData({ ...editCourseData, title: e.target.value })} className="input-glass" />
                       <input placeholder="Description" value={editCourseData.description || ""} onChange={(e) => setEditCourseData({ ...editCourseData, description: e.target.value })} className="input-glass" />
-                      <input placeholder="Thumbnail URL" value={editCourseData.thumbnail_url || ""} onChange={(e) => setEditCourseData({ ...editCourseData, thumbnail_url: e.target.value })} className="input-glass" />
                       <select value={editCourseData.category || "general"} onChange={(e) => setEditCourseData({ ...editCourseData, category: e.target.value })} className="input-glass bg-card">
                         <option value="general">General</option>
                         {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                       </select>
                       <input placeholder="Price" value={editCourseData.price || ""} onChange={(e) => setEditCourseData({ ...editCourseData, price: e.target.value })} className="input-glass" />
                       <input placeholder="Duration" value={editCourseData.duration || ""} onChange={(e) => setEditCourseData({ ...editCourseData, duration: e.target.value })} className="input-glass" />
+                      <MediaUpload
+                        value={editCourseData.thumbnail_url || ""}
+                        onChange={(url) => setEditCourseData({ ...editCourseData, thumbnail_url: url })}
+                        kind="image"
+                        folder="courses"
+                        label="Thumbnail"
+                      />
                     </div>
                     <div className="flex items-center gap-4">
                       <label className="flex items-center gap-2 cursor-pointer">
@@ -237,18 +250,32 @@ const CoursesTab = () => {
                   <h4 className="font-medium mb-4 flex items-center gap-2"><BookOpen className="w-4 h-4" /> Lessons ({getCourseLessons(course.id).length})</h4>
                   
                   {/* Add Lesson Form */}
-                  <div className="glass-card p-4 mb-4 bg-card/50">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                  <div className="glass-card p-4 mb-4 bg-card/50 space-y-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       <input placeholder="Lesson Title *" value={newLesson.title} onChange={(e) => setNewLesson({ ...newLesson, title: e.target.value })} className="input-glass text-sm" />
                       <select value={newLesson.resource_type} onChange={(e) => setNewLesson({ ...newLesson, resource_type: e.target.value as ResourceType })} className="input-glass bg-card text-sm">
                         {RESOURCE_TYPES.map(type => <option key={type.value} value={type.value}>{type.label}</option>)}
                       </select>
-                      <input placeholder="Video URL" value={newLesson.video_url} onChange={(e) => setNewLesson({ ...newLesson, video_url: e.target.value })} className="input-glass text-sm" />
-                      <input placeholder="PDF URL" value={newLesson.pdf_url} onChange={(e) => setNewLesson({ ...newLesson, pdf_url: e.target.value })} className="input-glass text-sm" />
                     </div>
-                    <div className="flex gap-3 mt-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <MediaUpload
+                        value={newLesson.video_url}
+                        onChange={(url) => setNewLesson({ ...newLesson, video_url: url })}
+                        kind="video"
+                        folder={`lessons/${course.id}`}
+                        label="Video (upload or paste URL)"
+                      />
+                      <MediaUpload
+                        value={newLesson.pdf_url}
+                        onChange={(url) => setNewLesson({ ...newLesson, pdf_url: url })}
+                        kind="pdf"
+                        folder={`lessons/${course.id}`}
+                        label="PDF (upload or paste URL)"
+                      />
+                    </div>
+                    <div className="flex gap-3">
                       <textarea placeholder="Notes (optional)" value={newLesson.notes} onChange={(e) => setNewLesson({ ...newLesson, notes: e.target.value })} className="input-glass text-sm flex-1 min-h-[60px]" />
-                      <button onClick={() => handleAddLesson(course.id)} className="btn-gradient self-end"><Plus className="w-4 h-4" /></button>
+                      <button onClick={() => handleAddLesson(course.id)} className="btn-gradient self-end inline-flex items-center gap-1"><Plus className="w-4 h-4" /> Add</button>
                     </div>
                   </div>
 

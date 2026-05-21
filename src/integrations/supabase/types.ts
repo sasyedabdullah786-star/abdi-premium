@@ -588,6 +588,42 @@ export type Database = {
           },
         ]
       }
+      nexus_published: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          html: string
+          id: string
+          slug: string
+          source_url: string | null
+          title: string
+          updated_at: string
+          view_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          html: string
+          id?: string
+          slug: string
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          html?: string
+          id?: string
+          slug?: string
+          source_url?: string | null
+          title?: string
+          updated_at?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

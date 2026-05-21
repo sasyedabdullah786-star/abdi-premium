@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Plus, Trash2, Save, Edit3, X, FileText, Eye, EyeOff } from "lucide-react";
 import { useBlogPosts } from "@/hooks/useBlogPosts";
 import { useToast } from "@/hooks/use-toast";
+import MediaUpload from "@/components/MediaUpload";
 
 interface BlogPost {
   id: string;
@@ -82,11 +83,12 @@ const BlogTab = () => {
               onChange={(e) => setNewPost({ ...newPost, title: e.target.value })} 
               className="input-glass" 
             />
-            <input 
-              placeholder="Featured Image URL" 
-              value={newPost.image_url} 
-              onChange={(e) => setNewPost({ ...newPost, image_url: e.target.value })} 
-              className="input-glass" 
+            <MediaUpload
+              value={newPost.image_url}
+              onChange={(url) => setNewPost({ ...newPost, image_url: url })}
+              kind="image"
+              folder="blog"
+              label="Featured image"
             />
           </div>
           <textarea 
@@ -126,11 +128,12 @@ const BlogTab = () => {
                           className="input-glass" 
                           placeholder="Title"
                         />
-                        <input 
-                          value={editPostData.image_url || ""} 
-                          onChange={(e) => setEditPostData({ ...editPostData, image_url: e.target.value })} 
-                          className="input-glass" 
-                          placeholder="Image URL"
+                        <MediaUpload
+                          value={editPostData.image_url || ""}
+                          onChange={(url) => setEditPostData({ ...editPostData, image_url: url })}
+                          kind="image"
+                          folder="blog"
+                          label="Featured image"
                         />
                       </div>
                       <textarea 
