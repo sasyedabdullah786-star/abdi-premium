@@ -214,10 +214,30 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
     ensureSession();
     const userMsg: Msg = { role: 'user', content: text };
     const base = (messages.length === 1 && messages[0] === WELCOME) ? [] : messages;
-    const next = [...base, userMsg];
+    let next = [...base, userMsg];
     setMessages(next);
     setInput('');
     setLoading(true);
+
+    // Auto URL-fetch: detect URLs in user message and inject page context (text + screenshot)
+    try {
+      const urls = text.match(/https?:\/\/[^\s)]+/g)?.slice(0, 2) || [];
+      if (urls.length) {
+        const contexts: string[] = [];
+        for (const u of urls) {
+          try {
+            const { data } = await supabase.functions.invoke('fetch-url', { body: { url: u } });
+            if (data && !data.error) {
+              contexts.push(`[Fetched ${u}]\nTitle: ${data.title}\nScreenshot: ${data.screenshot}\nExcerpt:\n${(data.text || '').slice(0, 3000)}`);
+            }
+          } catch {}
+        }
+        if (contexts.length) {
+          next = [...next, { role: 'assistant', content: `_Fetched ${urls.length} link${urls.length>1?'s':''} for context._\n\n\`\`\`\n${contexts.join('\n\n---\n\n').slice(0, 8000)}\n\`\`\`` } as Msg];
+          setMessages(next);
+        }
+      }
+    } catch {}
 
     try {
       const resp = await fetch(CHAT_URL, {
