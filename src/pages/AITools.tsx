@@ -10,7 +10,7 @@ import {
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-type Mode = "learning_path" | "quiz" | "summarize" | "nextgen";
+type Mode = "learning_path" | "quiz" | "summarize" | "nextgen" | "image";
 
 interface PathWeek { week: number; focus: string; daily_minutes?: number; milestones: string[]; suggested_courses?: string[]; }
 interface PathPlan {
