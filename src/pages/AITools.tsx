@@ -174,6 +174,7 @@ const AITools = () => {
     else if (h.mode === "quiz") { setQuizInput(h.inputs.quizInput ?? ""); setNumQ(h.inputs.numQ ?? 5); setDifficulty(h.inputs.difficulty ?? "beginner"); setQuiz(h.result); }
     else if (h.mode === "summarize") { setSumInput(h.inputs.sumInput ?? ""); setSummary(h.result); }
     else if (h.mode === "nextgen") { setNextgenInput(h.inputs.nextgenInput ?? ""); setDifficulty(h.inputs.difficulty ?? "beginner"); setNextgen(h.result); }
+    else if (h.mode === "image") { setImagePrompt(h.inputs.imagePrompt ?? ""); setImages(Array.isArray(h.result) ? h.result : []); }
     setSidebarOpen(false);
   };
 
