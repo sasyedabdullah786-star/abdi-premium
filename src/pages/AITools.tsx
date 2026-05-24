@@ -113,7 +113,7 @@ const AITools = () => {
   }, [history, query]);
 
   const resetOutput = () => {
-    setPath(null); setQuiz(null); setSummary(""); setNextgen(null);
+    setPath(null); setQuiz(null); setSummary(""); setNextgen(null); setImages([]);
     setAnswers({}); setSubmitted(false);
   };
 
