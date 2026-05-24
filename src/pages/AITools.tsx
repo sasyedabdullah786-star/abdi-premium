@@ -373,7 +373,38 @@ const AITools = () => {
                   </div>
                 )}
 
-                <button onClick={run} disabled={loading || (mode === "quiz" && !quizInput.trim()) || (mode === "summarize" && !sumInput.trim()) || (mode === "nextgen" && !nextgenInput.trim())} className="btn-primary w-full mt-4 disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                {mode === "image" && (
+                  <div className="space-y-4">
+                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-amber-300 mb-1"><ImageIcon className="w-3.5 h-3.5" /> Image Studio</div>
+                      <p className="text-[11px] text-muted-foreground">Generate or edit images with Gemini 2.5 Flash Image (Nano Banana). Optionally upload a source image to edit.</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground block mb-1.5">Prompt</label>
+                      <textarea value={imagePrompt} onChange={(e) => setImagePrompt(e.target.value)} rows={5} placeholder="Describe the image, or describe edits to apply to your source image…" className="input-glass h-auto py-2.5 text-sm resize-none w-full" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground block mb-1.5">Source image (optional — for editing)</label>
+                      {imageSource ? (
+                        <div className="relative rounded-lg overflow-hidden border border-border/40">
+                          <img src={imageSource} alt="source" className="w-full max-h-48 object-contain bg-muted/30" />
+                          <button onClick={() => setImageSource(null)} className="absolute top-1.5 right-1.5 p-1 rounded-md bg-background/80 border border-border/40 hover:bg-destructive/20 text-destructive"><X className="w-3.5 h-3.5" /></button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center justify-center gap-2 h-20 rounded-lg border border-dashed border-border/50 bg-muted/20 text-xs text-muted-foreground cursor-pointer hover:bg-muted/40 transition-colors">
+                          <Upload className="w-4 h-4" /> Click to upload an image to edit
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                            const f = e.target.files?.[0]; if (!f) return;
+                            if (f.size > 8 * 1024 * 1024) { toast({ title: "Image too large", description: "Max 8 MB.", variant: "destructive" }); return; }
+                            const r = new FileReader(); r.onload = () => setImageSource(r.result as string); r.readAsDataURL(f);
+                          }} />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <button onClick={run} disabled={loading || (mode === "quiz" && !quizInput.trim()) || (mode === "summarize" && !sumInput.trim()) || (mode === "nextgen" && !nextgenInput.trim()) || (mode === "image" && !imagePrompt.trim())} className="btn-primary w-full mt-4 disabled:opacity-50 inline-flex items-center justify-center gap-2">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
                   {loading ? "Generating..." : "Generate"}
                 </button>
@@ -381,7 +412,7 @@ const AITools = () => {
 
               {/* Output */}
               <div className="lg:col-span-3 surface-elevated p-5 min-h-[400px] rounded-2xl border border-border/40 bg-card">
-                {!loading && !path && !quiz && !summary && !nextgen && (
+                {!loading && !path && !quiz && !summary && !nextgen && images.length === 0 && (
                   <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground py-16">
                     <div className="icon-glow w-12 h-12 mb-4 flex items-center justify-center rounded-xl bg-primary/10 border border-primary/30">
                       <modeMeta.icon className="w-5 h-5 text-primary" />
