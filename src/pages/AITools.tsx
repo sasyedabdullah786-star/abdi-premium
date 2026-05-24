@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Wand2, Map, Brain, FileText, Sparkles, Loader2, Check, X, ChevronRight,
   RotateCcw, BookOpen, Clock, Target, Plus, Trash2, MessageSquare, Search,
-  Rocket, Calendar, Users, Award, Quote, Compass, Mail, Menu,
+  Rocket, Calendar, Users, Award, Quote, Compass, Mail, Menu, ImageIcon, Download, Upload,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
