@@ -81,12 +81,15 @@ const AITools = () => {
   const [numQ, setNumQ] = useState(5);
   const [sumInput, setSumInput] = useState("");
   const [nextgenInput, setNextgenInput] = useState("Become an AI-native product builder");
+  const [imagePrompt, setImagePrompt] = useState("A futuristic classroom with glowing holograms, cinematic lighting");
+  const [imageSource, setImageSource] = useState<string | null>(null);
 
   // outputs
   const [path, setPath] = useState<PathPlan | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [summary, setSummary] = useState("");
   const [nextgen, setNextgen] = useState<NextGen | null>(null);
+  const [images, setImages] = useState<string[]>([]);
 
   // quiz state
   const [answers, setAnswers] = useState<Record<number, number>>({});
