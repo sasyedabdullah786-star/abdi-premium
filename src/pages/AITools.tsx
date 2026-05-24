@@ -125,23 +125,36 @@ const AITools = () => {
   const run = async () => {
     setLoading(true); resetOutput();
     try {
-      const body: any = { mode, difficulty };
       let title = "";
       let inputs: any = {};
-      if (mode === "learning_path") { body.goal = goal; body.weeks = weeks; title = goal; inputs = { goal, weeks, difficulty }; }
-      else if (mode === "quiz") { body.input = quizInput; body.num_questions = numQ; title = quizInput.slice(0, 60); inputs = { quizInput, numQ, difficulty }; }
-      else if (mode === "summarize") { body.input = sumInput; title = sumInput.slice(0, 60); inputs = { sumInput }; }
-      else if (mode === "nextgen") { body.input = nextgenInput; title = nextgenInput; inputs = { nextgenInput, difficulty }; }
-
-      const { data, error } = await supabase.functions.invoke("ai-tools", { body });
-      if (error) throw error;
-      if ((data as any)?.error) throw new Error((data as any).error);
-
       let result: any;
-      if (mode === "summarize") { result = (data as any).content || ""; setSummary(result); }
-      else if (mode === "learning_path") { result = (data as any).data; setPath(result); }
-      else if (mode === "quiz") { result = (data as any).data; setQuiz(result); }
-      else if (mode === "nextgen") { result = (data as any).data; setNextgen(result); }
+
+      if (mode === "image") {
+        title = imagePrompt.slice(0, 60);
+        inputs = { imagePrompt, hasSource: !!imageSource };
+        const { data, error } = await supabase.functions.invoke("ai-image", {
+          body: { prompt: imagePrompt, source_image: imageSource || undefined },
+        });
+        if (error) throw error;
+        if ((data as any)?.error) throw new Error((data as any).error);
+        result = (data as any).images || [];
+        setImages(result);
+      } else {
+        const body: any = { mode, difficulty };
+        if (mode === "learning_path") { body.goal = goal; body.weeks = weeks; title = goal; inputs = { goal, weeks, difficulty }; }
+        else if (mode === "quiz") { body.input = quizInput; body.num_questions = numQ; title = quizInput.slice(0, 60); inputs = { quizInput, numQ, difficulty }; }
+        else if (mode === "summarize") { body.input = sumInput; title = sumInput.slice(0, 60); inputs = { sumInput }; }
+        else if (mode === "nextgen") { body.input = nextgenInput; title = nextgenInput; inputs = { nextgenInput, difficulty }; }
+
+        const { data, error } = await supabase.functions.invoke("ai-tools", { body });
+        if (error) throw error;
+        if ((data as any)?.error) throw new Error((data as any).error);
+
+        if (mode === "summarize") { result = (data as any).content || ""; setSummary(result); }
+        else if (mode === "learning_path") { result = (data as any).data; setPath(result); }
+        else if (mode === "quiz") { result = (data as any).data; setQuiz(result); }
+        else if (mode === "nextgen") { result = (data as any).data; setNextgen(result); }
+      }
 
       pushHistory({
         id: `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
