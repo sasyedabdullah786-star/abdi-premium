@@ -62,6 +62,7 @@ const TOOLS: { id: Mode; icon: any; title: string; desc: string; accent: string 
   { id: "quiz", icon: Brain, title: "Quiz Generator", desc: "Instant MCQ quizzes with explanations.", accent: "from-secondary/30 to-primary/30" },
   { id: "summarize", icon: FileText, title: "Notes Summarizer", desc: "TL;DR + key concepts + flashcards.", accent: "from-primary/30 to-emerald-500/30" },
   { id: "nextgen", icon: Rocket, title: "NextGen — Future-You", desc: "Time-machine simulation of who you become in 5 years.", accent: "from-fuchsia-500/30 to-primary/30" },
+  { id: "image", icon: ImageIcon, title: "Image Studio", desc: "Generate or edit images with AI (Nano Banana).", accent: "from-amber-500/30 to-fuchsia-500/30" },
 ];
 
 const AITools = () => {
