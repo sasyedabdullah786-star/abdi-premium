@@ -5,12 +5,12 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   Wand2, Map, Brain, FileText, Sparkles, Loader2, Check, X, ChevronRight,
   RotateCcw, BookOpen, Clock, Target, Plus, Trash2, MessageSquare, Search,
-  Rocket, Calendar, Users, Award, Quote, Compass, Mail, Menu,
+  Rocket, Calendar, Users, Award, Quote, Compass, Mail, Menu, ImageIcon, Download, Upload,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-type Mode = "learning_path" | "quiz" | "summarize" | "nextgen";
+type Mode = "learning_path" | "quiz" | "summarize" | "nextgen" | "image";
 
 interface PathWeek { week: number; focus: string; daily_minutes?: number; milestones: string[]; suggested_courses?: string[]; }
 interface PathPlan {
@@ -62,6 +62,7 @@ const TOOLS: { id: Mode; icon: any; title: string; desc: string; accent: string 
   { id: "quiz", icon: Brain, title: "Quiz Generator", desc: "Instant MCQ quizzes with explanations.", accent: "from-secondary/30 to-primary/30" },
   { id: "summarize", icon: FileText, title: "Notes Summarizer", desc: "TL;DR + key concepts + flashcards.", accent: "from-primary/30 to-emerald-500/30" },
   { id: "nextgen", icon: Rocket, title: "NextGen — Future-You", desc: "Time-machine simulation of who you become in 5 years.", accent: "from-fuchsia-500/30 to-primary/30" },
+  { id: "image", icon: ImageIcon, title: "Image Studio", desc: "Generate or edit images with AI (Nano Banana).", accent: "from-amber-500/30 to-fuchsia-500/30" },
 ];
 
 const AITools = () => {
@@ -80,12 +81,15 @@ const AITools = () => {
   const [numQ, setNumQ] = useState(5);
   const [sumInput, setSumInput] = useState("");
   const [nextgenInput, setNextgenInput] = useState("Become an AI-native product builder");
+  const [imagePrompt, setImagePrompt] = useState("A futuristic classroom with glowing holograms, cinematic lighting");
+  const [imageSource, setImageSource] = useState<string | null>(null);
 
   // outputs
   const [path, setPath] = useState<PathPlan | null>(null);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [summary, setSummary] = useState("");
   const [nextgen, setNextgen] = useState<NextGen | null>(null);
+  const [images, setImages] = useState<string[]>([]);
 
   // quiz state
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -109,7 +113,7 @@ const AITools = () => {
   }, [history, query]);
 
   const resetOutput = () => {
-    setPath(null); setQuiz(null); setSummary(""); setNextgen(null);
+    setPath(null); setQuiz(null); setSummary(""); setNextgen(null); setImages([]);
     setAnswers({}); setSubmitted(false);
   };
 
@@ -121,23 +125,36 @@ const AITools = () => {
   const run = async () => {
     setLoading(true); resetOutput();
     try {
-      const body: any = { mode, difficulty };
       let title = "";
       let inputs: any = {};
-      if (mode === "learning_path") { body.goal = goal; body.weeks = weeks; title = goal; inputs = { goal, weeks, difficulty }; }
-      else if (mode === "quiz") { body.input = quizInput; body.num_questions = numQ; title = quizInput.slice(0, 60); inputs = { quizInput, numQ, difficulty }; }
-      else if (mode === "summarize") { body.input = sumInput; title = sumInput.slice(0, 60); inputs = { sumInput }; }
-      else if (mode === "nextgen") { body.input = nextgenInput; title = nextgenInput; inputs = { nextgenInput, difficulty }; }
-
-      const { data, error } = await supabase.functions.invoke("ai-tools", { body });
-      if (error) throw error;
-      if ((data as any)?.error) throw new Error((data as any).error);
-
       let result: any;
-      if (mode === "summarize") { result = (data as any).content || ""; setSummary(result); }
-      else if (mode === "learning_path") { result = (data as any).data; setPath(result); }
-      else if (mode === "quiz") { result = (data as any).data; setQuiz(result); }
-      else if (mode === "nextgen") { result = (data as any).data; setNextgen(result); }
+
+      if (mode === "image") {
+        title = imagePrompt.slice(0, 60);
+        inputs = { imagePrompt, hasSource: !!imageSource };
+        const { data, error } = await supabase.functions.invoke("ai-image", {
+          body: { prompt: imagePrompt, source_image: imageSource || undefined },
+        });
+        if (error) throw error;
+        if ((data as any)?.error) throw new Error((data as any).error);
+        result = (data as any).images || [];
+        setImages(result);
+      } else {
+        const body: any = { mode, difficulty };
+        if (mode === "learning_path") { body.goal = goal; body.weeks = weeks; title = goal; inputs = { goal, weeks, difficulty }; }
+        else if (mode === "quiz") { body.input = quizInput; body.num_questions = numQ; title = quizInput.slice(0, 60); inputs = { quizInput, numQ, difficulty }; }
+        else if (mode === "summarize") { body.input = sumInput; title = sumInput.slice(0, 60); inputs = { sumInput }; }
+        else if (mode === "nextgen") { body.input = nextgenInput; title = nextgenInput; inputs = { nextgenInput, difficulty }; }
+
+        const { data, error } = await supabase.functions.invoke("ai-tools", { body });
+        if (error) throw error;
+        if ((data as any)?.error) throw new Error((data as any).error);
+
+        if (mode === "summarize") { result = (data as any).content || ""; setSummary(result); }
+        else if (mode === "learning_path") { result = (data as any).data; setPath(result); }
+        else if (mode === "quiz") { result = (data as any).data; setQuiz(result); }
+        else if (mode === "nextgen") { result = (data as any).data; setNextgen(result); }
+      }
 
       pushHistory({
         id: `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`,
@@ -157,6 +174,7 @@ const AITools = () => {
     else if (h.mode === "quiz") { setQuizInput(h.inputs.quizInput ?? ""); setNumQ(h.inputs.numQ ?? 5); setDifficulty(h.inputs.difficulty ?? "beginner"); setQuiz(h.result); }
     else if (h.mode === "summarize") { setSumInput(h.inputs.sumInput ?? ""); setSummary(h.result); }
     else if (h.mode === "nextgen") { setNextgenInput(h.inputs.nextgenInput ?? ""); setDifficulty(h.inputs.difficulty ?? "beginner"); setNextgen(h.result); }
+    else if (h.mode === "image") { setImagePrompt(h.inputs.imagePrompt ?? ""); setImages(Array.isArray(h.result) ? h.result : []); }
     setSidebarOpen(false);
   };
 
@@ -355,7 +373,38 @@ const AITools = () => {
                   </div>
                 )}
 
-                <button onClick={run} disabled={loading || (mode === "quiz" && !quizInput.trim()) || (mode === "summarize" && !sumInput.trim()) || (mode === "nextgen" && !nextgenInput.trim())} className="btn-primary w-full mt-4 disabled:opacity-50 inline-flex items-center justify-center gap-2">
+                {mode === "image" && (
+                  <div className="space-y-4">
+                    <div className="rounded-lg border border-amber-500/30 bg-amber-500/5 p-3">
+                      <div className="flex items-center gap-2 text-xs font-medium text-amber-300 mb-1"><ImageIcon className="w-3.5 h-3.5" /> Image Studio</div>
+                      <p className="text-[11px] text-muted-foreground">Generate or edit images with Gemini 2.5 Flash Image (Nano Banana). Optionally upload a source image to edit.</p>
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground block mb-1.5">Prompt</label>
+                      <textarea value={imagePrompt} onChange={(e) => setImagePrompt(e.target.value)} rows={5} placeholder="Describe the image, or describe edits to apply to your source image…" className="input-glass h-auto py-2.5 text-sm resize-none w-full" />
+                    </div>
+                    <div>
+                      <label className="text-xs font-medium text-muted-foreground block mb-1.5">Source image (optional — for editing)</label>
+                      {imageSource ? (
+                        <div className="relative rounded-lg overflow-hidden border border-border/40">
+                          <img src={imageSource} alt="source" className="w-full max-h-48 object-contain bg-muted/30" />
+                          <button onClick={() => setImageSource(null)} className="absolute top-1.5 right-1.5 p-1 rounded-md bg-background/80 border border-border/40 hover:bg-destructive/20 text-destructive"><X className="w-3.5 h-3.5" /></button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center justify-center gap-2 h-20 rounded-lg border border-dashed border-border/50 bg-muted/20 text-xs text-muted-foreground cursor-pointer hover:bg-muted/40 transition-colors">
+                          <Upload className="w-4 h-4" /> Click to upload an image to edit
+                          <input type="file" accept="image/*" className="hidden" onChange={(e) => {
+                            const f = e.target.files?.[0]; if (!f) return;
+                            if (f.size > 8 * 1024 * 1024) { toast({ title: "Image too large", description: "Max 8 MB.", variant: "destructive" }); return; }
+                            const r = new FileReader(); r.onload = () => setImageSource(r.result as string); r.readAsDataURL(f);
+                          }} />
+                        </label>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <button onClick={run} disabled={loading || (mode === "quiz" && !quizInput.trim()) || (mode === "summarize" && !sumInput.trim()) || (mode === "nextgen" && !nextgenInput.trim()) || (mode === "image" && !imagePrompt.trim())} className="btn-primary w-full mt-4 disabled:opacity-50 inline-flex items-center justify-center gap-2">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wand2 className="w-4 h-4" />}
                   {loading ? "Generating..." : "Generate"}
                 </button>
@@ -363,7 +412,7 @@ const AITools = () => {
 
               {/* Output */}
               <div className="lg:col-span-3 surface-elevated p-5 min-h-[400px] rounded-2xl border border-border/40 bg-card">
-                {!loading && !path && !quiz && !summary && !nextgen && (
+                {!loading && !path && !quiz && !summary && !nextgen && images.length === 0 && (
                   <div className="h-full flex flex-col items-center justify-center text-center text-muted-foreground py-16">
                     <div className="icon-glow w-12 h-12 mb-4 flex items-center justify-center rounded-xl bg-primary/10 border border-primary/30">
                       <modeMeta.icon className="w-5 h-5 text-primary" />
@@ -549,6 +598,24 @@ const AITools = () => {
                     </div>
 
                     <button onClick={resetOutput} className="btn-ghost text-xs inline-flex items-center gap-1"><RotateCcw className="w-3.5 h-3.5" /> Run another simulation</button>
+                  </div>
+                )}
+
+                {images.length > 0 && (
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="flex items-center gap-2"><ImageIcon className="w-4 h-4 text-amber-400" /><h2 className="text-lg font-semibold">Generated</h2></div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {images.map((src, i) => (
+                        <div key={i} className="relative group rounded-xl overflow-hidden border border-border/50 bg-muted/20">
+                          <img src={src} alt={`generated ${i + 1}`} className="w-full h-auto object-contain" />
+                          <a href={src} download={`abdi-image-${Date.now()}-${i + 1}.png`} className="absolute top-2 right-2 p-1.5 rounded-md bg-background/80 border border-border/40 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/20 text-primary" title="Download">
+                            <Download className="w-3.5 h-3.5" />
+                          </a>
+                          <button onClick={() => { setImageSource(src); toast({ title: "Loaded as source", description: "Edit prompt and generate again." }); }} className="absolute bottom-2 right-2 px-2 py-1 rounded-md text-[10px] bg-background/80 border border-border/40 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/20">Edit this</button>
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={resetOutput} className="btn-ghost text-xs inline-flex items-center gap-1"><RotateCcw className="w-3.5 h-3.5" /> Generate another</button>
                   </div>
                 )}
               </div>
