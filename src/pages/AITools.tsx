@@ -600,6 +600,24 @@ const AITools = () => {
                     <button onClick={resetOutput} className="btn-ghost text-xs inline-flex items-center gap-1"><RotateCcw className="w-3.5 h-3.5" /> Run another simulation</button>
                   </div>
                 )}
+
+                {images.length > 0 && (
+                  <div className="space-y-3 animate-fade-in">
+                    <div className="flex items-center gap-2"><ImageIcon className="w-4 h-4 text-amber-400" /><h2 className="text-lg font-semibold">Generated</h2></div>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {images.map((src, i) => (
+                        <div key={i} className="relative group rounded-xl overflow-hidden border border-border/50 bg-muted/20">
+                          <img src={src} alt={`generated ${i + 1}`} className="w-full h-auto object-contain" />
+                          <a href={src} download={`abdi-image-${Date.now()}-${i + 1}.png`} className="absolute top-2 right-2 p-1.5 rounded-md bg-background/80 border border-border/40 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/20 text-primary" title="Download">
+                            <Download className="w-3.5 h-3.5" />
+                          </a>
+                          <button onClick={() => { setImageSource(src); toast({ title: "Loaded as source", description: "Edit prompt and generate again." }); }} className="absolute bottom-2 right-2 px-2 py-1 rounded-md text-[10px] bg-background/80 border border-border/40 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-primary/20">Edit this</button>
+                        </div>
+                      ))}
+                    </div>
+                    <button onClick={resetOutput} className="btn-ghost text-xs inline-flex items-center gap-1"><RotateCcw className="w-3.5 h-3.5" /> Generate another</button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
