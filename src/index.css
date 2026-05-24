@@ -5,117 +5,118 @@
 @tailwind utilities;
 
 /* ============================================
-   ABD"I — Linear-inspired Design System
-   Mono-accent: Electric Indigo (#6366F1)
+   ABD"I — Monochrome Design System
+   Sourced from the logo: pure black, pure white, neutral grays.
    ============================================ */
 
 @layer base {
   :root {
-    /* Surfaces — near-black, ultra-clean */
-    --background: 240 10% 4%;
+    /* Surfaces — true black, paper white */
+    --background: 0 0% 3%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 6%;
+    --card: 0 0% 6%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 7%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 98%;
 
-    /* Mono accent: Electric Indigo */
-    --primary: 239 84% 67%;            /* #6366F1 */
-    --primary-foreground: 0 0% 100%;
-    --primary-soft: 250 95% 76%;       /* #A78BFA */
+    /* Mono accent: pure white on black */
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 6%;
+    --primary-soft: 0 0% 80%;
 
-    --secondary: 240 6% 12%;
+    --secondary: 0 0% 12%;
     --secondary-foreground: 0 0% 98%;
 
-    --accent: 239 84% 67%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 6%;
 
-    --muted: 240 6% 10%;
-    --muted-foreground: 240 5% 65%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 60%;
 
     --destructive: 0 72% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --success: 152 76% 50%;
-    --success-foreground: 0 0% 100%;
-    --warning: 38 92% 60%;
-    --warning-foreground: 240 10% 4%;
+    --success: 0 0% 90%;
+    --success-foreground: 0 0% 6%;
+    --warning: 0 0% 80%;
+    --warning-foreground: 0 0% 6%;
 
-    --border: 240 6% 14%;
-    --input: 240 6% 12%;
-    --ring: 239 84% 67%;
+    --border: 0 0% 16%;
+    --input: 0 0% 12%;
+    --ring: 0 0% 80%;
 
     --radius: 0.625rem;
 
-    /* Glass + glow */
-    --glass-bg: 240 10% 6%;
-    --glass-border: 240 6% 16%;
+    /* Glass + glow (neutral) */
+    --glass-bg: 0 0% 6%;
+    --glass-border: 0 0% 18%;
     --glass-highlight: 0 0% 100%;
-    --glow-primary: 239 84% 67%;
-    --glow-secondary: 250 95% 76%;
-    --glow-accent: 239 84% 67%;
+    --glow-primary: 0 0% 100%;
+    --glow-secondary: 0 0% 70%;
+    --glow-accent: 0 0% 90%;
 
     /* Sidebar */
-    --sidebar-background: 240 10% 5%;
+    --sidebar-background: 0 0% 4%;
     --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 239 84% 67%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 6% 10%;
+    --sidebar-primary: 0 0% 98%;
+    --sidebar-primary-foreground: 0 0% 6%;
+    --sidebar-accent: 0 0% 10%;
     --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 240 6% 14%;
-    --sidebar-ring: 239 84% 67%;
+    --sidebar-border: 0 0% 16%;
+    --sidebar-ring: 0 0% 80%;
 
-    /* Charts */
-    --chart-1: 239 84% 67%;
-    --chart-2: 250 95% 76%;
-    --chart-3: 152 76% 50%;
-    --chart-4: 38 92% 60%;
-    --chart-5: 0 72% 60%;
+    /* Charts — grayscale ramp */
+    --chart-1: 0 0% 98%;
+    --chart-2: 0 0% 75%;
+    --chart-3: 0 0% 55%;
+    --chart-4: 0 0% 35%;
+    --chart-5: 0 0% 20%;
 
-    /* Semantic gradients */
-    --gradient-start: 239 84% 67%;
-    --gradient-mid: 245 90% 70%;
-    --gradient-end: 250 95% 76%;
+    /* Semantic gradients (white → gray) */
+    --gradient-start: 0 0% 100%;
+    --gradient-mid: 0 0% 80%;
+    --gradient-end: 0 0% 55%;
   }
 
   .light {
     --background: 0 0% 100%;
-    --foreground: 240 10% 8%;
+    --foreground: 0 0% 6%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 8%;
+    --card-foreground: 0 0% 6%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 8%;
-    --primary: 239 84% 60%;
+    --popover-foreground: 0 0% 6%;
+    --primary: 0 0% 6%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 250 95% 65%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 10% 8%;
-    --accent: 239 84% 60%;
+    --primary-soft: 0 0% 25%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 6%;
+    --accent: 0 0% 10%;
     --accent-foreground: 0 0% 100%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --success: 152 76% 40%;
-    --warning: 38 92% 50%;
-    --border: 240 6% 90%;
-    --input: 240 6% 94%;
-    --ring: 239 84% 60%;
+    --success: 0 0% 10%;
+    --warning: 0 0% 30%;
+    --border: 0 0% 90%;
+    --input: 0 0% 94%;
+    --ring: 0 0% 20%;
     --glass-bg: 0 0% 100%;
-    --glass-border: 240 6% 90%;
-    --glow-primary: 239 84% 60%;
-    --glow-secondary: 250 95% 65%;
+    --glass-border: 0 0% 90%;
+    --glow-primary: 0 0% 0%;
+    --glow-secondary: 0 0% 30%;
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 240 10% 8%;
-    --sidebar-primary: 239 84% 60%;
+    --sidebar-foreground: 0 0% 6%;
+    --sidebar-primary: 0 0% 6%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 5% 96%;
-    --sidebar-accent-foreground: 240 10% 8%;
-    --sidebar-border: 240 6% 90%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 6%;
+    --sidebar-border: 0 0% 90%;
   }
 }
+
 
 @layer base {
   * { @apply border-border; }
