@@ -321,7 +321,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   return (
     <div className={containerClasses}>
       {/* LEFT: Chat */}
-      <div className="flex flex-col flex-1 min-w-0" style={{ width: openArtifact ? '44%' : '100%' }}>
+      <div className={`flex flex-col flex-1 min-w-0 ${openArtifact ? 'hidden md:flex md:w-[44%] md:flex-none' : 'w-full'}`}>
         {/* Header */}
         <div className="flex items-center justify-between px-3 py-2.5 border-b border-border/30 bg-gradient-to-r from-primary/10 to-secondary/10 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
@@ -439,7 +439,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
 
       {/* RIGHT: Artifact pane */}
       {openArtifact && (
-        <div className="flex-1 min-w-0 animate-fade-in">
+        <div className="flex-1 min-w-0 w-full animate-fade-in">
           <ArtifactPane artifact={openArtifact} onClose={() => setOpenArtifact(null)} onPublish={() => setPublishOpen(true)} />
         </div>
       )}
