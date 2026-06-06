@@ -1,6 +1,7 @@
 import { Save, Palette } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useToast } from "@/hooks/use-toast";
+import MediaUpload from "@/components/MediaUpload";
 
 const FONT_OPTIONS = [
   "Inter", "Poppins", "Roboto", "Open Sans", "Lato", "Montserrat", 
