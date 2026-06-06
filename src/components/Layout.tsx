@@ -240,9 +240,13 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
         <div className="container mx-auto px-4 py-10">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-primary-foreground" />
-              </div>
+              {settings.logo_url ? (
+                <img src={settings.logo_url} alt="Logo" className="w-7 h-7 rounded-md object-contain bg-background" />
+              ) : (
+                <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-primary-foreground" />
+                </div>
+              )}
               <span className="font-semibold text-sm">ABD"I</span>
             </Link>
             <div className="flex items-center gap-5 text-xs">
