@@ -78,9 +78,13 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
                 </Link>
               )}
               <Link to="/" className="flex items-center gap-2 group">
-                <div className="relative w-7 h-7 rounded-md bg-primary flex items-center justify-center shadow-sm">
-                  <Sparkles className="w-4 h-4 text-primary-foreground" />
-                </div>
+                {settings.logo_url ? (
+                  <img src={settings.logo_url} alt="Logo" className="w-7 h-7 rounded-md object-contain bg-background" />
+                ) : (
+                  <div className="relative w-7 h-7 rounded-md bg-primary flex items-center justify-center shadow-sm">
+                    <Sparkles className="w-4 h-4 text-primary-foreground" />
+                  </div>
+                )}
                 <span className="font-semibold text-[15px] tracking-tight hidden sm:block">
                   ABD<span className="text-muted-foreground">"</span>I
                 </span>
