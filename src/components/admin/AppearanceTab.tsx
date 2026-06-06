@@ -96,17 +96,15 @@ const AppearanceTab = () => {
       <div className="glass-card p-6 space-y-4">
         <h3 className="font-medium">Branding</h3>
         <div>
-          <label className="block text-sm font-medium mb-2">Logo URL</label>
-          <input 
-            type="text" 
-            value={settings.logo_url || ""} 
-            onChange={(e) => updateSettings({ logo_url: e.target.value })} 
-            className="input-glass" 
-            placeholder="https://example.com/logo.png"
+          <label className="block text-sm font-medium mb-2">Logo</label>
+          <p className="text-xs text-muted-foreground mb-2">Upload directly — applied to header, footer & every logo across the site.</p>
+          <MediaUpload
+            value={settings.logo_url || ""}
+            onChange={(url) => updateSettings({ logo_url: url })}
+            kind="image"
+            folder="branding"
+            allowUrl
           />
-          {settings.logo_url && (
-            <img src={settings.logo_url} alt="Logo preview" className="mt-2 h-12 object-contain" />
-          )}
         </div>
         <div>
           <label className="block text-sm font-medium mb-2">Footer Text</label>
