@@ -249,7 +249,7 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
               )}
               <span className="font-semibold text-sm">ABD"I</span>
             </Link>
-            <div className="flex items-center gap-5 text-xs">
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
@@ -260,7 +260,8 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
                 </Link>
               ))}
             </div>
-            <p className="text-muted-foreground text-xs">{settings.footer_text}</p>
+            <p className="text-muted-foreground text-xs text-center">{settings.footer_text}</p>
+
           </div>
         </div>
       </footer>
