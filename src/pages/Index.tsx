@@ -86,8 +86,8 @@ const Index = () => {
       {settings.homepage_sections.announcements && activeAnnouncements.length > 0 && (
         <div className="bg-primary/10 border-b border-primary/20">
           <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-center gap-3 text-sm">
-              <Megaphone className="w-4 h-4 text-primary" />
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm text-center">
+              <Megaphone className="w-4 h-4 text-primary shrink-0" />
               <span className="font-medium text-primary">{activeAnnouncements[0].title}</span>
               {activeAnnouncements[0].content && (
                 <span className="text-muted-foreground">— {activeAnnouncements[0].content}</span>
@@ -96,6 +96,7 @@ const Index = () => {
           </div>
         </div>
       )}
+
 
       {/* Shayari motivational banner */}
       <div className="container mx-auto px-4 pt-6">
