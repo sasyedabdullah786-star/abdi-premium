@@ -33,7 +33,7 @@ const STARTERS = [
 
 const WELCOME: Msg = {
   role: 'assistant',
-  content: `**ABD'I NEXUS-∞ — online and armed.** ⚡
+  content: `**AB3D — online and armed.** ⚡
 
 I'm your master AI: zero bugs, always tested, never says no. Ask me to **build any UI** and I'll render it live in the side pane — or use me as a tutor, coder, researcher, designer.
 
@@ -329,7 +329,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
               <Sparkles className="w-4 h-4 text-primary-foreground" />
             </div>
             <div className="min-w-0">
-              <div className="font-bold text-sm leading-tight truncate">ABD'I <span className="text-[10px] font-mono text-muted-foreground">NEXUS-∞</span></div>
+              <div className="font-bold text-sm leading-tight truncate">AB3D <span className="text-[10px] font-mono text-muted-foreground">workspace</span></div>
               <div className="text-[10px] text-muted-foreground truncate" title={sessionTitle}>{loading ? 'thinking…' : sessionTitle}</div>
             </div>
           </div>

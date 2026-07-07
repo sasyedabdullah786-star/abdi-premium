@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ThemeProvider } from "@/hooks/useTheme";
 import CommandPalette from "@/components/CommandPalette";
 import AIAssistant, { AIAssistantButton } from "@/components/AIAssistant";
+import InstallApp from "@/components/InstallApp";
 import ParticleBackground from "@/components/ParticleBackground";
 import AnimatedCursor from "@/components/AnimatedCursor";
 import PageLoader from "@/components/PageLoader";
@@ -93,6 +94,7 @@ const AppShell = () => {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onOpenChat={() => setChatOpen(true)} />
       {!onNexus && <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />}
       {!onNexus && !chatOpen && <AIAssistantButton onClick={() => setChatOpen(true)} />}
+      <InstallApp />
       <VoiceButton />
     </>
   );
