@@ -1,0 +1,16 @@
+{
+  "name": "ABD\"I Premium",
+  "short_name": "ABD\"I",
+  "description": "ABD\"I — courses, AI tools, and AB3D workspace.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "icons": [
+    { "src": "/app-icon.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
+    { "src": "/app-icon.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" },
+    { "src": "/app-icon.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }
+  ]
+}
