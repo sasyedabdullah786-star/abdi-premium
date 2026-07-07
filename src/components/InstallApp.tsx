@@ -47,7 +47,7 @@ const InstallApp = () => {
       <button
         onClick={() => setOpen(true)}
         title="Install app"
-        className="fixed bottom-20 right-5 z-40 h-10 px-3 rounded-full bg-background/80 backdrop-blur border border-border/50 shadow-lg flex items-center gap-2 text-xs font-medium hover:bg-muted/50 transition-all"
+        className="fixed bottom-40 right-5 z-40 h-9 px-3 rounded-full bg-background/80 backdrop-blur border border-border/50 shadow-lg flex items-center gap-1.5 text-xs font-medium hover:bg-muted/50 transition-all"
       >
         <Download className="w-3.5 h-3.5" /> Install
       </button>
