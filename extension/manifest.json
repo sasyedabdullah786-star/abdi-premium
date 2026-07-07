@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "ABD\"I Premium",
+  "version": "1.0.0",
+  "description": "Quick launcher for ABD\"I Premium — courses, AI Tools, and AB3D workspace.",
+  "action": {
+    "default_title": "Open ABD\"I",
+    "default_icon": "icon.jpg"
+  },
+  "background": { "service_worker": "background.js" },
+  "icons": { "48": "icon.jpg", "128": "icon.jpg" }
+}
