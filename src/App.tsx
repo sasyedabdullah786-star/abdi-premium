@@ -94,6 +94,7 @@ const AppShell = () => {
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onOpenChat={() => setChatOpen(true)} />
       {!onNexus && <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />}
       {!onNexus && !chatOpen && <AIAssistantButton onClick={() => setChatOpen(true)} />}
+      <InstallApp />
       <VoiceButton />
     </>
   );
