@@ -93,7 +93,7 @@ const Nexus = () => {
             <Sparkles className="w-4 h-4 text-primary-foreground" />
           </div>
           <div>
-            <div className="text-xs font-bold leading-tight">ABD'I Nexus</div>
+            <div className="text-xs font-bold leading-tight">AB3D</div>
             <div className="text-[9px] font-mono text-muted-foreground">chat history</div>
           </div>
         </div>
@@ -180,7 +180,7 @@ const Nexus = () => {
                 <Sparkles className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
-                <div className="text-sm font-semibold leading-tight">ABD'I Nexus</div>
+                <div className="text-sm font-semibold leading-tight">AB3D</div>
                 <div className="text-[11px] text-muted-foreground font-mono">save · resume · build with AI</div>
               </div>
             </div>

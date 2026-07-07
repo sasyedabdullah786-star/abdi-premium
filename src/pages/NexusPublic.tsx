@@ -30,7 +30,7 @@ const NexusPublic = () => {
       if (data) {
         // best-effort view count bump
         supabase.from("nexus_published").update({ view_count: ((data as any).view_count || 0) + 1 }).eq("id", (data as any).id).then(() => {});
-        document.title = `${(data as any).title} — ABD'I Nexus`;
+        document.title = `${(data as any).title} — AB3D`;
       }
     })();
   }, [slug]);
@@ -78,7 +78,7 @@ const NexusPublic = () => {
             </div>
             <div className="min-w-0">
               <div className="text-sm font-semibold truncate">{item.title}</div>
-              <div className="text-[11px] text-muted-foreground font-mono">ABD'I Nexus · {item.view_count.toLocaleString()} views</div>
+              <div className="text-[11px] text-muted-foreground font-mono">AB3D · {item.view_count.toLocaleString()} views</div>
             </div>
           </div>
           <div className="flex items-center gap-2">
