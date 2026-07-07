@@ -86,8 +86,8 @@ const Index = () => {
       {settings.homepage_sections.announcements && activeAnnouncements.length > 0 && (
         <div className="bg-primary/10 border-b border-primary/20">
           <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-center gap-3 text-sm">
-              <Megaphone className="w-4 h-4 text-primary" />
+            <div className="flex flex-wrap items-center justify-center gap-2 text-xs sm:text-sm text-center">
+              <Megaphone className="w-4 h-4 text-primary shrink-0" />
               <span className="font-medium text-primary">{activeAnnouncements[0].title}</span>
               {activeAnnouncements[0].content && (
                 <span className="text-muted-foreground">— {activeAnnouncements[0].content}</span>
@@ -96,6 +96,7 @@ const Index = () => {
           </div>
         </div>
       )}
+
 
       {/* Shayari motivational banner */}
       <div className="container mx-auto px-4 pt-6">
@@ -113,14 +114,15 @@ const Index = () => {
             </div>
 
             {/* Title */}
-            <h1 className="font-display text-4xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in-up delay-100">
+            <h1 className="font-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 animate-fade-in-up delay-100 break-words">
               <span className="gradient-text">{settings.hero_title}</span>
             </h1>
 
             {/* Subtitle */}
-            <p className="text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-200">
+            <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto animate-fade-in-up delay-200 px-2">
               {settings.hero_subtitle}
             </p>
+
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in-up delay-300">
