@@ -138,6 +138,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [openArtifact, setOpenArtifact] = useState<string | null>(null);
   const [publishOpen, setPublishOpen] = useState(false);
+  const [modelKey, setModelKey] = useState<string>(() => localStorage.getItem('ab3d-model') || 'ab3d-default');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
@@ -246,7 +247,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: next.slice(-20).map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({ model: modelKey, messages: next.slice(-20).map(m => ({ role: m.role, content: m.content })) }),
       });
 
       if (resp.status === 429) { toast({ title: 'Slow down', description: 'Try again in a moment.', variant: 'destructive' }); setLoading(false); return; }
@@ -350,8 +351,21 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
           </div>
         </div>
 
-        {/* Tool chips */}
-        <div className="flex gap-1.5 px-3 py-2 border-b border-border/20 overflow-x-auto shrink-0 scrollbar-thin">
+        {/* Model + tool chips */}
+        <div className="flex gap-1.5 px-3 py-2 border-b border-border/20 overflow-x-auto shrink-0 scrollbar-thin items-center">
+          <select
+            value={modelKey}
+            onChange={(e) => { setModelKey(e.target.value); localStorage.setItem('ab3d-model', e.target.value); }}
+            className="text-[11px] font-sans-ui bg-card border border-border rounded-sm px-2 py-1 focus:outline-none focus:border-primary"
+            title="Choose AI model"
+          >
+            <option value="ab3d-default">AB3D · Default</option>
+            <option value="ab3d-fast">AB3D · Fast</option>
+            <option value="ab3d-reasoning">AB3D · Reasoning</option>
+            <option value="claude-sonnet">Claude Sonnet 4.5</option>
+            <option value="claude-haiku">Claude Haiku 4.5</option>
+          </select>
+          <div className="w-px h-5 bg-border/60 mx-1" />
           {TOOLS.map(t => (
             <button key={t.label} onClick={() => sendMessage(t.hint)} disabled={loading}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/30 hover:bg-primary/10 hover:text-primary border border-border/30 text-[11px] font-mono whitespace-nowrap transition-colors disabled:opacity-50">
