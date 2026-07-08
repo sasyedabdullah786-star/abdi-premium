@@ -247,7 +247,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: next.slice(-20).map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({ model: modelKey, messages: next.slice(-20).map(m => ({ role: m.role, content: m.content })) }),
       });
 
       if (resp.status === 429) { toast({ title: 'Slow down', description: 'Try again in a moment.', variant: 'destructive' }); setLoading(false); return; }
