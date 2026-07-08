@@ -85,9 +85,7 @@ const AppShell = () => {
 
   return (
     <>
-      <ParticleBackground />
       <PageLoader />
-      <AnimatedCursor />
       <AnimatedRoutes />
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onOpenChat={() => setChatOpen(true)} />
       {!onNexus && <AIAssistant open={chatOpen} onOpenChange={setChatOpen} />}
