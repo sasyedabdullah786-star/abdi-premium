@@ -138,6 +138,7 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
   const [openArtifact, setOpenArtifact] = useState<string | null>(null);
   const [publishOpen, setPublishOpen] = useState(false);
+  const [modelKey, setModelKey] = useState<string>(() => localStorage.getItem('ab3d-model') || 'ab3d-default');
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
