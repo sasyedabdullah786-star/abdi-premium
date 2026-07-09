@@ -72,6 +72,29 @@ const AppearanceTab = () => {
       </div>
 
       <div className="glass-card p-6 space-y-4">
+        <h3 className="font-medium flex items-center gap-2"><Sparkles className="w-4 h-4" /> Theme Presets</h3>
+        <p className="text-xs text-muted-foreground">One-click apply a curated palette to background, surface, text, primary, accent and border.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {PRESETS.map((preset) => (
+            <button
+              key={preset.name}
+              type="button"
+              onClick={() => applyPreset(preset)}
+              className="text-left p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                {preset.swatches.map((s, i) => (
+                  <span key={i} className="w-6 h-6 rounded-full border border-border" style={{ background: s }} />
+                ))}
+              </div>
+              <div className="font-medium text-sm">{preset.name}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{preset.description}</div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="glass-card p-6 space-y-4">
         <h3 className="font-medium flex items-center gap-2"><Palette className="w-4 h-4" /> Colors (HSL Format)</h3>
         <p className="text-xs text-muted-foreground">Use HSL values like "190 100% 50%" for colors</p>
         
