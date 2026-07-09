@@ -47,7 +47,7 @@ const AppearanceTab = () => {
   const { toast } = useToast();
 
   const applyPreset = (preset: Preset) => {
-    updateSettings(preset.values as any);
+    updateSettings(preset.values);
     toast({ title: `Applied "${preset.name}" theme` });
   };
 
