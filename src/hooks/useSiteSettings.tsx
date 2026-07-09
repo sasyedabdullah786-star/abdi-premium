@@ -145,7 +145,23 @@ export const useSiteSettings = () => {
     const root = document.documentElement;
     if (s.primary_color) root.style.setProperty('--primary', s.primary_color);
     if (s.background_color) root.style.setProperty('--background', s.background_color);
-    if (s.card_color) root.style.setProperty('--card', s.card_color);
+    if (s.card_color) {
+      root.style.setProperty('--card', s.card_color);
+      root.style.setProperty('--popover', s.card_color);
+    }
+    if (s.text_color) {
+      root.style.setProperty('--foreground', s.text_color);
+      root.style.setProperty('--card-foreground', s.text_color);
+      root.style.setProperty('--popover-foreground', s.text_color);
+    }
+    if (s.accent_color) {
+      root.style.setProperty('--accent', s.accent_color);
+      root.style.setProperty('--ring', s.primary_color || s.accent_color);
+    }
+    if (s.border_color) {
+      root.style.setProperty('--border', s.border_color);
+      root.style.setProperty('--input', s.border_color);
+    }
     if (s.font_family) {
       document.body.style.fontFamily = `'${s.font_family}', sans-serif`;
     }
