@@ -8,26 +8,34 @@ const FONT_OPTIONS = [
   "Source Sans Pro", "Nunito", "Raleway", "Ubuntu"
 ];
 
+type PresetValues = {
+  background_color: string;
+  card_color: string;
+  text_color: string;
+  primary_color: string;
+  accent_color: string;
+  border_color: string;
+};
+
 type Preset = {
   name: string;
   description: string;
   swatches: string[];
-  values: {
-    background_color: string;
-    card_color: string;
-    primary_color: string;
-  };
+  values: PresetValues;
 };
 
 const PRESETS: Preset[] = [
   {
     name: "Editorial Cream",
-    description: "Warm paper background, deep navy ink, amber accent",
+    description: "Warm paper, deep navy ink, amber accent",
     swatches: ["hsl(40 20% 96%)", "hsl(220 40% 22%)", "hsl(35 80% 55%)"],
     values: {
       background_color: "40 20% 96%",
       card_color: "0 0% 100%",
+      text_color: "220 15% 12%",
       primary_color: "220 40% 22%",
+      accent_color: "35 80% 55%",
+      border_color: "30 12% 86%",
     },
   },
   {
@@ -37,7 +45,10 @@ const PRESETS: Preset[] = [
     values: {
       background_color: "42 60% 97%",
       card_color: "0 0% 100%",
+      text_color: "240 25% 12%",
       primary_color: "262 78% 55%",
+      accent_color: "340 82% 60%",
+      border_color: "42 25% 86%",
     },
   },
 ];
