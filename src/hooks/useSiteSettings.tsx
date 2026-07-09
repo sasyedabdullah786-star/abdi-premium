@@ -58,9 +58,12 @@ const defaultPageSettings: PageSettings = {
 
 const defaultSettings: SiteSettings = {
   id: '',
-  primary_color: '190 100% 50%',
-  background_color: '222 47% 6%',
-  card_color: '222 47% 8%',
+  primary_color: '262 78% 55%',
+  background_color: '42 60% 97%',
+  card_color: '0 0% 100%',
+  text_color: '240 25% 12%',
+  accent_color: '340 82% 60%',
+  border_color: '42 25% 86%',
   font_family: 'Inter',
   footer_text: '© 2024 ABD"I. All rights reserved.',
   hero_title: 'Welcome to ABD"I',
