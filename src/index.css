@@ -102,6 +102,9 @@
   * { @apply border-border; }
   html { scroll-behavior: smooth; }
   html, body { overflow-x: hidden; max-width: 100vw; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 
   body {
     @apply bg-background text-foreground antialiased;
