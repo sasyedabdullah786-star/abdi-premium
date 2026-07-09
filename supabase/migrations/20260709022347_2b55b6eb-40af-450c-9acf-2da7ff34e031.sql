@@ -1,0 +1,4 @@
+ALTER TABLE public.site_settings
+  ADD COLUMN IF NOT EXISTS text_color TEXT DEFAULT '240 25% 12%',
+  ADD COLUMN IF NOT EXISTS accent_color TEXT DEFAULT '340 82% 60%',
+  ADD COLUMN IF NOT EXISTS border_color TEXT DEFAULT '42 25% 86%';

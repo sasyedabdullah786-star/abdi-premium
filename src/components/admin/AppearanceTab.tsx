@@ -8,26 +8,34 @@ const FONT_OPTIONS = [
   "Source Sans Pro", "Nunito", "Raleway", "Ubuntu"
 ];
 
+type PresetValues = {
+  background_color: string;
+  card_color: string;
+  text_color: string;
+  primary_color: string;
+  accent_color: string;
+  border_color: string;
+};
+
 type Preset = {
   name: string;
   description: string;
   swatches: string[];
-  values: {
-    background_color: string;
-    card_color: string;
-    primary_color: string;
-  };
+  values: PresetValues;
 };
 
 const PRESETS: Preset[] = [
   {
     name: "Editorial Cream",
-    description: "Warm paper background, deep navy ink, amber accent",
+    description: "Warm paper, deep navy ink, amber accent",
     swatches: ["hsl(40 20% 96%)", "hsl(220 40% 22%)", "hsl(35 80% 55%)"],
     values: {
       background_color: "40 20% 96%",
       card_color: "0 0% 100%",
+      text_color: "220 15% 12%",
       primary_color: "220 40% 22%",
+      accent_color: "35 80% 55%",
+      border_color: "30 12% 86%",
     },
   },
   {
@@ -37,7 +45,10 @@ const PRESETS: Preset[] = [
     values: {
       background_color: "42 60% 97%",
       card_color: "0 0% 100%",
+      text_color: "240 25% 12%",
       primary_color: "262 78% 55%",
+      accent_color: "340 82% 60%",
+      border_color: "42 25% 86%",
     },
   },
 ];
@@ -87,59 +98,38 @@ const AppearanceTab = () => {
 
       <div className="glass-card p-6 space-y-4">
         <h3 className="font-medium flex items-center gap-2"><Palette className="w-4 h-4" /> Colors (HSL Format)</h3>
-        <p className="text-xs text-muted-foreground">Use HSL values like "190 100% 50%" for colors</p>
-        
+        <p className="text-xs text-muted-foreground">Use HSL triples like <code className="px-1 rounded bg-muted">220 40% 22%</code>. Changes apply live across the site.</p>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium mb-2">Primary Color</label>
-            <div className="flex gap-2">
-              <input 
-                type="text" 
-                value={settings.primary_color} 
-                onChange={(e) => updateSettings({ primary_color: e.target.value })} 
-                className="input-glass flex-1" 
-                placeholder="190 100% 50%" 
-              />
-              <div 
-                className="w-10 h-10 rounded-lg border border-border" 
-                style={{ backgroundColor: `hsl(${settings.primary_color})` }}
-              />
+          {([
+            { key: "background_color", label: "Background", hint: "40 20% 96%" },
+            { key: "card_color",       label: "Surface",    hint: "0 0% 100%" },
+            { key: "text_color",       label: "Text",       hint: "220 15% 12%" },
+            { key: "primary_color",    label: "Primary",    hint: "220 40% 22%" },
+            { key: "accent_color",     label: "Accent",     hint: "35 80% 55%" },
+            { key: "border_color",     label: "Border",     hint: "30 12% 86%" },
+          ] as const).map((f) => (
+            <div key={f.key}>
+              <label className="block text-sm font-medium mb-2">{f.label}</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={(settings as any)[f.key] ?? ""}
+                  onChange={(e) => updateSettings({ [f.key]: e.target.value } as any)}
+                  className="input-glass flex-1"
+                  placeholder={f.hint}
+                />
+                <div
+                  className="w-10 h-10 rounded-lg border border-border shrink-0"
+                  style={{ backgroundColor: `hsl(${(settings as any)[f.key] || f.hint})` }}
+                />
+              </div>
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Background Color</label>
-            <div className="flex gap-2">
-              <input 
-                type="text" 
-                value={settings.background_color} 
-                onChange={(e) => updateSettings({ background_color: e.target.value })} 
-                className="input-glass flex-1" 
-                placeholder="222 47% 11%"
-              />
-              <div 
-                className="w-10 h-10 rounded-lg border border-border" 
-                style={{ backgroundColor: `hsl(${settings.background_color})` }}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2">Card Color</label>
-            <div className="flex gap-2">
-              <input 
-                type="text" 
-                value={settings.card_color} 
-                onChange={(e) => updateSettings({ card_color: e.target.value })} 
-                className="input-glass flex-1" 
-                placeholder="217 33% 17%"
-              />
-              <div 
-                className="w-10 h-10 rounded-lg border border-border" 
-                style={{ backgroundColor: `hsl(${settings.card_color})` }}
-              />
-            </div>
-          </div>
+          ))}
         </div>
       </div>
+
+
 
       <div className="glass-card p-6 space-y-4">
         <h3 className="font-medium">Typography</h3>

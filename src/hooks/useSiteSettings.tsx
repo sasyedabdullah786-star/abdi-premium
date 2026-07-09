@@ -27,6 +27,9 @@ export interface SiteSettings {
   primary_color: string;
   background_color: string;
   card_color: string;
+  text_color: string;
+  accent_color: string;
+  border_color: string;
   font_family: string;
   footer_text: string;
   hero_title: string;
@@ -55,9 +58,12 @@ const defaultPageSettings: PageSettings = {
 
 const defaultSettings: SiteSettings = {
   id: '',
-  primary_color: '190 100% 50%',
-  background_color: '222 47% 6%',
-  card_color: '222 47% 8%',
+  primary_color: '262 78% 55%',
+  background_color: '42 60% 97%',
+  card_color: '0 0% 100%',
+  text_color: '240 25% 12%',
+  accent_color: '340 82% 60%',
+  border_color: '42 25% 86%',
   font_family: 'Inter',
   footer_text: '© 2024 ABD"I. All rights reserved.',
   hero_title: 'Welcome to ABD"I',
@@ -139,7 +145,23 @@ export const useSiteSettings = () => {
     const root = document.documentElement;
     if (s.primary_color) root.style.setProperty('--primary', s.primary_color);
     if (s.background_color) root.style.setProperty('--background', s.background_color);
-    if (s.card_color) root.style.setProperty('--card', s.card_color);
+    if (s.card_color) {
+      root.style.setProperty('--card', s.card_color);
+      root.style.setProperty('--popover', s.card_color);
+    }
+    if (s.text_color) {
+      root.style.setProperty('--foreground', s.text_color);
+      root.style.setProperty('--card-foreground', s.text_color);
+      root.style.setProperty('--popover-foreground', s.text_color);
+    }
+    if (s.accent_color) {
+      root.style.setProperty('--accent', s.accent_color);
+      root.style.setProperty('--ring', s.primary_color || s.accent_color);
+    }
+    if (s.border_color) {
+      root.style.setProperty('--border', s.border_color);
+      root.style.setProperty('--input', s.border_color);
+    }
     if (s.font_family) {
       document.body.style.fontFamily = `'${s.font_family}', sans-serif`;
     }

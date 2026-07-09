@@ -689,7 +689,9 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          accent_color: string | null
           background_color: string | null
+          border_color: string | null
           card_color: string | null
           created_at: string | null
           font_family: string | null
@@ -711,10 +713,13 @@ export type Database = {
           seo_description: string | null
           seo_keywords: string | null
           seo_title: string | null
+          text_color: string | null
           updated_at: string | null
         }
         Insert: {
+          accent_color?: string | null
           background_color?: string | null
+          border_color?: string | null
           card_color?: string | null
           created_at?: string | null
           font_family?: string | null
@@ -736,10 +741,13 @@ export type Database = {
           seo_description?: string | null
           seo_keywords?: string | null
           seo_title?: string | null
+          text_color?: string | null
           updated_at?: string | null
         }
         Update: {
+          accent_color?: string | null
           background_color?: string | null
+          border_color?: string | null
           card_color?: string | null
           created_at?: string | null
           font_family?: string | null
@@ -761,6 +769,7 @@ export type Database = {
           seo_description?: string | null
           seo_keywords?: string | null
           seo_title?: string | null
+          text_color?: string | null
           updated_at?: string | null
         }
         Relationships: []
