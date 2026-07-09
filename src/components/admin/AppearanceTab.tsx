@@ -128,7 +128,8 @@ const AppearanceTab = () => {
           ))}
         </div>
       </div>
-      </div>
+
+
 
       <div className="glass-card p-6 space-y-4">
         <h3 className="font-medium">Typography</h3>
