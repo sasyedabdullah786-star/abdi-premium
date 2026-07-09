@@ -1,4 +1,4 @@
-import { Save, Palette } from "lucide-react";
+import { Save, Palette, Sparkles } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useToast } from "@/hooks/use-toast";
 import MediaUpload from "@/components/MediaUpload";
@@ -8,9 +8,48 @@ const FONT_OPTIONS = [
   "Source Sans Pro", "Nunito", "Raleway", "Ubuntu"
 ];
 
+type Preset = {
+  name: string;
+  description: string;
+  swatches: string[];
+  values: {
+    background_color: string;
+    card_color: string;
+    primary_color: string;
+  };
+};
+
+const PRESETS: Preset[] = [
+  {
+    name: "Editorial Cream",
+    description: "Warm paper background, deep navy ink, amber accent",
+    swatches: ["hsl(40 20% 96%)", "hsl(220 40% 22%)", "hsl(35 80% 55%)"],
+    values: {
+      background_color: "40 20% 96%",
+      card_color: "0 0% 100%",
+      primary_color: "220 40% 22%",
+    },
+  },
+  {
+    name: "Vibrant Violet",
+    description: "Cream paper with electric violet accents",
+    swatches: ["hsl(42 60% 97%)", "hsl(262 78% 55%)", "hsl(340 82% 60%)"],
+    values: {
+      background_color: "42 60% 97%",
+      card_color: "0 0% 100%",
+      primary_color: "262 78% 55%",
+    },
+  },
+];
+
 const AppearanceTab = () => {
   const { settings, updateSettings } = useSiteSettings();
   const { toast } = useToast();
+
+  const applyPreset = (preset: Preset) => {
+    updateSettings(preset.values);
+    toast({ title: `Applied "${preset.name}" theme` });
+  };
 
   const handleSave = () => {
     toast({ title: "Appearance settings saved!" });
@@ -21,6 +60,29 @@ const AppearanceTab = () => {
       <div>
         <h2 className="font-display text-2xl font-bold">Appearance</h2>
         <p className="text-muted-foreground">Customize colors, fonts, and visual style</p>
+      </div>
+
+      <div className="glass-card p-6 space-y-4">
+        <h3 className="font-medium flex items-center gap-2"><Sparkles className="w-4 h-4" /> Theme Presets</h3>
+        <p className="text-xs text-muted-foreground">One-click apply a curated palette to background, surface, text, primary, accent and border.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {PRESETS.map((preset) => (
+            <button
+              key={preset.name}
+              type="button"
+              onClick={() => applyPreset(preset)}
+              className="text-left p-4 rounded-lg border border-border hover:border-primary/50 hover:bg-muted/50 transition-all"
+            >
+              <div className="flex items-center gap-2 mb-2">
+                {preset.swatches.map((s, i) => (
+                  <span key={i} className="w-6 h-6 rounded-full border border-border" style={{ background: s }} />
+                ))}
+              </div>
+              <div className="font-medium text-sm">{preset.name}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{preset.description}</div>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="glass-card p-6 space-y-4">
