@@ -27,6 +27,9 @@ export interface SiteSettings {
   primary_color: string;
   background_color: string;
   card_color: string;
+  text_color: string;
+  accent_color: string;
+  border_color: string;
   font_family: string;
   footer_text: string;
   hero_title: string;
