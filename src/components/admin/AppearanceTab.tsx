@@ -15,10 +15,7 @@ type Preset = {
   values: {
     background_color: string;
     card_color: string;
-    foreground_color?: string;
     primary_color: string;
-    accent_color?: string;
-    border_color?: string;
   };
 };
 
@@ -30,23 +27,17 @@ const PRESETS: Preset[] = [
     values: {
       background_color: "40 20% 96%",
       card_color: "0 0% 100%",
-      foreground_color: "220 15% 12%",
       primary_color: "220 40% 22%",
-      accent_color: "35 80% 55%",
-      border_color: "30 12% 86%",
     },
   },
   {
     name: "Vibrant Violet",
-    description: "Cream paper with electric violet + magenta accents",
+    description: "Cream paper with electric violet accents",
     swatches: ["hsl(42 60% 97%)", "hsl(262 78% 55%)", "hsl(340 82% 60%)"],
     values: {
       background_color: "42 60% 97%",
       card_color: "0 0% 100%",
-      foreground_color: "240 25% 12%",
       primary_color: "262 78% 55%",
-      accent_color: "340 82% 60%",
-      border_color: "42 25% 86%",
     },
   },
 ];
