@@ -119,9 +119,9 @@ const BannersTab = () => {
           <div>
             <label className="text-xs font-medium mb-1 block">Banner Image (optional)</label>
             <MediaUpload
-              accept="image/*"
-              currentUrl={editing.image_url || undefined}
-              onUpload={(url) => setEditing({ ...editing, image_url: url })}
+              kind="image"
+              value={editing.image_url || ""}
+              onChange={(url) => setEditing({ ...editing, image_url: url })}
             />
           </div>
 
