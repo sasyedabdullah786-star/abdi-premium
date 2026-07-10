@@ -15,6 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import BannerStrip from "@/components/BannerStrip";
 
 interface LayoutProps {
   children: ReactNode;
@@ -57,6 +58,7 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
 
   return (
     <div className="min-h-screen bg-background relative">
+      <BannerStrip />
       {showNav && (
         <nav
           className={`sticky top-0 z-50 transition-all duration-200 ${

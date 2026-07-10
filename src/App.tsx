@@ -28,6 +28,7 @@ import StudyCompanion from "./pages/StudyCompanion";
 import Nexus from "./pages/Nexus";
 import NexusPublic from "./pages/NexusPublic";
 import VoiceButton from "./components/VoiceButton";
+import PageGate from "./components/PageGate";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const AnimatedRoutes = () => {
   const location = useLocation();
   return (
     <div key={location.pathname} className="animate-fade-in">
+      <PageGate>
       <Routes location={location}>
         <Route path="/" element={<Index />} />
         <Route path="/institution" element={<Institution />} />
@@ -56,6 +58,7 @@ const AnimatedRoutes = () => {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
+      </PageGate>
     </div>
   );
 };
