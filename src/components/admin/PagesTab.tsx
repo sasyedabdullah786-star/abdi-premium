@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, EyeOff, Clock, FileText, BookOpen, Mail, Building2, Save } from "lucide-react";
+import { Eye, EyeOff, Clock, FileText, BookOpen, Mail, Building2, Save, Sparkles, Brain, Zap, Trophy, User, Boxes } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,7 +53,13 @@ const PagesTab = () => {
     { key: 'courses' as keyof PageSettings, label: 'Courses', icon: BookOpen, path: '/courses', description: 'Browse and explore all courses' },
     { key: 'blog' as keyof PageSettings, label: 'Blog', icon: FileText, path: '/blog', description: 'Blog posts and articles' },
     { key: 'contact' as keyof PageSettings, label: 'Contact', icon: Mail, path: '/contact', description: 'Contact information and form' },
-    { key: 'institution' as keyof PageSettings, label: 'About Us', icon: Building2, path: '/institution', description: 'Institution information and mission' }
+    { key: 'institution' as keyof PageSettings, label: 'About Us', icon: Building2, path: '/institution', description: 'Institution information and mission' },
+    { key: 'hub' as keyof PageSettings, label: 'Holographic Hub', icon: Boxes, path: '/hub', description: '3D immersive dashboard' },
+    { key: 'companion' as keyof PageSettings, label: 'Study Companion', icon: Brain, path: '/companion', description: 'AI adaptive quiz & flashcards' },
+    { key: 'nexus' as keyof PageSettings, label: 'AB3D Nexus', icon: Sparkles, path: '/nexus', description: 'AI workspace & project builder' },
+    { key: 'ai_tools' as keyof PageSettings, label: 'AI Tools', icon: Zap, path: '/ai-tools', description: 'Path generator, quiz, image studio' },
+    { key: 'leaderboard' as keyof PageSettings, label: 'Leaderboard', icon: Trophy, path: '/leaderboard', description: 'Top learners ranking' },
+    { key: 'profile' as keyof PageSettings, label: 'Profile', icon: User, path: '/profile', description: 'Student profile & progress' }
   ];
 
   const handleToggleEnabled = async (key: keyof PageSettings) => {
