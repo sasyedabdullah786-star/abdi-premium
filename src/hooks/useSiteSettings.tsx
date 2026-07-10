@@ -20,6 +20,12 @@ export interface PageSettings {
   blog: PageSetting;
   contact: PageSetting;
   institution: PageSetting;
+  hub: PageSetting;
+  companion: PageSetting;
+  nexus: PageSetting;
+  ai_tools: PageSetting;
+  leaderboard: PageSetting;
+  profile: PageSetting;
 }
 
 export interface SiteSettings {
@@ -53,7 +59,13 @@ const defaultPageSettings: PageSettings = {
   courses: { enabled: true, coming_soon: false },
   blog: { enabled: true, coming_soon: false },
   contact: { enabled: true, coming_soon: false },
-  institution: { enabled: true, coming_soon: false }
+  institution: { enabled: true, coming_soon: false },
+  hub: { enabled: true, coming_soon: false },
+  companion: { enabled: true, coming_soon: false },
+  nexus: { enabled: true, coming_soon: false },
+  ai_tools: { enabled: true, coming_soon: false },
+  leaderboard: { enabled: true, coming_soon: false },
+  profile: { enabled: true, coming_soon: false }
 };
 
 const defaultSettings: SiteSettings = {
