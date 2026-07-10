@@ -136,10 +136,8 @@ export const useSiteSettings = () => {
             : defaultSettings.homepage_sections,
           page_settings: rawPageSettings && typeof rawPageSettings === 'object'
             ? {
-                courses: (rawPageSettings.courses as PageSetting) ?? defaultPageSettings.courses,
-                blog: (rawPageSettings.blog as PageSetting) ?? defaultPageSettings.blog,
-                contact: (rawPageSettings.contact as PageSetting) ?? defaultPageSettings.contact,
-                institution: (rawPageSettings.institution as PageSetting) ?? defaultPageSettings.institution
+                ...defaultPageSettings,
+                ...(rawPageSettings as Partial<PageSettings>)
               }
             : defaultPageSettings
         };
