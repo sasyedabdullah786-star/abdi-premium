@@ -80,6 +80,54 @@ export type Database = {
         }
         Relationships: []
       }
+      banners: {
+        Row: {
+          animation: string | null
+          bg_color: string | null
+          created_at: string
+          cta_label: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          link_url: string | null
+          priority: number
+          subtitle: string | null
+          text_color: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          animation?: string | null
+          bg_color?: string | null
+          created_at?: string
+          cta_label?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          priority?: number
+          subtitle?: string | null
+          text_color?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          animation?: string | null
+          bg_color?: string | null
+          created_at?: string
+          cta_label?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          link_url?: string | null
+          priority?: number
+          subtitle?: string | null
+          text_color?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           content: string | null
