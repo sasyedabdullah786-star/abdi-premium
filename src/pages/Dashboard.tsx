@@ -3,7 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { 
   Settings, Palette, BookOpen, FileText, Mail, ArrowLeft, 
   Megaphone, Star, Tag, BarChart3, Layout, Construction, 
-  MessageSquare, FileCheck, Brain
+  MessageSquare, FileCheck, Brain, Image as ImageIcon
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import AnalyticsTab from "@/components/admin/AnalyticsTab";
@@ -14,6 +14,7 @@ import ReviewsTab from "@/components/admin/ReviewsTab";
 import CoursesTab from "@/components/admin/CoursesTab";
 import CategoriesTab from "@/components/admin/CategoriesTab";
 import AnnouncementsTab from "@/components/admin/AnnouncementsTab";
+import BannersTab from "@/components/admin/BannersTab";
 import TestimonialsTab from "@/components/admin/TestimonialsTab";
 import PagesTab from "@/components/admin/PagesTab";
 import GeneralTab from "@/components/admin/GeneralTab";
@@ -21,7 +22,7 @@ import AppearanceTab from "@/components/admin/AppearanceTab";
 import BlogTab from "@/components/admin/BlogTab";
 import ContactTab from "@/components/admin/ContactTab";
 
-type TabId = "smart" | "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "testimonials" | "reviews" | "blog" | "contact";
+type TabId = "smart" | "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "banners" | "testimonials" | "reviews" | "blog" | "contact";
 
 const Dashboard = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -56,6 +57,7 @@ const Dashboard = () => {
     { id: "courses" as const, label: "Courses", icon: BookOpen },
     { id: "categories" as const, label: "Categories", icon: Tag },
     { id: "announcements" as const, label: "Announcements", icon: Megaphone },
+    { id: "banners" as const, label: "Banners", icon: ImageIcon },
     { id: "testimonials" as const, label: "Testimonials", icon: Star },
     { id: "reviews" as const, label: "Reviews", icon: MessageSquare },
     { id: "blog" as const, label: "Blog", icon: FileText },
@@ -74,6 +76,7 @@ const Dashboard = () => {
       case "courses": return <CoursesTab />;
       case "categories": return <CategoriesTab />;
       case "announcements": return <AnnouncementsTab />;
+      case "banners": return <BannersTab />;
       case "testimonials": return <TestimonialsTab />;
       case "reviews": return <ReviewsTab />;
       case "blog": return <BlogTab />;
