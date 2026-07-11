@@ -95,6 +95,7 @@ export type Database = {
           text_color: string | null
           title: string
           updated_at: string
+          variant: string
         }
         Insert: {
           animation?: string | null
@@ -110,6 +111,7 @@ export type Database = {
           text_color?: string | null
           title: string
           updated_at?: string
+          variant?: string
         }
         Update: {
           animation?: string | null
@@ -125,6 +127,7 @@ export type Database = {
           text_color?: string | null
           title?: string
           updated_at?: string
+          variant?: string
         }
         Relationships: []
       }

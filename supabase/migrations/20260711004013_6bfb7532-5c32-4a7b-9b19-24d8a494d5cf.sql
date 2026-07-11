@@ -1,0 +1,1 @@
+ALTER TABLE public.banners ADD COLUMN IF NOT EXISTS variant TEXT NOT NULL DEFAULT 'strip';
