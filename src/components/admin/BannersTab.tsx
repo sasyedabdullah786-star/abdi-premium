@@ -25,6 +25,7 @@ const emptyForm: Partial<Banner> = {
   animation: "slide",
   is_active: true,
   priority: 0,
+  variant: "strip",
 };
 
 const BannersTab = () => {
