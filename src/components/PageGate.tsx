@@ -25,7 +25,7 @@ const ROUTE_MAP: Array<{ match: (p: string) => boolean; key: keyof PageSettings;
 
 const PageGate = ({ children }: { children: ReactNode }) => {
   const { settings, loading } = useSiteSettings();
-  const { user } = useAuth();
+  const { isAdmin } = useAuth();
   const location = useLocation();
   const path = location.pathname;
 
@@ -33,10 +33,8 @@ const PageGate = ({ children }: { children: ReactNode }) => {
 
   const isBypass = BYPASS.some((p) => path.startsWith(p));
 
-  // Maintenance mode (admins/dashboard still allowed)
-  if (settings.is_maintenance_mode && !isBypass) {
-    // Simple heuristic: allow authenticated users on /dashboard already bypassed.
-    // Everyone else sees maintenance.
+  // Maintenance mode — admins always bypass so they can turn it off
+  if (settings.is_maintenance_mode && !isBypass && !isAdmin) {
     return <MaintenanceMode message={settings.maintenance_message} />;
   }
 
