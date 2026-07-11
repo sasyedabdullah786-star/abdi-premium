@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Save, X, Eye, EyeOff, Sparkles } from "lucide-react
 import { useBanners, Banner } from "@/hooks/useBanners";
 import { useToast } from "@/hooks/use-toast";
 import MediaUpload from "@/components/MediaUpload";
+import Banner2 from "@/components/Banner2";
 
 const gradientPresets = [
   { label: "Indigo → Pink", value: "from-indigo-500 to-pink-500" },
