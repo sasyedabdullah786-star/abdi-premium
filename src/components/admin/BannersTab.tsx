@@ -162,6 +162,7 @@ const BannersTab = () => {
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate flex items-center gap-2">
                 {b.title}
+                <span className="text-[10px] uppercase tracking-wide bg-primary/10 text-primary px-1.5 py-0.5 rounded">{b.variant === "hero" ? "Hero" : "Strip"}</span>
                 {!b.is_active && <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded">off</span>}
               </div>
               {b.subtitle && <div className="text-xs text-muted-foreground truncate">{b.subtitle}</div>}
