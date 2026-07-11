@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Save, X, Eye, EyeOff, Sparkles } from "lucide-react
 import { useBanners, Banner } from "@/hooks/useBanners";
 import { useToast } from "@/hooks/use-toast";
 import MediaUpload from "@/components/MediaUpload";
+import Banner2 from "@/components/Banner2";
 
 const gradientPresets = [
   { label: "Indigo → Pink", value: "from-indigo-500 to-pink-500" },
@@ -24,6 +25,7 @@ const emptyForm: Partial<Banner> = {
   animation: "slide",
   is_active: true,
   priority: 0,
+  variant: "strip",
 };
 
 const BannersTab = () => {
@@ -64,15 +66,29 @@ const BannersTab = () => {
           </div>
 
           {/* Live preview */}
-          <div className="rounded-lg overflow-hidden border border-border">
-            <div className={`bg-gradient-to-r ${editing.bg_color?.startsWith("from-") ? editing.bg_color : "from-primary to-accent"} px-4 py-2.5 flex items-center gap-3`} style={{ color: editing.text_color || "#fff" }}>
-              {editing.image_url && <img src={editing.image_url} className="w-8 h-8 rounded-md object-cover" alt="" />}
-              <div className="flex-1 min-w-0">
-                <div className="font-semibold text-sm truncate">{editing.title || "Banner title"}</div>
-                {editing.subtitle && <div className="text-xs opacity-90 truncate">{editing.subtitle}</div>}
+          <div className="rounded-lg overflow-hidden border border-border bg-muted/30">
+            {editing.variant === "hero" ? (
+              <div className="py-2">
+                <Banner2 banner={{ ...(emptyForm as any), ...editing, id: "preview" } as any} />
               </div>
-              {editing.link_url && <span className="text-xs bg-white/20 px-3 py-1 rounded-full">{editing.cta_label}</span>}
-            </div>
+            ) : (
+              <div className={`bg-gradient-to-r ${editing.bg_color?.startsWith("from-") ? editing.bg_color : "from-primary to-accent"} px-4 py-2.5 flex items-center gap-3`} style={{ color: editing.text_color || "#fff" }}>
+                {editing.image_url && <img src={editing.image_url} className="w-8 h-8 rounded-md object-cover" alt="" />}
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold text-sm truncate">{editing.title || "Banner title"}</div>
+                  {editing.subtitle && <div className="text-xs opacity-90 truncate">{editing.subtitle}</div>}
+                </div>
+                {editing.link_url && <span className="text-xs bg-white/20 px-3 py-1 rounded-full">{editing.cta_label}</span>}
+              </div>
+            )}
+          </div>
+
+          <div>
+            <label className="text-xs font-medium mb-1 block">Banner Style</label>
+            <select className="input-glass" value={editing.variant || "strip"} onChange={e => setEditing({ ...editing, variant: e.target.value })}>
+              <option value="strip">Strip (compact top bar — original)</option>
+              <option value="hero">Hero (large card with big image + CTA — Banner 2)</option>
+            </select>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
@@ -146,6 +162,7 @@ const BannersTab = () => {
             <div className="flex-1 min-w-0">
               <div className="font-medium truncate flex items-center gap-2">
                 {b.title}
+                <span className="text-[10px] uppercase tracking-wide bg-primary/10 text-primary px-1.5 py-0.5 rounded">{b.variant === "hero" ? "Hero" : "Strip"}</span>
                 {!b.is_active && <span className="text-[10px] bg-muted px-1.5 py-0.5 rounded">off</span>}
               </div>
               {b.subtitle && <div className="text-xs text-muted-foreground truncate">{b.subtitle}</div>}

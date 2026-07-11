@@ -13,6 +13,7 @@ export interface Banner {
   animation: string | null;
   is_active: boolean;
   priority: number;
+  variant: string; // 'strip' | 'hero'
   created_at: string;
   updated_at: string;
 }
