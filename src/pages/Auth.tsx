@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Mail, Lock, User, LogIn, UserPlus, KeyRound } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -13,6 +13,9 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const rawNext = searchParams.get("next") || "";
+  const nextPath = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +47,7 @@ const Auth = () => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       toast({ title: mode === 'login' ? "Welcome back!" : "Account created!" });
-      navigate("/");
+      navigate(nextPath);
     }
     setLoading(false);
   };

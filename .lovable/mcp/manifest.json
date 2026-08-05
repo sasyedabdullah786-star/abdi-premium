@@ -1,0 +1,180 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.1",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://tbjlkqxjkcktdzwidzje.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "abd-i",
+      "version": "0.1.0",
+      "title": "Abd'i"
+    },
+    "tools": [
+      {
+        "name": "search_courses",
+        "title": "Search courses",
+        "description": "Search the published ABD'I course catalog by title, description, or category.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Free-text search across title and description."
+            },
+            "category": {
+              "type": "string",
+              "description": "Filter by category name."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max results (default 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_course",
+        "title": "Get course details",
+        "description": "Fetch one published course with its lessons by course id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "course_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "The course id."
+            }
+          },
+          "required": [
+            "course_id"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "my_progress",
+        "title": "My learning progress",
+        "description": "Get the signed-in learner's XP, level, streaks, and course enrollments with progress.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_daily_task",
+        "title": "Create daily study task",
+        "description": "Add a study task to the signed-in learner's daily plan.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Task title."
+            },
+            "description": {
+              "type": "string",
+              "description": "Optional task detail."
+            },
+            "task_type": {
+              "type": "string",
+              "description": "Task type, e.g. study, revise, quiz."
+            },
+            "task_date": {
+              "type": "string",
+              "description": "ISO date (YYYY-MM-DD). Defaults to today."
+            },
+            "xp_reward": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 500,
+              "description": "XP granted on completion."
+            }
+          },
+          "required": [
+            "title"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_flashcard",
+        "title": "Create flashcard",
+        "description": "Save a flashcard (front/back) to the signed-in learner's study deck.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "front": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Question or prompt side."
+            },
+            "back": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Answer side."
+            },
+            "topic": {
+              "type": "string",
+              "description": "Optional topic label."
+            },
+            "course_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Optional course to attach the card to."
+            }
+          },
+          "required": [
+            "front",
+            "back"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
