@@ -218,14 +218,14 @@
 
   /* Every interactive control gets instant press feedback */
   button:not(:disabled):active,
-  [role="button"]:not([aria-disabled="true"]):active,
-  a[href]:active {
+  [role="button"]:not([aria-disabled="true"]):active {
     transform: scale(0.97);
   }
-  button, [role="button"], a[href] {
+  button, [role="button"] {
     transition: transform var(--dur-press) var(--ease-out);
     -webkit-tap-highlight-color: transparent;
   }
+
 
   .input-glass {
     @apply w-full h-10 px-3 rounded-sm bg-input border border-border text-foreground text-sm
