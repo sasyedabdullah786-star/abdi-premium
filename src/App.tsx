@@ -29,6 +29,7 @@ import Nexus from "./pages/Nexus";
 import NexusPublic from "./pages/NexusPublic";
 import VoiceButton from "./components/VoiceButton";
 import PageGate from "./components/PageGate";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const AnimatedRoutes = () => {
         <Route path="/nexus" element={<Nexus />} />
         <Route path="/nexus/p/:slug" element={<NexusPublic />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       </PageGate>
