@@ -153,8 +153,18 @@
     @apply bg-card border border-border rounded-sm;
     box-shadow: 0 1px 2px hsl(220 15% 15% / 0.04);
   }
-  .surface-hover { @apply surface-elevated transition-colors duration-150; }
-  .surface-hover:hover { border-color: hsl(var(--primary) / 0.4); }
+  .surface-hover {
+    @apply surface-elevated;
+    transition: border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-base) var(--ease-out),
+                transform var(--dur-base) var(--ease-out);
+  }
+  .surface-hover:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 6px 20px -8px hsl(var(--primary) / 0.25);
+    transform: translateY(-2px);
+  }
+  .surface-hover:active { transform: translateY(-1px) scale(0.995); transition-duration: var(--dur-press); }
 
   /* Legacy alias — flatten glass to plain card */
   .glass-card { @apply surface-elevated; }
@@ -173,33 +183,59 @@
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 h-10 px-5 rounded-sm
       bg-primary text-primary-foreground font-medium text-sm
-      transition-colors duration-150
-      hover:bg-primary/90 active:opacity-90
+      hover:bg-primary/90
       focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
     font-family: 'Inter', system-ui, sans-serif;
+    transition: background-color var(--dur-fast) var(--ease-out),
+                transform var(--dur-press) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out);
   }
+  .btn-primary:active { transform: scale(0.97); }
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 h-10 px-5 rounded-sm
-      bg-card text-foreground font-medium text-sm border border-border
-      transition-colors duration-150 hover:bg-muted;
+      bg-card text-foreground font-medium text-sm border border-border hover:bg-muted
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
     font-family: 'Inter', system-ui, sans-serif;
+    transition: background-color var(--dur-fast) var(--ease-out),
+                border-color var(--dur-fast) var(--ease-out),
+                transform var(--dur-press) var(--ease-out);
   }
+  .btn-secondary:active { transform: scale(0.97); }
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 h-10 px-3 rounded-sm
-      text-muted-foreground font-medium text-sm transition-colors duration-150
-      hover:bg-muted hover:text-foreground;
+      text-muted-foreground font-medium text-sm
+      hover:bg-muted hover:text-foreground
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
     font-family: 'Inter', system-ui, sans-serif;
+    transition: background-color var(--dur-fast) var(--ease-out),
+                color var(--dur-fast) var(--ease-out),
+                transform var(--dur-press) var(--ease-out);
   }
+  .btn-ghost:active { transform: scale(0.97); }
   .btn-gradient { @apply btn-primary; }
   .btn-glass { @apply btn-secondary; }
   .btn-outline { @apply btn-secondary; }
 
+  /* Every interactive control gets instant press feedback */
+  button:not(:disabled):active,
+  [role="button"]:not([aria-disabled="true"]):active,
+  a[href]:active {
+    transform: scale(0.97);
+  }
+  button, [role="button"], a[href] {
+    transition: transform var(--dur-press) var(--ease-out);
+    -webkit-tap-highlight-color: transparent;
+  }
+
   .input-glass {
     @apply w-full h-10 px-3 rounded-sm bg-input border border-border text-foreground text-sm
-      placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30
-      transition-colors duration-150;
+      placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/30;
     font-family: 'Inter', system-ui, sans-serif;
+    transition: border-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out),
+                background-color var(--dur-fast) var(--ease-out);
   }
+
 
   .badge-gradient {
     @apply inline-flex items-center px-2 py-0.5 rounded-sm text-xs font-medium;
