@@ -252,10 +252,23 @@
   }
 
   .nav-link {
-    @apply relative px-3 py-1.5 text-sm text-foreground/80 hover:text-primary transition-colors duration-150;
+    @apply relative px-3 py-1.5 text-sm text-foreground/80 hover:text-primary;
     font-family: 'Inter', system-ui, sans-serif;
+    transition: color var(--dur-fast) var(--ease-out);
   }
-  .nav-link.active { @apply text-primary; border-bottom: 2px solid hsl(var(--primary)); }
+  /* Underline grows from the center — origin-aware, no layout shift */
+  .nav-link::after {
+    content: "";
+    position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+    background: hsl(var(--primary));
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .nav-link:hover::after { transform: scaleX(0.6); }
+  .nav-link.active { @apply text-primary; }
+  .nav-link.active::after { transform: scaleX(1); }
+
 
   .stat-card { @apply surface-elevated p-5; }
 
