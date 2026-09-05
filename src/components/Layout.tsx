@@ -58,8 +58,8 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
 
   return (
     <div className="min-h-screen bg-background relative">
-      <BannerStrip />
       {showNav && (
+
         <nav
           className={`sticky top-0 z-50 transition-all duration-200 ${
             scrolled
@@ -228,6 +228,8 @@ const Layout = ({ children, showBack = false, showNav = true, title }: LayoutPro
       )}
 
       <main className="relative">
+        <BannerStrip />
+
         {title && (
           <div className="container mx-auto px-4 pt-10">
             <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
