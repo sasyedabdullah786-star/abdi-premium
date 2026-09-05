@@ -23,10 +23,11 @@ const Banner2 = ({ banner: b, onDismiss }: Props) => {
   const inlineBg = !gradient && b.bg_color ? { background: b.bg_color } : undefined;
 
   return (
-    <div className="container mx-auto px-4 pt-3">
+    <div className="container mx-auto px-4 pt-4">
       <div
-        className={`relative overflow-hidden rounded-2xl ${gradient} ${animClass} shadow-lg ring-1 ring-white/10`}
+        className={`relative overflow-hidden rounded-3xl ${gradient} ${animClass} shadow-md border border-border/50`}
         style={{ ...inlineBg, color: b.text_color || "#fff" }}
+
       >
         {/* Animated shine sweep */}
         <div className="pointer-events-none absolute inset-0 opacity-40">
