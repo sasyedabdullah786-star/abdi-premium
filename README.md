@@ -1,73 +1,144 @@
-# Welcome to your Lovable project
+# Abd"i
 
-## Project info
+I want you to build a complete multi‑page website called ABD"I. 
+The website must be fully original code but the UI, layout, structure, and flow should be inspired by theeduverse.xyz. 
+Do NOT copy their code — recreate the same style and structure with new code.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Here are the exact requirements:
 
-## How can I edit this code?
+-----------------------------------------
+✅ 1. GENERAL RULES
+-----------------------------------------
+• The website must NOT redirect to any external website.
+• All pages must be internal HTML files.
+• The UI should look premium, dark‑mode, glassy, and mobile‑first.
+• The design should feel similar to Eduverse (cards, gradients, rounded corners, icons, spacing).
+• Use only HTML + CSS + minimal JS (no frameworks).
+• Everything must be self‑contained and work offline.
 
-There are several ways of editing your application.
+-----------------------------------------
+✅ 2. MAIN PAGES TO CREATE
+-----------------------------------------
+Create these pages:
 
-**Use Lovable**
+1. index.html  
+   - Main hub page like Eduverse home (Eleak style)
+   - Branding: ABD"I
+   - Cards for:
+     • Next Toppers
+     • Physics Wallah
+     • Padhle Akshay
+     • Key Access
+   - Each card must open an internal page (no redirects)
+   - Add a top-right link to “Admin”
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+2. nexttoppers.html  
+   - Institute page with:
+     • Logo icon
+     • Title
+     • Subtitle
+     • Crash course link
+     • Resource links
+     • Connected institute links
 
-Changes made via Lovable will be committed automatically to this repo.
+3. padhleakshay.html  
+   - Similar structure to Next Toppers page
+   - Include modules, crash course, linked hubs
 
-**Use your preferred IDE**
+4. physicswallah.html  
+   - Similar structure
+   - Include PW-style modules and combined flows
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+5. key-access.html  
+   - A page where user enters a key
+   - If key = NT-ACCESS → go to nexttoppers.html
+   - If key = PA-ACCESS → go to padhleakshay.html
+   - If key = PW-ACCESS → go to physicswallah.html
+   - Invalid key → show alert
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+-----------------------------------------
+✅ 3. ADMIN PANEL (NO FOLDERS)
+-----------------------------------------
+Create these two files in the root folder:
 
-Follow these steps:
+6. admin.html  
+   - Admin login page
+   - Premium UI
+   - Email + password fields
+   - On submit → redirect to dashboard.html
+   - No real authentication (front-end only)
+
+7. dashboard.html  
+   - Admin dashboard
+   - Sidebar + main content
+   - Editable cards for:
+     • Next Toppers
+     • Physics Wallah
+     • Padhle Akshay
+   - Each card should have:
+     • Label field
+     • Subtitle field
+     • Internal link field
+     • Save button (no backend)
+     • Remove button (no backend)
+   - This is a visual demo only
+
+-----------------------------------------
+✅ 4. FILE STRUCTURE
+-----------------------------------------
+All files must be in the root folder:
+
+index.html  
+nexttoppers.html  
+padhleakshay.html  
+physicswallah.html  
+key-access.html  
+admin.html  
+dashboard.html  
+
+-----------------------------------------
+✅ 5. STYLE REQUIREMENTS
+-----------------------------------------
+• Dark theme  
+• Glassmorphism  
+• Rounded corners  
+• Gradient icons  
+• Smooth hover effects  
+• Mobile responsive  
+• Clean typography  
+• Consistent spacing  
+• Same vibe as Eduverse but original code  
+
+-----------------------------------------
+✅ 6. DELIVERABLE
+-----------------------------------------
+Provide the full HTML + CSS + JS code for ALL pages listed above.
+
+Each page must be complete and ready to use.
+
+-----------------------------------------
+
+Generate all pages now.
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://abdi-premium.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/9c6cfac9-99b0-45f4-ac4a-cd63bb26e1bd).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
