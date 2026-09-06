@@ -7,6 +7,8 @@ import { useLessons, RESOURCE_TYPES, ResourceType } from "@/hooks/useLessons";
 import Discussions from "@/components/Discussions";
 import DoubtSolver from "@/components/DoubtSolver";
 import { useEnrollment } from "@/hooks/useEnrollment";
+import { useCourseAccess } from "@/hooks/useCourseAccess";
+import CoursePaywall from "@/components/CoursePaywall";
 import { useAuth } from "@/hooks/useAuth";
 
 const resourceIcons: Record<ResourceType, React.ReactNode> = {
@@ -30,6 +32,15 @@ const Course = () => {
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
 
   const course = courses.find(c => c.id === courseId);
+  const { purchase, hasAccess, requestPurchase } = useCourseAccess(courseId, course?.is_paid);
+  const [buying, setBuying] = useState(false);
+
+  const handleBuy = async () => {
+    if (!course) return;
+    setBuying(true);
+    await requestPurchase(Number(course.price_amount) || 0, course.currency || "INR");
+    setBuying(false);
+  };
 
   // Award XP the first time a video lesson is opened
   useEffect(() => {
@@ -117,7 +128,7 @@ const Course = () => {
               <BookOpen className="w-4 h-4" />
               <span>{lessons.length} items</span>
             </div>
-            {user && (
+            {user && hasAccess && (
               isEnrolled ? (
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="badge-success inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-success/15 text-success border border-success/30">
@@ -159,7 +170,22 @@ const Course = () => {
         </section>
       )}
 
+      {/* Paywall for locked paid courses */}
+      {course.is_paid && !hasAccess && (
+        <section className="container mx-auto px-4 pb-16">
+          <CoursePaywall
+            title={course.title}
+            amount={Number(course.price_amount) || 0}
+            currency={course.currency || "INR"}
+            purchase={purchase}
+            onBuy={handleBuy}
+            buying={buying}
+          />
+        </section>
+      )}
+
       {/* Tab Navigation */}
+      {hasAccess && (<>
       <section className="container mx-auto px-4 pb-4">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap gap-2 pb-4 border-b border-border/30 overflow-x-auto">
@@ -373,10 +399,12 @@ const Course = () => {
         </div>
       </section>
 
+      </>)}
+
       {/* Discussion section */}
       <section className="container mx-auto px-4 pb-16">
         <div className="max-w-6xl mx-auto">
-          <Discussions courseId={courseId} />
+          {hasAccess && <Discussions courseId={courseId} />}
         </div>
       </section>
     </Layout>

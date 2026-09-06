@@ -17,13 +17,15 @@ const CoursesTab = () => {
 
   const [newCourse, setNewCourse] = useState({ 
     title: "", description: "", thumbnail_url: "", category: "general", 
-    price: "Free", duration: "", certificates_enabled: false 
+    price: "Free", duration: "", certificates_enabled: false,
+    is_paid: false, price_amount: 0, currency: "INR"
   });
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
   const [editingCourse, setEditingCourse] = useState<string | null>(null);
   const [editCourseData, setEditCourseData] = useState<Partial<Course>>({});
   const [newLesson, setNewLesson] = useState({ 
-    title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" as ResourceType 
+    title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" as ResourceType,
+    is_free_preview: false
   });
   const [editingLesson, setEditingLesson] = useState<string | null>(null);
   const [editLessonData, setEditLessonData] = useState<Partial<Lesson>>({});
@@ -42,14 +44,17 @@ const CoursesTab = () => {
       is_featured: false,
       category: newCourse.category,
       certificates_enabled: newCourse.certificates_enabled,
-      price: newCourse.price,
+      price: newCourse.is_paid ? `${newCourse.currency} ${newCourse.price_amount}` : "Free",
+      is_paid: newCourse.is_paid,
+      price_amount: Number(newCourse.price_amount) || 0,
+      currency: newCourse.currency,
       duration: newCourse.duration || null,
       average_rating: null,
       total_reviews: null,
       total_enrollments: null
     });
     if (result.success) {
-      setNewCourse({ title: "", description: "", thumbnail_url: "", category: "general", price: "Free", duration: "", certificates_enabled: false });
+      setNewCourse({ title: "", description: "", thumbnail_url: "", category: "general", price: "Free", duration: "", certificates_enabled: false, is_paid: false, price_amount: 0, currency: "INR" });
       toast({ title: "Course added successfully!" });
     }
   };
@@ -62,6 +67,9 @@ const CoursesTab = () => {
       thumbnail_url: course.thumbnail_url,
       category: course.category,
       price: course.price,
+      is_paid: course.is_paid,
+      price_amount: course.price_amount,
+      currency: course.currency,
       duration: course.duration,
       certificates_enabled: course.certificates_enabled
     });
@@ -95,10 +103,11 @@ const CoursesTab = () => {
       notes: newLesson.notes || null,
       pdf_url: newLesson.pdf_url || null,
       sort_order: courseLessons.length,
-      resource_type: newLesson.resource_type
+      resource_type: newLesson.resource_type,
+      is_free_preview: newLesson.is_free_preview
     });
     if (result.success) {
-      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" });
+      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video", is_free_preview: false });
       refetchLessons();
       toast({ title: "Lesson added!" });
     }
@@ -111,7 +120,8 @@ const CoursesTab = () => {
       video_url: lesson.video_url,
       notes: lesson.notes,
       pdf_url: lesson.pdf_url,
-      resource_type: lesson.resource_type
+      resource_type: lesson.resource_type,
+      is_free_preview: lesson.is_free_preview
     });
   };
 
@@ -168,6 +178,20 @@ const CoursesTab = () => {
             <input type="checkbox" checked={newCourse.certificates_enabled} onChange={(e) => setNewCourse({ ...newCourse, certificates_enabled: e.target.checked })} className="w-4 h-4 accent-primary" />
             <span className="text-sm">Enable Certificate</span>
           </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={newCourse.is_paid} onChange={(e) => setNewCourse({ ...newCourse, is_paid: e.target.checked })} className="w-4 h-4 accent-primary" />
+            <span className="text-sm">Paid course</span>
+          </label>
+          {newCourse.is_paid && (
+            <div className="flex items-center gap-2">
+              <select value={newCourse.currency} onChange={(e) => setNewCourse({ ...newCourse, currency: e.target.value })} className="input-glass bg-card w-24">
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+              <input type="number" min={0} placeholder="Amount" value={newCourse.price_amount} onChange={(e) => setNewCourse({ ...newCourse, price_amount: Number(e.target.value) })} className="input-glass w-32" />
+            </div>
+          )}
           <button onClick={handleAddCourse} className="btn-gradient">Add Course</button>
         </div>
       </div>
@@ -205,6 +229,20 @@ const CoursesTab = () => {
                         <input type="checkbox" checked={editCourseData.certificates_enabled} onChange={(e) => setEditCourseData({ ...editCourseData, certificates_enabled: e.target.checked })} className="w-4 h-4 accent-primary" />
                         <span className="text-sm">Enable Certificate</span>
                       </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={!!editCourseData.is_paid} onChange={(e) => setEditCourseData({ ...editCourseData, is_paid: e.target.checked })} className="w-4 h-4 accent-primary" />
+                        <span className="text-sm">Paid course</span>
+                      </label>
+                      {editCourseData.is_paid && (
+                        <div className="flex items-center gap-2">
+                          <select value={editCourseData.currency || "INR"} onChange={(e) => setEditCourseData({ ...editCourseData, currency: e.target.value })} className="input-glass bg-card w-24">
+                            <option value="INR">INR</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                          </select>
+                          <input type="number" min={0} placeholder="Amount" value={editCourseData.price_amount ?? 0} onChange={(e) => setEditCourseData({ ...editCourseData, price_amount: Number(e.target.value) })} className="input-glass w-32" />
+                        </div>
+                      )}
                       <button onClick={() => handleSaveCourse(course.id)} className="btn-gradient flex items-center gap-2"><Save className="w-4 h-4" /> Save</button>
                       <button onClick={() => setEditingCourse(null)} className="btn-outline flex items-center gap-2"><X className="w-4 h-4" /> Cancel</button>
                     </div>
@@ -218,6 +256,7 @@ const CoursesTab = () => {
                         {course.is_featured && <span className="px-2 py-0.5 text-xs rounded-full bg-primary/20 text-primary flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Trending</span>}
                         {course.certificates_enabled && <span className="px-2 py-0.5 text-xs rounded-full bg-success/20 text-success flex items-center gap-1"><Award className="w-3 h-3" /> Certificate</span>}
                         {!course.is_published && <span className="px-2 py-0.5 text-xs rounded-full bg-destructive/20 text-destructive">Draft</span>}
+                        {course.is_paid && <span className="px-2 py-0.5 text-xs rounded-full bg-accent/20 text-accent-foreground border border-border/40">Paid · {course.currency} {course.price_amount}</span>}
                       </div>
                       <p className="text-muted-foreground text-sm">{course.description}</p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
@@ -275,7 +314,13 @@ const CoursesTab = () => {
                     </div>
                     <div className="flex gap-3">
                       <textarea placeholder="Notes (optional)" value={newLesson.notes} onChange={(e) => setNewLesson({ ...newLesson, notes: e.target.value })} className="input-glass text-sm flex-1 min-h-[60px]" />
-                      <button onClick={() => handleAddLesson(course.id)} className="btn-gradient self-end inline-flex items-center gap-1"><Plus className="w-4 h-4" /> Add</button>
+                      <div className="flex flex-col justify-end gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer text-sm">
+                          <input type="checkbox" checked={newLesson.is_free_preview} onChange={(e) => setNewLesson({ ...newLesson, is_free_preview: e.target.checked })} className="w-4 h-4 accent-primary" />
+                          Free preview
+                        </label>
+                        <button onClick={() => handleAddLesson(course.id)} className="btn-gradient inline-flex items-center gap-1"><Plus className="w-4 h-4" /> Add</button>
+                      </div>
                     </div>
                   </div>
 

@@ -12,6 +12,9 @@ export interface Course {
   category: string | null;
   certificates_enabled: boolean;
   price: string | null;
+  is_paid: boolean;
+  price_amount: number;
+  currency: string;
   duration: string | null;
   average_rating: number | null;
   total_reviews: number | null;
