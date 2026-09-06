@@ -128,7 +128,7 @@ const Course = () => {
               <BookOpen className="w-4 h-4" />
               <span>{lessons.length} items</span>
             </div>
-            {user && (
+            {user && hasAccess && (
               isEnrolled ? (
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="badge-success inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs bg-success/15 text-success border border-success/30">

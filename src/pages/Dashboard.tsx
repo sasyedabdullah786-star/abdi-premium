@@ -12,6 +12,7 @@ import SectionsTab from "@/components/admin/SectionsTab";
 import MaintenanceTab from "@/components/admin/MaintenanceTab";
 import ReviewsTab from "@/components/admin/ReviewsTab";
 import CoursesTab from "@/components/admin/CoursesTab";
+import PurchasesTab from "@/components/admin/PurchasesTab";
 import CategoriesTab from "@/components/admin/CategoriesTab";
 import AnnouncementsTab from "@/components/admin/AnnouncementsTab";
 import BannersTab from "@/components/admin/BannersTab";
@@ -22,7 +23,7 @@ import AppearanceTab from "@/components/admin/AppearanceTab";
 import BlogTab from "@/components/admin/BlogTab";
 import ContactTab from "@/components/admin/ContactTab";
 
-type TabId = "smart" | "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "categories" | "announcements" | "banners" | "testimonials" | "reviews" | "blog" | "contact";
+type TabId = "smart" | "analytics" | "general" | "appearance" | "sections" | "pages" | "maintenance" | "courses" | "purchases" | "categories" | "announcements" | "banners" | "testimonials" | "reviews" | "blog" | "contact";
 
 const Dashboard = () => {
   const { user, isAdmin, loading: authLoading } = useAuth();
@@ -55,6 +56,7 @@ const Dashboard = () => {
     { id: "pages" as const, label: "Pages", icon: FileCheck },
     { id: "maintenance" as const, label: "Maintenance", icon: Construction },
     { id: "courses" as const, label: "Courses", icon: BookOpen },
+    { id: "purchases" as const, label: "Purchases", icon: BarChart3 },
     { id: "categories" as const, label: "Categories", icon: Tag },
     { id: "announcements" as const, label: "Announcements", icon: Megaphone },
     { id: "banners" as const, label: "Banners", icon: ImageIcon },
@@ -74,6 +76,7 @@ const Dashboard = () => {
       case "pages": return <PagesTab />;
       case "maintenance": return <MaintenanceTab />;
       case "courses": return <CoursesTab />;
+      case "purchases": return <PurchasesTab />;
       case "categories": return <CategoriesTab />;
       case "announcements": return <AnnouncementsTab />;
       case "banners": return <BannersTab />;
