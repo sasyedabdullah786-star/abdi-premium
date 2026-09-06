@@ -314,7 +314,13 @@ const CoursesTab = () => {
                     </div>
                     <div className="flex gap-3">
                       <textarea placeholder="Notes (optional)" value={newLesson.notes} onChange={(e) => setNewLesson({ ...newLesson, notes: e.target.value })} className="input-glass text-sm flex-1 min-h-[60px]" />
-                      <button onClick={() => handleAddLesson(course.id)} className="btn-gradient self-end inline-flex items-center gap-1"><Plus className="w-4 h-4" /> Add</button>
+                      <div className="flex flex-col justify-end gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer text-sm">
+                          <input type="checkbox" checked={newLesson.is_free_preview} onChange={(e) => setNewLesson({ ...newLesson, is_free_preview: e.target.checked })} className="w-4 h-4 accent-primary" />
+                          Free preview
+                        </label>
+                        <button onClick={() => handleAddLesson(course.id)} className="btn-gradient inline-flex items-center gap-1"><Plus className="w-4 h-4" /> Add</button>
+                      </div>
                     </div>
                   </div>
 
