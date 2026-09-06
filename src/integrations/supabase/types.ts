@@ -301,6 +301,53 @@ export type Database = {
           },
         ]
       }
+      course_purchases: {
+        Row: {
+          amount: number
+          course_id: string
+          created_at: string
+          currency: string
+          id: string
+          provider: string | null
+          provider_ref: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          course_id: string
+          created_at?: string
+          currency?: string
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          course_id?: string
+          created_at?: string
+          currency?: string
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_purchases_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_reviews: {
         Row: {
           course_id: string
@@ -348,13 +395,16 @@ export type Database = {
           category: string | null
           certificates_enabled: boolean | null
           created_at: string | null
+          currency: string
           description: string | null
           duration: string | null
           id: string
           institution_id: string | null
           is_featured: boolean | null
+          is_paid: boolean
           is_published: boolean | null
           price: string | null
+          price_amount: number
           thumbnail_url: string | null
           title: string
           total_enrollments: number | null
@@ -366,13 +416,16 @@ export type Database = {
           category?: string | null
           certificates_enabled?: boolean | null
           created_at?: string | null
+          currency?: string
           description?: string | null
           duration?: string | null
           id?: string
           institution_id?: string | null
           is_featured?: boolean | null
+          is_paid?: boolean
           is_published?: boolean | null
           price?: string | null
+          price_amount?: number
           thumbnail_url?: string | null
           title: string
           total_enrollments?: number | null
@@ -384,13 +437,16 @@ export type Database = {
           category?: string | null
           certificates_enabled?: boolean | null
           created_at?: string | null
+          currency?: string
           description?: string | null
           duration?: string | null
           id?: string
           institution_id?: string | null
           is_featured?: boolean | null
+          is_paid?: boolean
           is_published?: boolean | null
           price?: string | null
+          price_amount?: number
           thumbnail_url?: string | null
           title?: string
           total_enrollments?: number | null
@@ -597,6 +653,7 @@ export type Database = {
           course_id: string
           created_at: string | null
           id: string
+          is_free_preview: boolean
           notes: string | null
           pdf_url: string | null
           resource_type: string | null
@@ -609,6 +666,7 @@ export type Database = {
           course_id: string
           created_at?: string | null
           id?: string
+          is_free_preview?: boolean
           notes?: string | null
           pdf_url?: string | null
           resource_type?: string | null
@@ -621,6 +679,7 @@ export type Database = {
           course_id?: string
           created_at?: string | null
           id?: string
+          is_free_preview?: boolean
           notes?: string | null
           pdf_url?: string | null
           resource_type?: string | null
@@ -985,6 +1044,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_course_access: {
+        Args: { _course_id: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
