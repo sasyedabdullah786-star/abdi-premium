@@ -67,6 +67,9 @@ const CoursesTab = () => {
       thumbnail_url: course.thumbnail_url,
       category: course.category,
       price: course.price,
+      is_paid: course.is_paid,
+      price_amount: course.price_amount,
+      currency: course.currency,
       duration: course.duration,
       certificates_enabled: course.certificates_enabled
     });
@@ -100,10 +103,11 @@ const CoursesTab = () => {
       notes: newLesson.notes || null,
       pdf_url: newLesson.pdf_url || null,
       sort_order: courseLessons.length,
-      resource_type: newLesson.resource_type
+      resource_type: newLesson.resource_type,
+      is_free_preview: newLesson.is_free_preview
     });
     if (result.success) {
-      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" });
+      setNewLesson({ title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video", is_free_preview: false });
       refetchLessons();
       toast({ title: "Lesson added!" });
     }
@@ -116,7 +120,8 @@ const CoursesTab = () => {
       video_url: lesson.video_url,
       notes: lesson.notes,
       pdf_url: lesson.pdf_url,
-      resource_type: lesson.resource_type
+      resource_type: lesson.resource_type,
+      is_free_preview: lesson.is_free_preview
     });
   };
 
@@ -173,6 +178,20 @@ const CoursesTab = () => {
             <input type="checkbox" checked={newCourse.certificates_enabled} onChange={(e) => setNewCourse({ ...newCourse, certificates_enabled: e.target.checked })} className="w-4 h-4 accent-primary" />
             <span className="text-sm">Enable Certificate</span>
           </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" checked={newCourse.is_paid} onChange={(e) => setNewCourse({ ...newCourse, is_paid: e.target.checked })} className="w-4 h-4 accent-primary" />
+            <span className="text-sm">Paid course</span>
+          </label>
+          {newCourse.is_paid && (
+            <div className="flex items-center gap-2">
+              <select value={newCourse.currency} onChange={(e) => setNewCourse({ ...newCourse, currency: e.target.value })} className="input-glass bg-card w-24">
+                <option value="INR">INR</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+              </select>
+              <input type="number" min={0} placeholder="Amount" value={newCourse.price_amount} onChange={(e) => setNewCourse({ ...newCourse, price_amount: Number(e.target.value) })} className="input-glass w-32" />
+            </div>
+          )}
           <button onClick={handleAddCourse} className="btn-gradient">Add Course</button>
         </div>
       </div>
@@ -210,6 +229,20 @@ const CoursesTab = () => {
                         <input type="checkbox" checked={editCourseData.certificates_enabled} onChange={(e) => setEditCourseData({ ...editCourseData, certificates_enabled: e.target.checked })} className="w-4 h-4 accent-primary" />
                         <span className="text-sm">Enable Certificate</span>
                       </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={!!editCourseData.is_paid} onChange={(e) => setEditCourseData({ ...editCourseData, is_paid: e.target.checked })} className="w-4 h-4 accent-primary" />
+                        <span className="text-sm">Paid course</span>
+                      </label>
+                      {editCourseData.is_paid && (
+                        <div className="flex items-center gap-2">
+                          <select value={editCourseData.currency || "INR"} onChange={(e) => setEditCourseData({ ...editCourseData, currency: e.target.value })} className="input-glass bg-card w-24">
+                            <option value="INR">INR</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                          </select>
+                          <input type="number" min={0} placeholder="Amount" value={editCourseData.price_amount ?? 0} onChange={(e) => setEditCourseData({ ...editCourseData, price_amount: Number(e.target.value) })} className="input-glass w-32" />
+                        </div>
+                      )}
                       <button onClick={() => handleSaveCourse(course.id)} className="btn-gradient flex items-center gap-2"><Save className="w-4 h-4" /> Save</button>
                       <button onClick={() => setEditingCourse(null)} className="btn-outline flex items-center gap-2"><X className="w-4 h-4" /> Cancel</button>
                     </div>
@@ -223,6 +256,7 @@ const CoursesTab = () => {
                         {course.is_featured && <span className="px-2 py-0.5 text-xs rounded-full bg-primary/20 text-primary flex items-center gap-1"><TrendingUp className="w-3 h-3" /> Trending</span>}
                         {course.certificates_enabled && <span className="px-2 py-0.5 text-xs rounded-full bg-success/20 text-success flex items-center gap-1"><Award className="w-3 h-3" /> Certificate</span>}
                         {!course.is_published && <span className="px-2 py-0.5 text-xs rounded-full bg-destructive/20 text-destructive">Draft</span>}
+                        {course.is_paid && <span className="px-2 py-0.5 text-xs rounded-full bg-accent/20 text-accent-foreground border border-border/40">Paid · {course.currency} {course.price_amount}</span>}
                       </div>
                       <p className="text-muted-foreground text-sm">{course.description}</p>
                       <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
