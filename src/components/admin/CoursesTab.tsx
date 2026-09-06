@@ -17,13 +17,15 @@ const CoursesTab = () => {
 
   const [newCourse, setNewCourse] = useState({ 
     title: "", description: "", thumbnail_url: "", category: "general", 
-    price: "Free", duration: "", certificates_enabled: false 
+    price: "Free", duration: "", certificates_enabled: false,
+    is_paid: false, price_amount: 0, currency: "INR"
   });
   const [expandedCourse, setExpandedCourse] = useState<string | null>(null);
   const [editingCourse, setEditingCourse] = useState<string | null>(null);
   const [editCourseData, setEditCourseData] = useState<Partial<Course>>({});
   const [newLesson, setNewLesson] = useState({ 
-    title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" as ResourceType 
+    title: "", video_url: "", notes: "", pdf_url: "", resource_type: "video" as ResourceType,
+    is_free_preview: false
   });
   const [editingLesson, setEditingLesson] = useState<string | null>(null);
   const [editLessonData, setEditLessonData] = useState<Partial<Lesson>>({});
