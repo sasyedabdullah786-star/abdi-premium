@@ -44,14 +44,17 @@ const CoursesTab = () => {
       is_featured: false,
       category: newCourse.category,
       certificates_enabled: newCourse.certificates_enabled,
-      price: newCourse.price,
+      price: newCourse.is_paid ? `${newCourse.currency} ${newCourse.price_amount}` : "Free",
+      is_paid: newCourse.is_paid,
+      price_amount: Number(newCourse.price_amount) || 0,
+      currency: newCourse.currency,
       duration: newCourse.duration || null,
       average_rating: null,
       total_reviews: null,
       total_enrollments: null
     });
     if (result.success) {
-      setNewCourse({ title: "", description: "", thumbnail_url: "", category: "general", price: "Free", duration: "", certificates_enabled: false });
+      setNewCourse({ title: "", description: "", thumbnail_url: "", category: "general", price: "Free", duration: "", certificates_enabled: false, is_paid: false, price_amount: 0, currency: "INR" });
       toast({ title: "Course added successfully!" });
     }
   };
