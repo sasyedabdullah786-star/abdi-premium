@@ -23,6 +23,7 @@ export interface Lesson {
   pdf_url: string | null;
   sort_order: number;
   resource_type: ResourceType;
+  is_free_preview: boolean;
   created_at: string;
   updated_at: string;
 }
