@@ -248,11 +248,12 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
   };
 
   // Complete Payment logic
-  const processSuccessfulPayment = (chosenMethod: string) => {
+  const processSuccessfulPayment = (chosenMethod: string, externalRef?: string) => {
     setStep('processing');
 
     setTimeout(() => {
-      const providerRef = generateProviderRef(chosenMethod);
+      const providerRef = externalRef || generateProviderRef(chosenMethod);
+
       const invoiceNumber = generateInvoiceNumber();
 
       const newTx: PaymentTransaction = {
