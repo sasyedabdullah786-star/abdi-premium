@@ -65,6 +65,8 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
 
   // Completed Transaction
   const [completedTx, setCompletedTx] = useState<PaymentTransaction | null>(null);
+  const [rzpLoading, setRzpLoading] = useState(false);
+
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [copiedUpi, setCopiedUpi] = useState(false);
 
