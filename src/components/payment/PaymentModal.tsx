@@ -18,6 +18,8 @@ import {
   getPaymentSettings
 } from '@/lib/paymentConfig';
 import { PaymentInvoice } from './PaymentInvoice';
+import { startRazorpayCheckout } from '@/lib/razorpay';
+
 
 interface CourseInfo {
   id: string;
