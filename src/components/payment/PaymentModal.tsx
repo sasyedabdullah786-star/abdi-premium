@@ -594,14 +594,26 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
                 </div>
               </div>
 
-              {/* Pay Action Button */}
+              {/* Pay Action Buttons */}
               <Button
-                onClick={handleInitiatePayment}
+                onClick={handleRazorpayPayment}
+                disabled={rzpLoading || totalPayable === 0}
                 className="w-full h-12 text-base font-semibold btn-gradient gap-2 shadow-lg hover:shadow-primary/20 transition-all"
               >
                 <Lock className="w-4 h-4" />
-                {totalPayable === 0 ? 'Claim Free Enrollment' : `Pay ${formatCurrency(totalPayable, currency)} & Unlock Course`}
+                {rzpLoading
+                  ? 'Opening secure checkout…'
+                  : `Pay ${formatCurrency(totalPayable, currency)} securely`}
               </Button>
+
+              <Button
+                variant="outline"
+                onClick={handleInitiatePayment}
+                className="w-full h-10 text-sm gap-2"
+              >
+                {totalPayable === 0 ? 'Claim Free Enrollment' : 'Use demo checkout (test mode)'}
+              </Button>
+
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground pt-1">
                 <span>✓ 7-Day Money-Back Guarantee</span>
