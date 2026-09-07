@@ -18,6 +18,8 @@ import {
   getPaymentSettings
 } from '@/lib/paymentConfig';
 import { PaymentInvoice } from './PaymentInvoice';
+import { startRazorpayCheckout } from '@/lib/razorpay';
+
 
 interface CourseInfo {
   id: string;
@@ -65,6 +67,8 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
 
   // Completed Transaction
   const [completedTx, setCompletedTx] = useState<PaymentTransaction | null>(null);
+  const [rzpLoading, setRzpLoading] = useState(false);
+
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [copiedUpi, setCopiedUpi] = useState(false);
 
@@ -180,7 +184,28 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
   };
 
   // Initiate Payment Submission
+  const handleRazorpayPayment = async () => {
+    if (!user) {
+      toast({ title: 'Please sign in', description: 'You need an account to link your course purchase.', variant: 'destructive' });
+      return;
+    }
+    setRzpLoading(true);
+    const result = await startRazorpayCheckout({
+      courseId: course.id,
+      couponCode: appliedCoupon?.code,
+    });
+    setRzpLoading(false);
+
+    if (!result.success) {
+      if (result.error === 'cancelled') return;
+      toast({ title: 'Payment not completed', description: result.error, variant: 'destructive' });
+      return;
+    }
+    processSuccessfulPayment('razorpay', result.paymentId);
+  };
+
   const handleInitiatePayment = () => {
+
     if (!user) {
       toast({ title: 'Please sign in', description: 'You need an account to link your course purchase.', variant: 'destructive' });
       return;
@@ -227,11 +252,12 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
   };
 
   // Complete Payment logic
-  const processSuccessfulPayment = (chosenMethod: string) => {
+  const processSuccessfulPayment = (chosenMethod: string, externalRef?: string) => {
     setStep('processing');
 
     setTimeout(() => {
-      const providerRef = generateProviderRef(chosenMethod);
+      const providerRef = externalRef || generateProviderRef(chosenMethod);
+
       const invoiceNumber = generateInvoiceNumber();
 
       const newTx: PaymentTransaction = {
@@ -594,14 +620,26 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
                 </div>
               </div>
 
-              {/* Pay Action Button */}
+              {/* Pay Action Buttons */}
               <Button
-                onClick={handleInitiatePayment}
+                onClick={handleRazorpayPayment}
+                disabled={rzpLoading || totalPayable === 0}
                 className="w-full h-12 text-base font-semibold btn-gradient gap-2 shadow-lg hover:shadow-primary/20 transition-all"
               >
                 <Lock className="w-4 h-4" />
-                {totalPayable === 0 ? 'Claim Free Enrollment' : `Pay ${formatCurrency(totalPayable, currency)} & Unlock Course`}
+                {rzpLoading
+                  ? 'Opening secure checkout…'
+                  : `Pay ${formatCurrency(totalPayable, currency)} securely`}
               </Button>
+
+              <Button
+                variant="outline"
+                onClick={handleInitiatePayment}
+                className="w-full h-10 text-sm gap-2"
+              >
+                {totalPayable === 0 ? 'Claim Free Enrollment' : 'Use demo checkout (test mode)'}
+              </Button>
+
 
               <div className="flex items-center justify-center gap-4 text-[11px] text-muted-foreground pt-1">
                 <span>✓ 7-Day Money-Back Guarantee</span>
