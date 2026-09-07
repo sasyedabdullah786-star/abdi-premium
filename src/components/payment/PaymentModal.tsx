@@ -180,7 +180,28 @@ export const PaymentModal = ({ course, isOpen, onClose, onSuccess }: PaymentModa
   };
 
   // Initiate Payment Submission
+  const handleRazorpayPayment = async () => {
+    if (!user) {
+      toast({ title: 'Please sign in', description: 'You need an account to link your course purchase.', variant: 'destructive' });
+      return;
+    }
+    setRzpLoading(true);
+    const result = await startRazorpayCheckout({
+      courseId: course.id,
+      couponCode: appliedCoupon?.code,
+    });
+    setRzpLoading(false);
+
+    if (!result.success) {
+      if (result.error === 'cancelled') return;
+      toast({ title: 'Payment not completed', description: result.error, variant: 'destructive' });
+      return;
+    }
+    processSuccessfulPayment('razorpay', result.paymentId);
+  };
+
   const handleInitiatePayment = () => {
+
     if (!user) {
       toast({ title: 'Please sign in', description: 'You need an account to link your course purchase.', variant: 'destructive' });
       return;
