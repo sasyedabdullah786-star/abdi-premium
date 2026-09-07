@@ -117,11 +117,10 @@ export const useCourseAccess = (courseId?: string, isPaid?: boolean) => {
 
       // Automatically enroll the student
       await supabase
-        .from('course_enrollments')
+        .from('enrollments')
         .upsert({
           user_id: user.id,
           course_id: courseId,
-          progress_percentage: 0,
         }, { onConflict: 'user_id,course_id' });
     } catch (err) {
       console.warn('Supabase purchase record sync skipped or offline:', err);
