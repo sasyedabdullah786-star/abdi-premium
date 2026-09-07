@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Banner {
@@ -22,7 +22,7 @@ export const useBanners = (onlyActive = false) => {
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchBanners = async () => {
+  const fetchBanners = useCallback(async () => {
     try {
       let q = supabase.from('banners').select('*').order('priority', { ascending: false }).order('created_at', { ascending: false });
       if (onlyActive) q = q.eq('is_active', true);
@@ -34,7 +34,7 @@ export const useBanners = (onlyActive = false) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [onlyActive]);
 
   const createBanner = async (b: Partial<Banner>) => {
     const { data, error } = await supabase.from('banners').insert(b as any).select().single();
@@ -57,7 +57,9 @@ export const useBanners = (onlyActive = false) => {
     return { success: true };
   };
 
-  useEffect(() => { fetchBanners(); }, [onlyActive]);
+  useEffect(() => { 
+    fetchBanners(); 
+  }, [fetchBanners]);
 
   return { banners, loading, createBanner, updateBanner, deleteBanner, refetch: fetchBanners };
 };

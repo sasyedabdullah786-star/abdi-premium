@@ -3,16 +3,236 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 import { brokeredPreviewStorage } from './previewAuthStorage';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+export const isSupabaseConfigured = Boolean(
+  import.meta.env.VITE_SUPABASE_URL &&
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY &&
+  !import.meta.env.VITE_SUPABASE_URL.includes("placeholder-project")
+);
 
-// Import the supabase client like this:
-// import { supabase } from "@/integrations/supabase/client";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://placeholder-project.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || "placeholder-anon-key";
+
+const DEFAULT_COURSES = [
+  {
+    id: "c-1",
+    title: "Complete Physics for JEE & NEET",
+    description: "Master mechanics, electrodynamics, optics, and modern physics with deep conceptual clarity.",
+    category: "Physics",
+    is_published: true,
+    is_featured: true,
+    price: "Free",
+    is_paid: false,
+    price_amount: 0,
+    currency: "USD",
+    duration: "48 hours",
+    average_rating: 4.9,
+    total_reviews: 128,
+    total_enrollments: 1250,
+    created_at: "2025-01-01T00:00:00.000Z",
+    updated_at: "2025-01-01T00:00:00.000Z"
+  },
+  {
+    id: "c-2",
+    title: "Organic Chemistry Mastery",
+    description: "Reaction mechanisms, named reactions, and synthesis pathways explained intuitively.",
+    category: "Chemistry",
+    is_published: true,
+    is_featured: true,
+    price: "INR 2,499",
+    is_paid: true,
+    price_amount: 2499,
+    currency: "INR",
+    duration: "36 hours",
+    average_rating: 4.8,
+    total_reviews: 94,
+    total_enrollments: 980,
+    created_at: "2025-01-02T00:00:00.000Z",
+    updated_at: "2025-01-02T00:00:00.000Z"
+  },
+  {
+    id: "c-3",
+    title: "Calculus & Advanced Algebra",
+    description: "Limits, derivatives, integrals, matrices, and vector calculus with step-by-step problem sets.",
+    category: "Mathematics",
+    is_published: true,
+    is_featured: true,
+    price: "INR 3,499",
+    is_paid: true,
+    price_amount: 3499,
+    currency: "INR",
+    duration: "40 hours",
+    average_rating: 5.0,
+    total_reviews: 210,
+    total_enrollments: 1640,
+    created_at: "2025-01-03T00:00:00.000Z",
+    updated_at: "2025-01-03T00:00:00.000Z"
+  }
+];
+
+const DEFAULT_CATEGORIES = [
+  { id: "cat-1", name: "Physics", icon: "Atom", color: "#8b5cf6", sort_order: 1, created_at: "2025-01-01T00:00:00.000Z" },
+  { id: "cat-2", name: "Chemistry", icon: "FlaskConical", color: "#06b6d4", sort_order: 2, created_at: "2025-01-01T00:00:00.000Z" },
+  { id: "cat-3", name: "Mathematics", icon: "Calculator", color: "#f59e0b", sort_order: 3, created_at: "2025-01-01T00:00:00.000Z" },
+  { id: "cat-4", name: "Computer Science", icon: "Code", color: "#10b981", sort_order: 4, created_at: "2025-01-01T00:00:00.000Z" }
+];
+
+const DEFAULT_ANNOUNCEMENTS = [
+  {
+    id: "ann-1",
+    title: "Welcome to ABD\"I Premium",
+    content: "Explore our interactive courses, AI study companion, and practice workspaces.",
+    is_active: true,
+    priority: 10,
+    created_at: "2025-01-01T00:00:00.000Z",
+    updated_at: "2025-01-01T00:00:00.000Z"
+  }
+];
+
+const DEFAULT_TESTIMONIALS = [
+  {
+    id: "t-1",
+    student_name: "Aarav Sharma",
+    course_name: "Complete Physics",
+    rating: 5,
+    review_text: "The visualization and study tools made difficult concepts so easy to grasp.",
+    is_approved: true,
+    created_at: "2025-01-01T00:00:00.000Z"
+  },
+  {
+    id: "t-2",
+    student_name: "Priya Patel",
+    course_name: "Calculus & Advanced Algebra",
+    rating: 5,
+    review_text: "The best structured courses and companion tools I have used for exam prep.",
+    is_approved: true,
+    created_at: "2025-01-01T00:00:00.000Z"
+  }
+];
+
+const DEFAULT_INSTITUTION = [
+  {
+    id: "inst-1",
+    name: "ABD\"I",
+    description: "Your premier learning destination for excellence in education",
+    mission: "Empowering learners worldwide with quality education",
+    created_at: "2025-01-01T00:00:00.000Z",
+    updated_at: "2025-01-01T00:00:00.000Z"
+  }
+];
+
+const DEFAULT_SETTINGS = [
+  {
+    id: "default-settings",
+    hero_title: "Welcome to ABD\"I",
+    hero_subtitle: "Your journey to excellence starts here",
+    is_maintenance_mode: false,
+    maintenance_message: "We're currently performing scheduled maintenance.",
+    homepage_sections: {
+      announcements: true,
+      trending: true,
+      categories: true,
+      testimonials: true,
+      stats: true,
+      features: true
+    },
+    page_settings: {
+      courses: { enabled: true, coming_soon: false },
+      blog: { enabled: true, coming_soon: false },
+      contact: { enabled: true, coming_soon: false },
+      institution: { enabled: true, coming_soon: false },
+      hub: { enabled: true, coming_soon: false },
+      companion: { enabled: true, coming_soon: false },
+      nexus: { enabled: true, coming_soon: false },
+      ai_tools: { enabled: true, coming_soon: false },
+      leaderboard: { enabled: true, coming_soon: false },
+      profile: { enabled: true, coming_soon: false }
+    }
+  }
+];
+
+const customFetch: typeof fetch = async (input, init) => {
+  const urlStr = typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as Request).url;
+
+  if (!isSupabaseConfigured || urlStr.includes('placeholder-project.supabase.co')) {
+    // Auth endpoints
+    if (urlStr.includes('/auth/v1/session') || urlStr.includes('/auth/v1/user')) {
+      return new Response(JSON.stringify({ data: { session: null, user: null }, error: null }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' }
+      });
+    }
+    if (urlStr.includes('/auth/v1/')) {
+      return new Response(JSON.stringify({ error: null }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' }
+      });
+    }
+
+    // REST endpoints
+    const makeRes = (data: unknown) => {
+      const arr = Array.isArray(data) ? data : [data];
+      return new Response(JSON.stringify(data), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+          'content-range': `0-${Math.max(0, arr.length - 1)}/${arr.length}`
+        }
+      });
+    };
+
+    if (urlStr.includes('/rest/v1/site_settings')) return makeRes(DEFAULT_SETTINGS);
+    if (urlStr.includes('/rest/v1/institutions')) return makeRes(DEFAULT_INSTITUTION);
+    if (urlStr.includes('/rest/v1/courses')) return makeRes(DEFAULT_COURSES);
+    if (urlStr.includes('/rest/v1/categories')) return makeRes(DEFAULT_CATEGORIES);
+    if (urlStr.includes('/rest/v1/announcements')) return makeRes(DEFAULT_ANNOUNCEMENTS);
+    if (urlStr.includes('/rest/v1/testimonials')) return makeRes(DEFAULT_TESTIMONIALS);
+    if (urlStr.includes('/rest/v1/contact_info')) {
+      return makeRes([{ id: "contact-1", address: "123 Education Street", phone: "+1 234 567 890", email: "contact@abdi.edu", social_links: {} }]);
+    }
+
+    if (urlStr.includes('/rest/v1/course_purchases')) {
+      if (init?.method && ['POST', 'PATCH', 'PUT'].includes(init.method.toUpperCase())) {
+        try {
+          const body = JSON.parse((init.body as string) || '{}');
+          const prev = JSON.parse(localStorage.getItem('abdi_mock_purchases') || '[]');
+          const updated = [{ id: crypto.randomUUID ? crypto.randomUUID() : `p_${Date.now()}`, ...body, created_at: new Date().toISOString() }, ...prev];
+          localStorage.setItem('abdi_mock_purchases', JSON.stringify(updated));
+          return makeRes(body);
+        } catch {
+          return makeRes({ success: true });
+        }
+      }
+      const raw = localStorage.getItem('abdi_mock_purchases');
+      const purchases = raw ? JSON.parse(raw) : [];
+      return makeRes(purchases);
+    }
+
+    // Mutations or generic queries
+    if (init?.method && ['POST', 'PATCH', 'PUT', 'DELETE'].includes(init.method.toUpperCase())) {
+      return makeRes({ success: true });
+    }
+
+    return makeRes([]);
+  }
+
+  try {
+    return await fetch(input, init);
+  } catch (networkErr) {
+    console.warn('Supabase fetch failed, using offline fallback:', networkErr);
+    return new Response(JSON.stringify([]), {
+      status: 200,
+      headers: { 'content-type': 'application/json', 'content-range': '0-0/0' }
+    });
+  }
+};
 
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: brokeredPreviewStorage(),
     persistSession: true,
-    autoRefreshToken: true,
+    autoRefreshToken: isSupabaseConfigured,
+  },
+  global: {
+    fetch: customFetch
   }
 });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export type ResourceType = 'video' | 'worksheet' | 'notes' | 'pdf' | 'homework' | 'dpp' | 'timetable' | 'pyq';
@@ -32,7 +32,7 @@ export const useLessons = (courseId?: string) => {
   const [lessons, setLessons] = useState<Lesson[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchLessons = async () => {
+  const fetchLessons = useCallback(async () => {
     try {
       let query = supabase
         .from('lessons')
@@ -52,7 +52,7 @@ export const useLessons = (courseId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId]);
 
   const createLesson = async (lesson: Omit<Lesson, 'id' | 'created_at' | 'updated_at'>) => {
     try {
@@ -105,7 +105,7 @@ export const useLessons = (courseId?: string) => {
 
   useEffect(() => {
     fetchLessons();
-  }, [courseId]);
+  }, [fetchLessons]);
 
   return { lessons, loading, createLesson, updateLesson, deleteLesson, refetch: fetchLessons };
 };

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,10 +9,13 @@ import { useCourses } from "@/hooks/useCourses";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { BookMarked, BookOpen, Star, TrendingUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BookMarked, BookOpen, Star, TrendingUp, Receipt, FileText, CreditCard, CheckCircle2, Clock } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import WeeklyGoal from "@/components/WeeklyGoal";
+import { listTransactions, PaymentTransaction, formatCurrency, PAYMENT_EVENT } from "@/lib/paymentConfig";
+import { PaymentInvoice } from "@/components/payment/PaymentInvoice";
 
 const StudentProfile = () => {
   const navigate = useNavigate();
@@ -22,6 +25,25 @@ const StudentProfile = () => {
   const { allProgress, loading: progressLoading } = useProgress();
   const { bookmarks, loading: bookmarksLoading } = useBookmarks();
   const { userReviews, loading: reviewsLoading } = useReviews();
+
+  const [transactions, setTransactions] = useState<PaymentTransaction[]>([]);
+  const [selectedInvoice, setSelectedInvoice] = useState<PaymentTransaction | null>(null);
+
+  useEffect(() => {
+    const loadTx = () => {
+      const all = listTransactions();
+      if (!user) {
+        setTransactions([]);
+        return;
+      }
+      const myTxs = all.filter(t => t.userId === user.id || t.userEmail === user.email);
+      setTransactions(myTxs);
+    };
+
+    loadTx();
+    window.addEventListener(PAYMENT_EVENT, loadTx);
+    return () => window.removeEventListener(PAYMENT_EVENT, loadTx);
+  }, [user]);
 
   const courseById = useMemo(() => {
     return new Map(courses.map((c) => [c.id, c] as const));
@@ -100,6 +122,9 @@ const StudentProfile = () => {
             </TabsTrigger>
             <TabsTrigger value="reviews" className="gap-2">
               <Star className="w-4 h-4" /> Reviews
+            </TabsTrigger>
+            <TabsTrigger value="purchases" className="gap-2">
+              <Receipt className="w-4 h-4" /> Purchases ({transactions.length})
             </TabsTrigger>
           </TabsList>
 
@@ -228,8 +253,100 @@ const StudentProfile = () => {
               )}
             </section>
           </TabsContent>
+
+          <TabsContent value="purchases" className="mt-6">
+            <section className="space-y-4">
+              {transactions.length === 0 ? (
+                <div className="glass-card p-12 text-center max-w-md mx-auto space-y-4">
+                  <div className="w-14 h-14 mx-auto rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                    <Receipt className="w-7 h-7" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg font-bold">No Purchases Yet</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Enrolled premium courses and their verified tax invoices will appear here.
+                    </p>
+                  </div>
+                  <Link to="/courses" className="btn-gradient inline-flex items-center gap-2 text-sm">
+                    <BookOpen className="w-4 h-4" /> Browse Courses
+                  </Link>
+                </div>
+              ) : (
+                transactions.map((tx) => (
+                  <article key={tx.id} className="glass-card p-6">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 mb-1">
+                          <Badge 
+                            variant={tx.status === 'paid' ? 'default' : 'secondary'}
+                            className={tx.status === 'paid' ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : ''}
+                          >
+                            {tx.status === 'paid' ? (
+                              <span className="flex items-center gap-1">
+                                <CheckCircle2 className="w-3 h-3" /> Paid & Active
+                              </span>
+                            ) : (
+                              <span className="flex items-center gap-1">
+                                <Clock className="w-3 h-3" /> {tx.status}
+                              </span>
+                            )}
+                          </Badge>
+                          <span className="text-xs font-mono text-muted-foreground">
+                            #{tx.invoiceNumber}
+                          </span>
+                        </div>
+                        <h2 className="font-display text-lg font-bold truncate">
+                          {tx.courseTitle}
+                        </h2>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-1">
+                          <span>
+                            Paid {formatCurrency(tx.amount, tx.currency)} via <strong className="capitalize text-foreground">{tx.paymentMethod}</strong>
+                          </span>
+                          <span>•</span>
+                          <span>
+                            {new Date(tx.createdAt).toLocaleDateString(undefined, { 
+                              year: 'numeric', month: 'short', day: 'numeric' 
+                            })}
+                          </span>
+                          {tx.couponCode && (
+                            <>
+                              <span>•</span>
+                              <span className="text-emerald-600 dark:text-emerald-400">Coupon: {tx.couponCode}</span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setSelectedInvoice(tx)}
+                          className="gap-1.5 text-xs h-9"
+                        >
+                          <FileText className="w-3.5 h-3.5 text-primary" /> View Invoice
+                        </Button>
+                        <Link
+                          to={`/course/${tx.courseId}`}
+                          className="btn-gradient text-xs inline-flex items-center gap-1.5 h-9 px-3.5 rounded-lg"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" /> Go to Course
+                        </Link>
+                      </div>
+                    </div>
+                  </article>
+                ))
+              )}
+            </section>
+          </TabsContent>
         </Tabs>
       </main>
+
+      <PaymentInvoice
+        transaction={selectedInvoice}
+        isOpen={!!selectedInvoice}
+        onClose={() => setSelectedInvoice(null)}
+      />
     </Layout>
   );
 };

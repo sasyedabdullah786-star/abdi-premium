@@ -19,9 +19,12 @@ const ResetPassword = () => {
       setValid(true);
     } else {
       // Allow if user already has a session from email click
-      supabase.auth.getSession().then(({ data }) => {
-        if (data.session) setValid(true);
-      });
+      supabase.auth
+        .getSession()
+        .then(({ data }) => {
+          if (data?.session) setValid(true);
+        })
+        .catch(() => {});
     }
   }, []);
 

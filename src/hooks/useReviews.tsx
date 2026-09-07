@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -23,7 +23,7 @@ export const useReviews = (courseId?: string) => {
   const [userReviews, setUserReviews] = useState<CourseReview[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       if (courseId) {
         // Fetch approved reviews for a course
@@ -47,6 +47,8 @@ export const useReviews = (courseId?: string) => {
             .maybeSingle();
 
           setUserReview(userReviewData);
+        } else {
+          setUserReview(null);
         }
       } else if (isAdmin) {
         // Admin: fetch all reviews
@@ -67,13 +69,16 @@ export const useReviews = (courseId?: string) => {
 
         if (error) throw error;
         setUserReviews(data || []);
+      } else {
+        setUserReviews([]);
+        setAllReviews([]);
       }
     } catch (err) {
       console.error('Error fetching reviews:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [courseId, user, isAdmin]);
 
   const createReview = async (courseId: string, rating: number, reviewText?: string) => {
     if (!user) return { success: false, error: 'Not authenticated' };
@@ -150,7 +155,7 @@ export const useReviews = (courseId?: string) => {
 
   useEffect(() => {
     fetchReviews();
-  }, [user, courseId, isAdmin]);
+  }, [fetchReviews]);
 
   return {
     reviews,

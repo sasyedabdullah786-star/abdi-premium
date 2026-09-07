@@ -143,14 +143,35 @@ const AIAssistant = ({ open, onOpenChange, embedded = false }: Props) => {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { toast } = useToast();
 
+  const sessionIdRef = useRef(sessionId);
+  sessionIdRef.current = sessionId;
+
   // Sync when active session changes externally (e.g. from Nexus page).
   useEffect(() => {
     const sync = () => {
       const s = getActiveSession();
-      setSessionId(s?.id ?? null);
-      setSessionTitle(s?.title ?? 'New chat');
-      setMessages(s && s.messages.length ? s.messages : [WELCOME]);
-      setOpenArtifact(null);
+      const newId = s?.id ?? null;
+      const newTitle = s?.title ?? 'New chat';
+      const newMsgs = s && s.messages.length ? s.messages : [WELCOME];
+
+      if (newId !== sessionIdRef.current) {
+        setSessionId(newId);
+        setSessionTitle(newTitle);
+        setMessages(newMsgs);
+        setOpenArtifact(null);
+      } else {
+        setSessionTitle(prev => (prev !== newTitle ? newTitle : prev));
+        setMessages(prev => {
+          if (prev.length !== newMsgs.length) return newMsgs;
+          const isSame = prev.every(
+            (m, idx) =>
+              m.role === newMsgs[idx]?.role &&
+              m.content === newMsgs[idx]?.content &&
+              m.artifact === newMsgs[idx]?.artifact
+          );
+          return isSame ? prev : newMsgs;
+        });
+      }
     };
     window.addEventListener(NEXUS_EVENT, sync);
     window.addEventListener('storage', sync);

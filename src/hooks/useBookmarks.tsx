@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -14,9 +14,10 @@ export const useBookmarks = () => {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchBookmarks = async () => {
+  const fetchBookmarks = useCallback(async () => {
     if (!user) {
       setLoading(false);
+      setBookmarks([]);
       return;
     }
 
@@ -34,7 +35,7 @@ export const useBookmarks = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   const addBookmark = async (courseId: string) => {
     if (!user) return { success: false, error: 'Not authenticated' };
@@ -91,7 +92,7 @@ export const useBookmarks = () => {
 
   useEffect(() => {
     fetchBookmarks();
-  }, [user]);
+  }, [fetchBookmarks]);
 
   return { 
     bookmarks, 

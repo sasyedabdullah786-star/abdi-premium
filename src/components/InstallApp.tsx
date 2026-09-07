@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Download, Smartphone, Chrome, X } from 'lucide-react';
+import { toast } from 'sonner';
 
 type BIPEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 
@@ -37,7 +38,7 @@ const InstallApp = () => {
         a.click();
         URL.revokeObjectURL(a.href);
       })
-      .catch(err => alert(err.message));
+      .catch(err => toast.error(err.message || 'Download failed'));
   };
 
   if (installed) return null;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -21,9 +21,11 @@ export const useProgress = (courseId?: string) => {
   const [allProgress, setAllProgress] = useState<CourseProgress[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchProgress = async () => {
+  const fetchProgress = useCallback(async () => {
     if (!user) {
       setLoading(false);
+      setProgress(null);
+      setAllProgress([]);
       return;
     }
 
@@ -64,7 +66,7 @@ export const useProgress = (courseId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, courseId]);
 
   const updateProgress = async (lessonId: string, totalLessons: number) => {
     if (!user || !courseId) return { success: false };
@@ -115,7 +117,7 @@ export const useProgress = (courseId?: string) => {
 
   useEffect(() => {
     fetchProgress();
-  }, [user, courseId]);
+  }, [fetchProgress]);
 
   return { 
     progress, 

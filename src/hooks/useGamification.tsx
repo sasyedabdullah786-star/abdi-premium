@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
@@ -41,11 +41,7 @@ export const useGamification = () => {
   const [leaderboard, setLeaderboard] = useState<UserStats[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchAll();
-  }, [user]);
-
-  const fetchAll = async () => {
+  const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
       const { data: badgeData } = await supabase.from('badges').select('*').order('sort_order');
@@ -82,13 +78,20 @@ export const useGamification = () => {
           .select('*, badge:badges(*)')
           .eq('user_id', user.id);
         setUserBadges((ubData as any) || []);
+      } else {
+        setStats(null);
+        setUserBadges([]);
       }
     } catch (err) {
       console.error('Error loading gamification:', err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    fetchAll();
+  }, [fetchAll]);
 
   const xpForNextLevel = (level: number) => level * 100;
   const progressPercent = stats

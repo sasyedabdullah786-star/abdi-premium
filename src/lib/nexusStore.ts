@@ -109,6 +109,18 @@ export function saveMessages(id: string, messages: NexusMsg[]) {
   const all = listSessions();
   const i = all.findIndex(s => s.id === id);
   if (i === -1) return;
+
+  const currentMsgs = all[i].messages || [];
+  if (currentMsgs.length === messages.length) {
+    const isSame = currentMsgs.every(
+      (m, idx) =>
+        m.role === messages[idx]?.role &&
+        m.content === messages[idx]?.content &&
+        m.artifact === messages[idx]?.artifact
+    );
+    if (isSame) return;
+  }
+
   const next = { ...all[i], messages: messages.slice(-100), updatedAt: Date.now() };
   // Auto-derive title from first user message if still default.
   if ((!all[i].title || all[i].title === 'New chat') && messages.length) {

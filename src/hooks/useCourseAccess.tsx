@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { listTransactions, PAYMENT_EVENT, PaymentTransaction } from '@/lib/paymentConfig';
 
 export interface CoursePurchase {
   id: string;
@@ -17,8 +18,7 @@ export interface CoursePurchase {
 /**
  * Determines whether the current user may open a course's content.
  * Free courses are open. Paid courses require a completed purchase
- * (admins always have access). Content itself is protected in the
- * database, this hook only drives the UI.
+ * (admins always have access).
  */
 export const useCourseAccess = (courseId?: string, isPaid?: boolean) => {
   const { user, isAdmin } = useAuth();
@@ -32,21 +32,103 @@ export const useCourseAccess = (courseId?: string, isPaid?: boolean) => {
       return;
     }
     setLoading(true);
-    const { data } = await supabase
-      .from('course_purchases')
-      .select('*')
-      .eq('course_id', courseId)
-      .eq('user_id', user.id)
-      .maybeSingle();
-    setPurchase((data as CoursePurchase) || null);
-    setLoading(false);
+
+    // 1. Check local completed transactions first for instant zero-latency feedback
+    const localTxs = listTransactions();
+    const localMatch = localTxs.find(
+      t => t.courseId === courseId && (t.userId === user.id || t.userEmail === user.email) && t.status === 'paid'
+    );
+
+    if (localMatch) {
+      setPurchase({
+        id: localMatch.id,
+        user_id: user.id,
+        course_id: courseId,
+        amount: localMatch.amount,
+        currency: localMatch.currency,
+        status: 'paid',
+        provider: localMatch.paymentMethod,
+        provider_ref: localMatch.providerRef,
+        created_at: localMatch.createdAt,
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await supabase
+        .from('course_purchases')
+        .select('*')
+        .eq('course_id', courseId)
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      setPurchase((data as CoursePurchase) || null);
+    } catch (e) {
+      console.warn('Could not fetch course purchase:', e);
+    } finally {
+      setLoading(false);
+    }
   }, [courseId, user]);
 
   useEffect(() => {
     fetchPurchase();
+
+    const handleSync = () => fetchPurchase();
+    window.addEventListener(PAYMENT_EVENT, handleSync);
+    window.addEventListener('storage', handleSync);
+
+    return () => {
+      window.removeEventListener(PAYMENT_EVENT, handleSync);
+      window.removeEventListener('storage', handleSync);
+    };
   }, [fetchPurchase]);
 
   const hasAccess = !isPaid || isAdmin || purchase?.status === 'paid';
+
+  const recordCompletedPurchase = async (tx: PaymentTransaction) => {
+    if (!user || !courseId) return { success: false, error: 'not-signed-in' };
+
+    setPurchase({
+      id: tx.id,
+      user_id: user.id,
+      course_id: courseId,
+      amount: tx.amount,
+      currency: tx.currency,
+      status: 'paid',
+      provider: tx.paymentMethod,
+      provider_ref: tx.providerRef,
+      created_at: tx.createdAt,
+    });
+
+    try {
+      // Record in Supabase
+      await supabase
+        .from('course_purchases')
+        .upsert({
+          user_id: user.id,
+          course_id: courseId,
+          amount: tx.amount,
+          currency: tx.currency,
+          status: 'paid',
+          provider: tx.paymentMethod,
+          provider_ref: tx.providerRef,
+        }, { onConflict: 'user_id,course_id' });
+
+      // Automatically enroll the student
+      await supabase
+        .from('course_enrollments')
+        .upsert({
+          user_id: user.id,
+          course_id: courseId,
+          progress_percentage: 0,
+        }, { onConflict: 'user_id,course_id' });
+    } catch (err) {
+      console.warn('Supabase purchase record sync skipped or offline:', err);
+    }
+
+    return { success: true };
+  };
 
   const requestPurchase = async (amount: number, currency: string) => {
     if (!user || !courseId) return { success: false, error: 'not-signed-in' };
@@ -60,5 +142,6 @@ export const useCourseAccess = (courseId?: string, isPaid?: boolean) => {
     return { success: true };
   };
 
-  return { purchase, hasAccess, loading, requestPurchase, refetch: fetchPurchase };
+  return { purchase, hasAccess, loading, recordCompletedPurchase, requestPurchase, refetch: fetchPurchase };
 };
+

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Layout from "@/components/Layout";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,11 +46,7 @@ const StudyCompanion = () => {
   const [cardLoading, setCardLoading] = useState(false);
   const [flippedIdx, setFlippedIdx] = useState<number | null>(null);
 
-  useEffect(() => {
-    if (user) loadTasks();
-  }, [user]);
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     if (!user) return;
     const today = new Date().toISOString().slice(0, 10);
     const { data } = await supabase
@@ -60,7 +56,11 @@ const StudyCompanion = () => {
       .eq("task_date", today)
       .order("created_at");
     setTasks((data as DailyTask[]) || []);
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) loadTasks();
+  }, [user, loadTasks]);
 
   const generateTasks = async () => {
     if (!user) return;

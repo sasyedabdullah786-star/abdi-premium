@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface HomepageSections {
@@ -106,7 +106,7 @@ export const useSiteSettings = () => {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
   const [loading, setLoading] = useState(true);
 
-  const fetchSettings = async () => {
+  const fetchSettings = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('site_settings')
@@ -149,7 +149,7 @@ export const useSiteSettings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const applyTheme = (s: SiteSettings) => {
     const root = document.documentElement;
@@ -213,7 +213,7 @@ export const useSiteSettings = () => {
 
   useEffect(() => {
     fetchSettings();
-  }, []);
+  }, [fetchSettings]);
 
   return { 
     settings, 

@@ -32,7 +32,7 @@ const Course = () => {
   const [activeLesson, setActiveLesson] = useState<string | null>(null);
 
   const course = courses.find(c => c.id === courseId);
-  const { purchase, hasAccess, requestPurchase } = useCourseAccess(courseId, course?.is_paid);
+  const { purchase, hasAccess, requestPurchase, recordCompletedPurchase, refetch: refetchAccess } = useCourseAccess(courseId, course?.is_paid);
   const [buying, setBuying] = useState(false);
 
   const handleBuy = async () => {
@@ -40,6 +40,14 @@ const Course = () => {
     setBuying(true);
     await requestPurchase(Number(course.price_amount) || 0, course.currency || "INR");
     setBuying(false);
+  };
+
+  const handlePaymentSuccess = async (tx: any) => {
+    if (recordCompletedPurchase) {
+      await recordCompletedPurchase(tx);
+    }
+    await refetchAccess();
+    enroll();
   };
 
   // Award XP the first time a video lesson is opened
@@ -180,6 +188,10 @@ const Course = () => {
             purchase={purchase}
             onBuy={handleBuy}
             buying={buying}
+            courseId={course.id}
+            thumbnailUrl={course.thumbnail_url}
+            duration={course.duration}
+            onPaymentSuccess={handlePaymentSuccess}
           />
         </section>
       )}

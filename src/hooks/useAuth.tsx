@@ -48,7 +48,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         if (session?.user) {
           setTimeout(() => {
-            checkAdminRole(session.user.id).then(setIsAdmin);
+            checkAdminRole(session.user.id)
+              .then(setIsAdmin)
+              .catch(() => setIsAdmin(false));
           }, 0);
         } else {
           setIsAdmin(false);
@@ -57,15 +59,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        checkAdminRole(session.user.id).then(setIsAdmin);
-      }
-      setLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data: { session } }) => {
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          checkAdminRole(session.user.id)
+            .then(setIsAdmin)
+            .catch(() => setIsAdmin(false));
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.warn('Could not fetch auth session:', err);
+        setSession(null);
+        setUser(null);
+        setIsAdmin(false);
+        setLoading(false);
+      });
 
     return () => subscription.unsubscribe();
   }, []);
